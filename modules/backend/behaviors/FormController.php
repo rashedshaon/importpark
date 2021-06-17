@@ -490,12 +490,20 @@ class FormController extends ControllerBehavior
             $redirectUrl = RouterHelper::replaceParameters($model, $redirectUrl);
         }
 
-        if (starts_with($redirectUrl, 'http://') || starts_with($redirectUrl, 'https://')) {
-            // Process absolute redirects
+        $url = $this->controller->formGetRedirectUrl($context, $model);
+        if ($url) {
+            $redirectUrl = $url;
+        }
+
+        if (!$redirectUrl) {
+            return null;
+        }
+
+        if (starts_with($redirectUrl, ['//', 'http://', 'https://'])) {
             $redirect = Redirect::to($redirectUrl);
-        } else {
-            // Process relative redirects
-            $redirect = $redirectUrl ? Backend::redirect($redirectUrl) : null;
+        }
+        else {
+            $redirect = Backend::redirect($redirectUrl);
         }
 
         return $redirect;
@@ -703,7 +711,18 @@ class FormController extends ControllerBehavior
     //
 
     /**
-     * Called before the creation or updating form is saved.
+     * formGetRedirectUrl returns a URL based on supplied context,
+     * relative URLs are treated as backend URLs
+     * @param string $context
+     * @param Model $model
+     * @return string
+     */
+    public function formGetRedirectUrl($context = null, $model = null)
+    {
+    }
+
+    /**
+     * formBeforeSave is called before the creation or updating form is saved
      * @param Model
      */
     public function formBeforeSave($model)
@@ -711,7 +730,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called after the creation or updating form is saved.
+     * formAfterSave is called after the creation or updating form is saved
      * @param Model
      */
     public function formAfterSave($model)
@@ -719,7 +738,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called before the creation form is saved.
+     * formBeforeCreate is called before the creation form is saved
      * @param Model
      */
     public function formBeforeCreate($model)
@@ -727,7 +746,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called after the creation form is saved.
+     * formAfterCreate is called after the creation form is saved
      * @param Model
      */
     public function formAfterCreate($model)
@@ -735,7 +754,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called before the updating form is saved.
+     * formBeforeUpdate is called before the updating form is saved
      * @param Model
      */
     public function formBeforeUpdate($model)
@@ -743,7 +762,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called after the updating form is saved.
+     * formAfterUpdate is called after the updating form is saved
      * @param Model
      */
     public function formAfterUpdate($model)
@@ -751,7 +770,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called after the form model is deleted.
+     * formAfterDelete called after the form model is deleted
      * @param Model
      */
     public function formAfterDelete($model)
@@ -759,8 +778,8 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Finds a Model record by its primary identifier, used by update actions. This logic
-     * can be changed by overriding it in the controller.
+     * formFindModelObject finds a Model record by its primary identifier, used by update
+     * actions. This logic can be changed by overriding it in the controller.
      * @param string $recordId
      * @return Model
      */
@@ -791,8 +810,8 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Creates a new instance of a form model. This logic can be changed
-     * by overriding it in the controller.
+     * formCreateModelObject creates a new instance of a form model. This logic can
+     * be changed by overriding it in the controller.
      * @return Model
      */
     public function formCreateModelObject()
@@ -801,7 +820,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called before the form fields are defined.
+     * formExtendFieldsBefore is called before the form fields are defined
      * @param Backend\Widgets\Form $host The hosting form widget
      * @return void
      */
@@ -810,7 +829,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called after the form fields are defined.
+     * formExtendFields is called after the form fields are defined
      * @param Backend\Widgets\Form $host The hosting form widget
      * @param array $fields Array of all defined form field objects (\Backend\Classes\FormField)
      * @return void
@@ -820,7 +839,8 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called before the form is refreshed, should return an array of additional save data.
+     * formExtendRefreshData is called before the form is refreshed, should return an array
+     * of additional save data.
      * @param Backend\Widgets\Form $host The hosting form widget
      * @param array $saveData Current save data
      * @return array
@@ -830,7 +850,8 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called when the form is refreshed, giving the opportunity to modify the form fields.
+     * formExtendRefreshFields is called when the form is refreshed, giving the opportunity
+     * to modify the form fields.
      * @param Backend\Widgets\Form $host The hosting form widget
      * @param array $fields Current form fields
      * @return array
@@ -840,7 +861,8 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Called after the form is refreshed, should return an array of additional result parameters.
+     * formExtendRefreshResults is called after the form is refreshed, should return an
+     * array of additional result parameters.
      * @param Backend\Widgets\Form $host The hosting form widget
      * @param array $result Current result parameters.
      * @return array
@@ -850,7 +872,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Extend supplied model used by create and update actions, the model can
+     * formExtendModel extends the supplied model used by create and update actions, the model can
      * be altered by overriding it in the controller.
      * @param Model $model
      * @return Model
@@ -860,7 +882,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Extend the query used for finding the form model. Extra conditions
+     * formExtendQuery extends the query used for finding the form model. Extra conditions
      * can be applied to the query, for example, $query->withTrashed();
      * @param October\Rain\Database\Builder $query
      * @return void
@@ -870,7 +892,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Static helper for extending form fields.
+     * extendFormFields is a static helper for extending form fields
      * @param  callable $callback
      * @return void
      */
@@ -881,6 +903,7 @@ class FormController extends ControllerBehavior
             if (!is_a($widget->getController(), $calledClass)) {
                 return;
             }
+
             call_user_func_array($callback, [$widget, $widget->model, $widget->getContext()]);
         });
     }
