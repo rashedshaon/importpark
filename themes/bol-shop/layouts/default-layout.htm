@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <title>BOL eShop - {{ this.page.title }}</title>
+    <meta name="description" content="{{ this.page.meta_description }}">
+    <meta name="title" content="{{ this.page.meta_title }}">
+    <meta name="author" content="Bangladesh Online">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Bangladesh Online">
+    
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <link rel="manifest" href="site.html">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ 'assets/images/favicon.ico' | theme }}">
+
+    <!-- CSS here -->
+    <link rel="stylesheet" href="{{ 'assets/css/bootstrap.min.css' | theme }}">
+    <link rel="stylesheet" href="{{ 'assets/css/owl.carousel.min.css' | theme }}">
+    <link rel="stylesheet" href="{{ 'assets/css/fontawesome.min.css' | theme }}">
+    <link rel="stylesheet" href="{{ 'assets/css/animate.min.css' | theme }}">
+    <link rel="stylesheet" href="{{ 'assets/css/magnific-popup.css' | theme }}">
+    <link rel="stylesheet" href="{{ 'assets/css/fontawesome-all.min.css' | theme }}">
+    <link rel="stylesheet" href="{{ 'assets/css/meanmenu.css' | theme }}">
+    <link rel="stylesheet" href="{{ 'assets/css/slick.css' | theme }}">
+    <link rel="stylesheet" href="{{ 'assets/css/default.css' | theme }}">
+    <link rel="stylesheet" href="{{ 'assets/css/style.css' | theme }}">
+    <link rel="stylesheet" href="{{ 'assets/css/responsive.css' | theme }}">
+
+    {% styles %}
+</head>
+
+<body>
+    <!-- preloader -->
+    <div id="loader-wrapper">
+        <div id="loader"></div>
+    </div>
+
+
+    <!-- Header -->
+    {% partial 'site/header' %}
+    
+
+    <!-- Content -->
+    {% page %}
+    
+
+    <!-- Footer -->
+    {% partial 'site/footer' %}
+
+
+    <!-- Popup -->
+    {% partial 'site/popup' %}
+
+
+    <!-- JS here -->
+    <script src="{{ 'assets/js/vendor/jquery-1.12.4.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/popper.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/bootstrap.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/owl.carousel.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/isotope.pkgd.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/one-page-nav-min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/slick.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/jquery.meanmenu.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/ajax-form.js' | theme }}"></script>
+    <script src="{{ 'assets/js/fontawesome.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/wow.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/jquery.scrollUp.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/imagesloaded.pkgd.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/jquery.magnific-popup.min.js' | theme }}"></script>
+    <script src="{{ 'assets/js/plugins.js' | theme }}"></script>
+    <script src="{{ 'assets/js/main.js' | theme }}"></script>
+
+    {% framework extras %}
+    {% scripts %}
+</body>
+
+
+</html>

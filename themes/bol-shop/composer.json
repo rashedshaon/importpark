@@ -1,0 +1,8 @@
+{
+    "name": "bol/bol-shop-theme",
+    "type": "october-theme",
+    "description": "The theme for BOL online shop",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}
