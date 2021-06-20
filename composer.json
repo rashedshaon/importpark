@@ -15,7 +15,10 @@
         "october/editor": "^2.0",
         "rainlab/builder-plugin": "^1.0",
         "lovata/shopaholic-plugin": "^1.30",
-        "lovata/toolbox-plugin": "^1.34"
+        "lovata/toolbox-plugin": "^1.34",
+        "lovata/bootstrap-shopaholic-theme": "^1.4",
+        "rainlab/pages-plugin": "^1.4",
+        "lovata/ordersshopaholic-plugin": "^1.29"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0|^9.0",
