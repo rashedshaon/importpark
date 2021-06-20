@@ -19,7 +19,8 @@
         "lovata/bootstrap-shopaholic-theme": "^1.4",
         "rainlab/pages-plugin": "^1.4",
         "lovata/ordersshopaholic-plugin": "^1.29",
-        "rainlab/user-plugin": "^1.5"
+        "rainlab/user-plugin": "^1.5",
+        "flynsarmy/sociallogin-plugin": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0|^9.0",
