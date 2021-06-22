@@ -20,7 +20,8 @@
         "rainlab/pages-plugin": "^1.4",
         "lovata/ordersshopaholic-plugin": "^1.29",
         "rainlab/user-plugin": "^1.5",
-        "flynsarmy/sociallogin-plugin": "^1.0"
+        "flynsarmy/sociallogin-plugin": "^1.0",
+        "rainlab/blog-plugin": "^1.5"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0|^9.0",
