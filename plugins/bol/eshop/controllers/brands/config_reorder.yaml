@@ -1,0 +1,4 @@
+title: Brands
+modelClass: Bol\Eshop\Models\Brand
+toolbar:
+    buttons: reorder_toolbar

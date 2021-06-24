@@ -1,0 +1,49 @@
+fields:
+    name:
+        label: bol.eshop::lang.category.name
+        span: auto
+        type: text
+    slug:
+        label: bol.eshop::lang.category.slug
+        span: auto
+        type: text
+        preset:
+            field: name
+            type: slug
+tabs:
+    fields:
+        photo:
+            label: 'bol.eshop::lang.category.photo'
+            mode: image
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            tab: 'bol.eshop::lang.category.details'
+
+        is_featured:
+            label: 'bol.eshop::lang.category.is_featured'
+            span: auto
+            type: switch
+            tab: 'bol.eshop::lang.category.details'
+
+        description:
+            label: bol.eshop::lang.category.description
+            size: large
+            span: left
+            type: textarea
+            tab: bol.eshop::lang.category.details
+        
+        meta_title:
+            label: 'bol.eshop::lang.category.meta_title'
+            span: auto
+            type: text
+            tab: 'bol.eshop::lang.category.tab_seo'
+        meta_description:
+            label: 'bol.eshop::lang.category.meta_description'
+            size: large
+            span: left
+            type: textarea
+            tab: 'bol.eshop::lang.category.tab_seo'

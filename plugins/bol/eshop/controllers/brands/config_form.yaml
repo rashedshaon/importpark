@@ -1,0 +1,10 @@
+name: Brands
+form: $/bol/eshop/models/brand/fields.yaml
+modelClass: Bol\Eshop\Models\Brand
+defaultRedirect: bol/eshop/brands
+create:
+    redirect: 'bol/eshop/brands/update/:id'
+    redirectClose: bol/eshop/brands
+update:
+    redirect: bol/eshop/brands
+    redirectClose: bol/eshop/brands

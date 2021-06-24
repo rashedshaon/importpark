@@ -1,0 +1,33 @@
+fields:
+    name:
+        label: bol.eshop::lang.brand.name
+        span: auto
+        type: text
+    slug:
+        label: bol.eshop::lang.brand.slug
+        span: auto
+        type: text
+        preset:
+            field: name
+            type: slug
+    logo:
+        label: 'bol.eshop::lang.brand.logo'
+        mode: image
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload
+
+    status:
+        label: 'bol.eshop::lang.brand.status'
+        span: auto
+        type: switch
+
+
+    description:
+        label: bol.eshop::lang.brand.description
+        size: large
+        span: left
+        type: textarea

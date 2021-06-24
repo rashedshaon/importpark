@@ -1,0 +1,38 @@
+1.0.1:
+    - 'Initialize plugin.'
+1.0.2:
+    - 'Created table bol_eshop_products'
+    - builder_table_create_bol_eshop_products.php
+1.0.3:
+    - 'Created table bol_eshop_categories'
+    - builder_table_create_bol_eshop_categories.php
+1.0.4:
+    - 'Created table bol_eshop_product_categories'
+    - builder_table_create_bol_eshop_product_categories.php
+1.0.5:
+    - 'Updated table bol_eshop_categories'
+    - builder_table_update_bol_eshop_categories.php
+1.0.6:
+    - 'Created table bol_eshop_brands'
+    - builder_table_create_bol_eshop_brands.php
+1.0.7:
+    - 'Updated table bol_eshop_brands'
+    - builder_table_update_bol_eshop_brands.php
+1.0.8:
+    - 'Created table bol_eshop_wish_list'
+    - builder_table_create_bol_eshop_wish_list.php
+1.0.9:
+    - 'Created table bol_eshop_unit_list'
+    - builder_table_create_bol_eshop_unit_list.php
+1.0.10:
+    - 'Created table bol_eshop_orders'
+    - builder_table_create_bol_eshop_orders.php
+1.0.11:
+    - 'Created table bol_eshop_order_items'
+    - builder_table_create_bol_eshop_order_items.php
+1.0.12:
+    - 'Updated table bol_eshop_orders'
+    - builder_table_update_bol_eshop_orders.php
+1.0.13:
+    - 'Created table bol_eshop_order_status'
+    - builder_table_create_bol_eshop_order_status.php

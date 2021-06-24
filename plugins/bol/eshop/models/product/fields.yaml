@@ -1,0 +1,194 @@
+fields:
+    title:
+        label: 'bol.eshop::lang.product.title'
+        span: auto
+        type: text
+    slug:
+        label: 'bol.eshop::lang.product.slug'
+        span: auto
+        preset:
+            field: title
+            type: slug
+        type: text
+tabs:
+    fields:
+        photos:
+            label: 'bol.eshop::lang.product.photos'
+            mode: image
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            tab: 'bol.eshop::lang.product.tab_basic'
+        video_url:
+            label: 'bol.eshop::lang.product.video_url'
+            span: auto
+            type: text
+            tab: 'bol.eshop::lang.product.tab_basic'
+        short_description:
+            label: 'bol.eshop::lang.product.short_description'
+            size: large
+            span: full
+            type: textarea
+            tab: 'bol.eshop::lang.product.tab_basic'
+        description:
+            label: 'bol.eshop::lang.product.description'
+            size: giant
+            span: full
+            type: richeditor
+            tab: 'bol.eshop::lang.product.tab_basic'
+        categories:
+            label: bol.eshop::lang.product.select_categories
+            nameFrom: name
+            descriptionFrom: description
+            span: auto
+            type: relation
+            tab: 'bol.eshop::lang.product.tab_category'
+        price:
+            label: 'bol.eshop::lang.product.price'
+            span: auto
+            type: number
+            tab: 'bol.eshop::lang.product.tab_price'
+        discount_type:
+            label: 'bol.eshop::lang.product.discount_type'
+            showSearch: false
+            span: left
+            type: dropdown
+            options:
+                'Amount': 'Amount'
+                'Percent': 'Percent'
+            tab: 'bol.eshop::lang.product.tab_price'
+        discount:
+            label: 'bol.eshop::lang.product.discount'
+            span: left
+            type: number
+            tab: 'bol.eshop::lang.product.tab_price'
+        discount_start:
+            label: 'bol.eshop::lang.product.discount_start'
+            mode: datetime
+            span: left
+            type: datepicker
+            tab: 'bol.eshop::lang.product.tab_price'
+        discount_end:
+            label: 'bol.eshop::lang.product.discount_end'
+            mode: datetime
+            span: left
+            type: datepicker
+            tab: 'bol.eshop::lang.product.tab_price'
+        is_published:
+            label: 'bol.eshop::lang.product.is_published'
+            span: auto
+            type: switch
+            tab: 'bol.eshop::lang.product.tab_others'
+        is_featured:
+            label: 'bol.eshop::lang.product.is_featured'
+            span: auto
+            type: switch
+            tab: 'bol.eshop::lang.product.tab_others'
+        published_at:
+            label: 'bol.eshop::lang.product.published_at'
+            mode: datetime
+            span: left
+            type: datepicker
+            tab: 'bol.eshop::lang.product.tab_others'
+        weight:
+            label: 'bol.eshop::lang.product.weight'
+            span: auto
+            type: number
+            tab: 'bol.eshop::lang.product.tab_others'
+        brand_id:
+            label: 'bol.eshop::lang.product.brand'
+            showSearch: true
+            span: left
+            type: dropdown
+            tab: 'bol.eshop::lang.product.tab_others'
+        unit:
+            label: 'bol.eshop::lang.product.unit'
+            showSearch: false
+            span: auto
+            type: dropdown
+            tab: 'bol.eshop::lang.product.tab_others'
+        type:
+            label: 'bol.eshop::lang.product.product_type'
+            showSearch: false
+            span: left
+            type: dropdown
+            options:
+                'Physical Product': 'Physical Product'
+                'Pre Order': 'Pre Order'
+                'Digital Product': 'Digital Product'
+            tab: 'bol.eshop::lang.product.tab_others'
+        colors:
+            label: bol.eshop::lang.product.set_color_variation
+            prompt: bol.eshop::lang.product.add_new_color_variation
+            style: default
+            span: auto
+            type: repeater
+            comment: bol.eshop::lang.product.color_variation_comment
+            tab: 'bol.eshop::lang.product.tab_others'
+            form:
+                fields:
+                    colors:
+                        label: bol.eshop::lang.product.select_color_variation
+                        prompt: bol.eshop::lang.product.add_new_color_variation
+                        style: default
+                        span: auto
+                        type: mediafinder
+                    price:
+                        label: bol.eshop::lang.product.price
+                        span: auto
+                        type: number
+        download_link:
+            label: 'bol.eshop::lang.product.external_download_link'
+            span: left
+            trigger:
+                action: show
+                field: type
+                condition: 'value[Digital Product]'
+            type: text
+            tab: 'bol.eshop::lang.product.tab_others'
+        download_product:
+            label: 'bol.eshop::lang.product.download_from_site'
+            mode: file
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: left
+            trigger:
+                action: show
+                field: type
+                condition: 'value[Digital Product]'
+            type: fileupload
+            tab: 'bol.eshop::lang.product.tab_others'
+        sizes:
+            label: bol.eshop::lang.product.set_size_variation
+            prompt: bol.eshop::lang.product.add_new_size_variation
+            style: default
+            span: auto
+            type: repeater
+            comment: bol.eshop::lang.product.size_variation_comment
+            tab: 'bol.eshop::lang.product.tab_others'
+            form:
+                fields:
+                    sizes:
+                        label: bol.eshop::lang.product.size_label
+                        span: auto
+                        type: text
+                    price:
+                        label: bol.eshop::lang.product.price
+                        span: auto
+                        type: number
+        meta_title:
+            label: 'bol.eshop::lang.product.meta_title'
+            span: auto
+            type: text
+            tab: 'bol.eshop::lang.product.tab_seo'
+        meta_description:
+            label: 'bol.eshop::lang.product.meta_description'
+            size: large
+            span: left
+            type: textarea
+            tab: 'bol.eshop::lang.product.tab_seo'

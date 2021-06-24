@@ -1,0 +1,10 @@
+name: Categories
+form: $/bol/eshop/models/category/fields.yaml
+modelClass: Bol\Eshop\Models\Category
+defaultRedirect: bol/eshop/categories
+create:
+    redirect: 'bol/eshop/categories/update/:id'
+    redirectClose: bol/eshop/categories
+update:
+    redirect: bol/eshop/categories
+    redirectClose: bol/eshop/categories

@@ -1,0 +1,26 @@
+columns:
+    id:
+        label: bol.eshop::lang.brand.id
+        type: number
+        invisible: true
+    name:
+        label: bol.eshop::lang.brand.name
+        type: text
+    description:
+        label: bol.eshop::lang.brand.description
+        type: text
+        invisible: true
+    status:
+        label: bol.eshop::lang.brand.status
+        type: switch
+    sort_order:
+        label: 'bol.eshop::lang.brand.sort_order'
+        type: text
+    created_at:
+        label: bol.eshop::lang.brand.created_at
+        type: datetime
+        invisible: true
+    updated_at:
+        label: bol.eshop::lang.brand.updated_at
+        type: datetime
+        invisible: true

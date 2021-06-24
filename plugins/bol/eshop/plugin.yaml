@@ -1,0 +1,48 @@
+plugin:
+    name: 'bol.eshop::lang.plugin.name'
+    description: 'bol.eshop::lang.plugin.description'
+    author: BOL
+    icon: oc-icon-home
+    homepage: ''
+permissions:
+    bol.eshop.manage_products:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_products'
+    bol.eshop.access_publish:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.access_publish'
+    bol.eshop.access_other_products:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.access_other_products'
+    bol.eshop.manage_categories:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_categories'
+    bol.eshop.manage_brands:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_brands'
+navigation:
+    main-menu-item:
+        label: 'bol.eshop::lang.plugin.name'
+        url: bol/eshop/products
+        icon: icon-home
+        permissions:
+            - bol.eshop.manage_products
+        sideMenu:
+            side-menu-item:
+                label: 'bol.eshop::lang.menu.products'
+                url: bol/eshop/products
+                icon: icon-book
+                permissions:
+                    - bol.eshop.manage_products
+            side-menu-item2:
+                label: 'bol.eshop::lang.menu.categories'
+                url: bol/eshop/categories
+                icon: icon-sitemap
+                permissions:
+                    - bol.eshop.manage_categories
+            side-menu-item3:
+                label: 'bol.eshop::lang.menu.brands'
+                url: bol/eshop/brands
+                icon: icon-star
+                permissions:
+                    - bol.eshop.manage_brands

@@ -1,0 +1,45 @@
+columns:
+    id:
+        label: bol.eshop::lang.product.id
+        type: number
+        invisible: true
+    title:
+        label: bol.eshop::lang.product.title
+        type: text
+    short_description:
+        label: bol.eshop::lang.product.short_description
+        type: text
+    page_view:
+        label: bol.eshop::lang.product.page_view
+        type: number
+    view:
+        label: bol.eshop::lang.product.view
+        type: number
+    type:
+        label: bol.eshop::lang.product.type
+        type: text
+    price:
+        label: bol.eshop::lang.product.price
+        type: text
+    is_featured:
+        label: bol.eshop::lang.product.is_featured
+        type: switch
+    is_published:
+        label: bol.eshop::lang.product.is_published
+        type: switch
+    published_at:
+        label: bol.eshop::lang.product.published_at
+        type: datetime
+        invisible: true
+    created_by:
+        label: bol.eshop::lang.product.created_by
+        type: text
+        invisible: true
+    created_at:
+        label: bol.eshop::lang.product.created_at
+        type: datetime
+        invisible: true
+    updated_at:
+        label: bol.eshop::lang.product.updated_at
+        type: datetime
+        invisible: true

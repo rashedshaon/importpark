@@ -1,0 +1,4 @@
+title: Categories
+modelClass: Bol\Eshop\Models\Category
+toolbar:
+    buttons: reorder_toolbar
