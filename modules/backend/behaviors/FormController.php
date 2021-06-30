@@ -43,27 +43,27 @@ class FormController extends ControllerBehavior
     use \Backend\Traits\FormModelSaver;
 
     /**
-     * @var string Default context for "create" pages.
+     * @var string CONTEXT_UPDATE for "create" pages.
      */
     const CONTEXT_CREATE = 'create';
 
     /**
-     * @var string Default context for "update" pages.
+     * @var string CONTEXT_UPDATE for "update" pages.
      */
     const CONTEXT_UPDATE = 'update';
 
     /**
-     * @var string Default context for "preview" pages.
+     * @var string CONTEXT_PREVIEW for "preview" pages.
      */
     const CONTEXT_PREVIEW = 'preview';
 
     /**
-     * @var \Backend\Classes\Controller|FormController Reference to the back end controller.
+     * @var \Backend\Classes\Controller|FormController controller reference
      */
     protected $controller;
 
     /**
-     * @var \Backend\Widgets\Form Reference to the widget object.
+     * @var \Backend\Widgets\Form formWidget object
      */
     protected $formWidget;
 
@@ -73,26 +73,34 @@ class FormController extends ControllerBehavior
     protected $requiredProperties = ['formConfig'];
 
     /**
-     * @var array Configuration values that must exist when applying the primary config file.
-     * - modelClass: Class name for the model
-     * - form: Form field definitions
+     * @var array requiredConfig that must exist when applying the primary config file
      */
     protected $requiredConfig = ['modelClass', 'form'];
 
     /**
-     * @var array Visible actions in context of the controller
+     * @var array actions visible in context of the controller
      */
     protected $actions = ['create', 'update', 'preview'];
 
     /**
-     * @var string The context to pass to the form widget.
+     * @var string context to pass to the form widget
      */
     protected $context;
 
     /**
-     * @var Model The initialized model used by the form.
+     * @var Model model used by the form
      */
     protected $model;
+
+    /**
+     * @var array customMessages contains default messages that you can override
+     */
+    protected $customMessages = [
+        'notFound' => 'backend::lang.form.not_found',
+        'flashCreate' => 'backend::lang.form.create_success',
+        'flashUpdate' => 'backend::lang.form.update_success',
+        'flashDelete' => 'backend::lang.form.delete_success',
+    ];
 
     /**
      * Behavior constructor
@@ -210,10 +218,8 @@ class FormController extends ControllerBehavior
     {
         try {
             $this->context = strlen($context) ? $context : $this->getConfig('create[context]', self::CONTEXT_CREATE);
-            $this->controller->pageTitle = $this->controller->pageTitle ?: $this->getLang(
-                "{$this->context}[title]",
-                'backend::lang.form.create_title'
-            );
+            $this->controller->pageTitle = $this->controller->pageTitle
+                ?: $this->getLang('title', 'backend::lang.form.create_title');
 
             $model = $this->controller->formCreateModelObject();
             $model = $this->controller->formExtendModel($model) ?: $model;
@@ -263,7 +269,7 @@ class FormController extends ControllerBehavior
         $this->controller->formAfterSave($model);
         $this->controller->formAfterCreate($model);
 
-        Flash::success($this->getLang("{$this->context}[flashSave]", 'backend::lang.form.create_success'));
+        Flash::success($this->getCustomLang('flashCreate'));
 
         if ($redirect = $this->makeRedirect('create', $model)) {
             return $redirect;
@@ -287,10 +293,8 @@ class FormController extends ControllerBehavior
     {
         try {
             $this->context = strlen($context) ? $context : $this->getConfig('update[context]', self::CONTEXT_UPDATE);
-            $this->controller->pageTitle = $this->controller->pageTitle ?: $this->getLang(
-                "{$this->context}[title]",
-                'backend::lang.form.update_title'
-            );
+            $this->controller->pageTitle = $this->controller->pageTitle
+                ?: $this->getLang('title', 'backend::lang.form.update_title');
 
             $model = $this->controller->formFindModelObject($recordId);
             $this->initForm($model);
@@ -336,7 +340,7 @@ class FormController extends ControllerBehavior
         $this->controller->formAfterSave($model);
         $this->controller->formAfterUpdate($model);
 
-        Flash::success($this->getLang("{$this->context}[flashSave]", 'backend::lang.form.update_success'));
+        Flash::success($this->getCustomLang('flashUpdate'));
 
         if ($redirect = $this->makeRedirect('update', $model)) {
             return $redirect;
@@ -363,7 +367,7 @@ class FormController extends ControllerBehavior
 
         $this->controller->formAfterDelete($model);
 
-        Flash::success($this->getLang("{$this->context}[flashDelete]", 'backend::lang.form.delete_success'));
+        Flash::success($this->getCustomLang('flashDelete'));
 
         if ($redirect = $this->makeRedirect('delete', $model)) {
             return $redirect;
@@ -387,10 +391,8 @@ class FormController extends ControllerBehavior
     {
         try {
             $this->context = strlen($context) ? $context : $this->getConfig('preview[context]', self::CONTEXT_PREVIEW);
-            $this->controller->pageTitle = $this->controller->pageTitle ?: $this->getLang(
-                "{$this->context}[title]",
-                'backend::lang.form.preview_title'
-            );
+            $this->controller->pageTitle = $this->controller->pageTitle
+                ?: $this->getLang('title', 'backend::lang.form.preview_title');
 
             $model = $this->controller->formFindModelObject($recordId);
             $this->initForm($model);
@@ -536,7 +538,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Parses in some default variables to a language string defined in config.
+     * getLang parses in some default variables to a language string defined in config.
      *
      * @param string $name Configuration property containing the language string
      * @param string $default A default language string to use if the config is not found
@@ -546,11 +548,48 @@ class FormController extends ControllerBehavior
     protected function getLang($name, $default = null, $extras = [])
     {
         $name = $this->getConfig($name, $default);
-        $vars = [
+
+        $vars = $extras + [
             'name' => Lang::get($this->getConfig('name', 'backend::lang.model.name'))
         ];
-        $vars = array_merge($vars, $extras);
+
         return Lang::get($name, $vars);
+    }
+
+    /**
+     * getCustomLang parses custom messages provided by the config
+     */
+    protected function getCustomLang(string $name, string $default = null, array $extras = []): string
+    {
+        $foundKey = $this->getConfig("{$this->context}[customMessages][${name}]");
+
+        // @deprecated messages can be local to the config
+        if ($foundKey === null) {
+            $foundKey = $this->getConfig("{$this->context}[${name}]");
+        }
+
+        if ($foundKey === null) {
+            $foundKey = $this->getConfig("customMessages[${name}]");
+        }
+
+        // @deprecated flashSave overrides flashCreate and flashUpdate
+        if ($foundKey === null && in_array($name, ['flashCreate', 'flashUpdate'])) {
+            return $this->getCustomLang('flashSave', $this->customMessages[$name], $extras);
+        }
+
+        if ($foundKey === null) {
+            $foundKey = $default;
+        }
+
+        if ($foundKey === null) {
+            $foundKey = $this->customMessages[$name] ?? '???';
+        }
+
+        $vars = $extras + [
+            'name' => Lang::get($this->getConfig('name', 'backend::lang.model.name'))
+        ];
+
+        return Lang::get($foundKey, $vars);
     }
 
     //
@@ -786,7 +825,7 @@ class FormController extends ControllerBehavior
     public function formFindModelObject($recordId)
     {
         if (!strlen($recordId)) {
-            throw new ApplicationException($this->getLang('not-found-message', 'backend::lang.form.missing_id'));
+            throw new ApplicationException($this->getCustomLang('notFound', 'backend::lang.form.missing_id'));
         }
 
         $model = $this->controller->formCreateModelObject();
@@ -799,7 +838,7 @@ class FormController extends ControllerBehavior
         $result = $query->find($recordId);
 
         if (!$result) {
-            throw new ApplicationException($this->getLang('not-found-message', 'backend::lang.form.not_found', [
+            throw new ApplicationException($this->getCustomLang('notFound', null, [
                 'class' => get_class($model), 'id' => $recordId
             ]));
         }

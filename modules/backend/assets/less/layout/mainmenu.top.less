@@ -1,4 +1,4 @@
-#layout-mainmenu {
+.layout-mainmenu {
     .navbar {
         padding: 0 20px 0 0;
         height: @mainmenu-mode-inline-height;
@@ -115,7 +115,7 @@
 }
 
 @media (min-width: @screen-sm-min) {
-    #layout-mainmenu .navbar {
+    .layout-mainmenu .navbar {
         &.navbar-mode-icons {
             ul.mainmenu-items[data-main-menu] {
                 > li.mainmenu-item.has-subitems > a:after,
@@ -286,4 +286,10 @@
 
 #layout-mainmenu .navbar.navbar-mode-collapse {
     .main-menu-collapse();
+}
+
+body.main-menu-left {
+    #layout-mainmenu .main-menu-container {
+        display: none;
+    }
 }

@@ -60,6 +60,7 @@ class BrandSetting extends Model
     const MENU_TILE     = 'tile';
     const MENU_COLLAPSE = 'collapse';
     const MENU_ICONS    = 'icons';
+    const MENU_LEFT    = 'left';
 
     const DEFAULT_LOGIN_COLOR = '#fef6eb';
     const DEFAULT_LOGIN_BG_TYPE = 'color';

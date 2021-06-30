@@ -110,8 +110,10 @@ class CmsObject extends HalcyonModel implements CmsObjectContract
     public static function loadCached($theme, $fileName)
     {
         try {
-            if (ObjectMemoryCache::has($theme, $fileName)) {
-                return ObjectMemoryCache::get($theme, $fileName, new static);
+            $cacheKey = static::makeInternalCacheKey($theme, $fileName);
+
+            if (ObjectMemoryCache::has($cacheKey)) {
+                return ObjectMemoryCache::get($cacheKey, new static);
             }
 
             $result = static::inTheme($theme)
@@ -119,13 +121,25 @@ class CmsObject extends HalcyonModel implements CmsObjectContract
                 ->find($fileName)
             ;
 
-            ObjectMemoryCache::put($theme, $fileName, $result);
+            ObjectMemoryCache::put($cacheKey, $result);
 
             return $result;
         }
         catch (Exception $ex) {
             static::throwHalcyonException($ex);
         }
+    }
+
+    /**
+     * makeCacheKey makes a unique key for this object
+     */
+    protected static function makeInternalCacheKey($theme, string $fileName): string
+    {
+        $objRef = get_called_class();
+
+        $themeDir = is_string($theme) ? $theme : $theme->getDirName();
+
+        return "${objRef}.${themeDir}.${fileName}";
     }
 
     /**

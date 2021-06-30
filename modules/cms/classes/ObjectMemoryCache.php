@@ -16,20 +16,16 @@ class ObjectMemoryCache
     /**
      * has
      */
-    public static function has($theme, string $fileName): bool
+    public static function has($cacheKey): bool
     {
-        $cacheKey = static::makeCacheKey($theme, $fileName);
-
         return array_key_exists($cacheKey, static::$cache);
     }
 
     /**
      * get
      */
-    public static function get($theme, string $fileName, CmsObject $instance): ?CmsObject
+    public static function get($cacheKey, CmsObject $instance): ?CmsObject
     {
-        $cacheKey = static::makeCacheKey($theme, $fileName);
-
         $attributes = static::$cache[$cacheKey] ?? null;
 
         return $attributes ? $instance->newFromBuilder($attributes) : null;
@@ -38,21 +34,9 @@ class ObjectMemoryCache
     /**
      * put
      */
-    public static function put($theme, string $fileName, ?CmsObject $obj)
+    public static function put($cacheKey, ?CmsObject $obj)
     {
-        $cacheKey = static::makeCacheKey($theme, $fileName);
-
         static::$cache[$cacheKey] = $obj ? $obj->getAttributes() : null;
-    }
-
-    /**
-     * makeCacheKey
-     */
-    protected static function makeCacheKey($theme, string $fileName): string
-    {
-        $themeDir = is_string($theme) ? $theme : $theme->getDirName();
-
-        return "${themeDir}.${fileName}";
     }
 
     /**

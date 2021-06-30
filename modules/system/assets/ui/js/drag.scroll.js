@@ -49,6 +49,7 @@
             startOffset = 0,
             self = this,
             dragging = false,
+            touchDragStarted = false,
             eventElementName = this.options.vertical ? 'pageY' : 'pageX',
             isNative = this.options.useNative && $('html').hasClass('mobile');
 
@@ -96,7 +97,13 @@
                 event.stopPropagation();
             }
 
-            return !scrollWheel(offset);
+            var scrolled = scrollWheel(offset);
+            if (!scrolled && self.options.noOverScroll) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            return !scrolled
         });
 
         if (this.options.useDrag) {
@@ -127,9 +134,12 @@
                 var touchEvent = event.originalEvent;
                 if (touchEvent.touches.length == 1) {
                     startDrag(touchEvent.touches[0]);
+                    touchDragStarted = true;
                     event.stopPropagation();
                 }
             });
+
+            window.addEventListener('touchmove', onTouchMove, {passive: false})
         }
 
         $el.on('click.dragScroll', function() {
@@ -156,14 +166,6 @@
             startOffset = self.options.vertical ? $el.scrollTop() : $el.scrollLeft();
 
             if (Modernizr.touchevents) {
-                $(window).on('touchmove.dragScroll', function(event) {
-                    var touchEvent = event.originalEvent;
-                    moveDrag(touchEvent.touches[0]);
-                    if (!isNative) {
-                        event.preventDefault();
-                    }
-                });
-
                 $(window).on('touchend.dragScroll', function(event) {
                     stopDrag();
                 });
@@ -179,6 +181,18 @@
                 stopDrag(isClick);
                 return false;
             });
+        }
+
+        function onTouchMove(event) {
+            if (!touchDragStarted) {
+                return
+            }
+
+            var touchEvent = event
+            moveDrag(touchEvent.touches[0])
+            if (!isNative) {
+                event.preventDefault()
+            }
         }
 
         /*
@@ -210,6 +224,7 @@
          */
         function stopDrag(click) {
             $(window).off('.dragScroll');
+            touchDragStarted = false
 
             dragging = false;
 
@@ -276,6 +291,7 @@
         scrollMarkerContainer: false,
         scrollSelector: null,
         dragSelector: null,
+        noOverScroll: false,
         dragClass: 'drag',
         start: function() {},
         drag: function() {},
@@ -455,6 +471,8 @@
         this.el.off('.dragScroll');
 
         this.el.removeData('oc.dragScroll');
+
+        window.removeEventListener('touchmove', onTouchMove, {passive: false})
 
         this.el = null;
         BaseProto.dispose.call(this);

@@ -89,6 +89,7 @@ Vue.component('backend-component-modal', {
             visible: false,
             loadingPosition: true,
             wasResizingOrDragging: false,
+            in: false,
             offset: {
                 left: 0,
                 top: 0
@@ -161,6 +162,10 @@ Vue.component('backend-component-modal', {
         containerCssClass: function computeContainerCssClass() {
             var result = this.modalCssClass;
 
+            if (this.in) {
+                result += 'in ';
+            }
+
             if (!this.isModal) {
                 return result + ' non-modal';
             }
@@ -195,14 +200,14 @@ Vue.component('backend-component-modal', {
             var that = this;
             Vue.nextTick(function() {
                 that.loadPosition();
-                $(that.$refs.container).addClass('in');
+                that.in = true;
             });
 
             $(document.body).on('keydown', this.onKeyDown);
         },
 
         hide: function hide(byEscape) {
-            $(this.$refs.container).removeClass('in');
+            this.in = false;
             $(document.body).off('keydown', this.onKeyDown);
 
             var that = this;

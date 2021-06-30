@@ -43,6 +43,14 @@
                 </div>
             </a>
         </li>
+        <li class="<?= $field->value === BrandSetting::MENU_LEFT ? 'active' : ''?>" data-menu-mode="<?= BrandSetting::MENU_LEFT ?>">
+            <a href="javascript:;">
+                <div class="menu-mode-box menu-mode-box-left">
+                    <span class="mode-image"></span>
+                    <h5 class="heading"><?= e(trans('backend::lang.branding.menu_mode_left')) ?></h5>
+                </div>
+            </a>
+        </li>
     </ul>
 </div>
 
@@ -66,5 +74,7 @@
         $('#layout-mainmenu .main-menu-container > nav.navbar')
             .removeClass('navbar-mode-icons navbar-mode-inline navbar-mode-text navbar-mode-tile navbar-mode-collapse')
             .addClass('navbar-mode-' + mode)
+
+        $(document.body).toggleClass('main-menu-left', mode === 'left')
     }
 </script>

@@ -69,5 +69,28 @@ div.control-simplelist.is-selectable-box.menu-mode-selector {
                 .backend-icon-sprite-pseudo(10px, 16px, 44px, 167px);
             }
         }
+
+        &.menu-mode-box-left {
+            height: 93px;
+
+            .mode-image {
+                width: 42px;
+                height: 93px;
+                float: left;
+                border-bottom: none;
+                border-right: 1px solid @color-grey-3;
+
+                &:before {
+                    top: 17px;
+                    .backend-icon-sprite-pseudo(10px, 56px, 148px, 100px);
+                }
+            }
+
+            .heading {
+                margin-left: 42px;
+                text-align: left;
+                padding: 18px 17px;
+            }
+        }
     }
 }

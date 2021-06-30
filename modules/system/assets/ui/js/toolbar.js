@@ -7,6 +7,7 @@
  * - data-control="toolbar" - enables the toolbar plugin
  * - data-no-drag-support="true" - disables the drag support for the toolbar, leaving only the mouse wheel support
  * - data-use-native-drag="true" - if native CSS is enabled via "mobile" on the HTML tag, false by default
+ * - data-vertical="false" - enables vertical scrolling mode for the toolbar contents
  *
  * JavaScript API:
  * $('#toolbar').toolbar()
@@ -44,7 +45,9 @@
         $el.dragScroll({
             scrollClassContainer: scrollClassContainer,
             useDrag: !noDragSupport,
-            useNative: this.options.useNativeDrag
+            useNative: this.options.useNativeDrag,
+            vertical: this.options.vertical,
+            noOverScroll: this.options.vertical
         })
 
         $('.form-control.growable', $toolbar).on('focus.toolbar', function(){
@@ -76,7 +79,8 @@
     }
 
     Toolbar.DEFAULTS = {
-        useNativeDrag: false
+        useNativeDrag: false,
+        vertical: false
     }
 
     // TOOLBAR PLUGIN DEFINITION
