@@ -1,0 +1,5 @@
+fields:
+    name:
+        label: 'bol.eshop::lang.unit.name'
+        span: auto
+        type: text

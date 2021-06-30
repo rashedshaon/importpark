@@ -1,0 +1,10 @@
+name: ShippingMethods
+form: $/bol/eshop/models/shippingmethod/fields.yaml
+modelClass: Bol\Eshop\Models\ShippingMethod
+defaultRedirect: bol/eshop/shippingmethods
+create:
+    redirect: 'bol/eshop/shippingmethods/update/:id'
+    redirectClose: bol/eshop/shippingmethods
+update:
+    redirect: bol/eshop/shippingmethods
+    redirectClose: bol/eshop/shippingmethods

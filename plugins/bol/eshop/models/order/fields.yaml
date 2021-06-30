@@ -1,0 +1,6 @@
+fields:
+    status:
+        label: status
+        showSearch: true
+        span: auto
+        type: dropdown

@@ -1,0 +1,9 @@
+fields:
+    name:
+        label: bol.eshop::lang.order_status.name
+        span: auto
+        type: text
+    color:
+        label: bol.eshop::lang.order_status.color
+        span: left
+        type: colorpicker

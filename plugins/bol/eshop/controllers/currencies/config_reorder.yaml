@@ -1,0 +1,4 @@
+title: Currencies
+modelClass: Bol\Eshop\Models\Currency
+toolbar:
+    buttons: reorder_toolbar

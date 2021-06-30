@@ -1,0 +1,10 @@
+name: Currencies
+form: $/bol/eshop/models/currency/fields.yaml
+modelClass: Bol\Eshop\Models\Currency
+defaultRedirect: bol/eshop/currencies
+create:
+    redirect: 'bol/eshop/currencies/update/:id'
+    redirectClose: bol/eshop/currencies
+update:
+    redirect: bol/eshop/currencies
+    redirectClose: bol/eshop/currencies

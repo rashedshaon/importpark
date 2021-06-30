@@ -1,0 +1,21 @@
+fields:
+    is_active:
+        label: bol.eshop::lang.currency.is_active
+        span: auto
+        type: switch
+    is_default:
+        label: bol.eshop::lang.currency.is_default
+        span: auto
+        type: switch
+    name:
+        label: bol.eshop::lang.currency.name
+        span: auto
+        type: text
+    code:
+        label: bol.eshop::lang.currency.code
+        span: auto
+        type: text
+    symbol:
+        label: bol.eshop::lang.currency.symbol
+        span: auto
+        type: text

@@ -1,0 +1,10 @@
+columns:
+    id:
+        label: id
+        type: number
+        invisible: true
+    name:
+        label: 'bol.eshop::lang.unit.name'
+        type: text
+        searchable: true
+        sortable: true

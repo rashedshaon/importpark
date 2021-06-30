@@ -1,0 +1,10 @@
+name: PaymentMethods
+form: $/bol/eshop/models/paymentmethod/fields.yaml
+modelClass: Bol\Eshop\Models\PaymentMethod
+defaultRedirect: bol/eshop/paymentmethods
+create:
+    redirect: 'bol/eshop/paymentmethods/update/:id'
+    redirectClose: bol/eshop/paymentmethods
+update:
+    redirect: bol/eshop/paymentmethods
+    redirectClose: bol/eshop/paymentmethods

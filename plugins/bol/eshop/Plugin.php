@@ -20,8 +20,67 @@ class Plugin extends PluginBase
         ];
     }
 
+     /**
+     * @return array
+     */
     public function registerSettings()
     {
+        return [
+            'eshop-menu-main-settings' => [
+                'label'       => 'bol.eshop::lang.settings.eshop',
+                'description' => 'bol.eshop::lang.settings.eshop_description',
+                'category'    => 'bol.eshop::lang.settings.tab_eshop',
+                'icon'        => 'oc-icon-book',
+                'class'       => 'Bol\Eshop\Models\Settings',
+                'order'       => 100,
+                'permissions' => ['bol.eshop.manage_basic_settings'],
+            ],
+            'eshop-menu-currencies'      => [
+                'label'       => 'bol.eshop::lang.settings.currencies',
+                'description' => 'bol.eshop::lang.settings.currency_description',
+                'category'    => 'bol.eshop::lang.settings.tab_eshop',
+                'icon'        => 'oc-icon-usd',
+                'url'         => Backend::url('bol/eshop/currencies'),
+                'order'       => 1800,
+                'permissions' => ['bol.eshop.manage_currencies'],
+            ],
+            'eshop-menu-units'      => [
+                'label'       => 'bol.eshop::lang.settings.units',
+                'description' => 'bol.eshop::lang.settings.units_description',
+                'category'    => 'bol.eshop::lang.settings.tab_eshop',
+                'icon'        => 'icon-balance-scale',
+                'url'         => Backend::url('bol/eshop/units'),
+                'order'       => 1801,
+                'permissions' => ['bol.eshop.manage_units'],
+            ],
+            'eshop-menu-order-statuses' => [
+                'label'       => 'bol.eshop::lang.settings.order_status',
+                'description' => 'bol.eshop::lang.settings.order_statuses_description',
+                'category'    => 'bol.eshop::lang.settings.tab_eshop',
+                'icon'        => 'icon-random',
+                'url'         => Backend::url('bol/eshop/orderstatuses'),
+                'order'       => 1802,
+                'permissions' => ['bol.eshop.manage_order_status'],
+            ],
+            'eshop-menu-payment-methods' => [
+                'label'       => 'bol.eshop::lang.settings.payment_methods',
+                'description' => 'bol.eshop::lang.settings.payment_methods_description',
+                'category'    => 'bol.eshop::lang.settings.tab_eshop',
+                'icon'        => 'icon-credit-card',
+                'url'         => Backend::url('bol/eshop/paymentmethods'),
+                'order'       => 1803,
+                'permissions' => ['bol.eshop.manage_payment_methods'],
+            ],
+            'eshop-menu-shipping-methods' => [
+                'label'       => 'bol.eshop::lang.settings.shipping_methods',
+                'description' => 'bol.eshop::lang.settings.shipping_methods_description',
+                'category'    => 'bol.eshop::lang.settings.tab_eshop',
+                'icon'        => 'icon-truck',
+                'url'         => Backend::url('bol/eshop/shippingmethods'),
+                'order'       => 1804,
+                'permissions' => ['bol.eshop.manage_shipping_methods'],
+            ],
+        ];
     }
 
     /**

@@ -1,0 +1,38 @@
+columns:
+    id:
+        label: bol.eshop::lang.currency.id
+        type: number
+        invisible: true
+    name:
+        label: bol.eshop::lang.currency.name
+        type: text
+        searchable: true
+        sortable: true
+    code:
+        label: bol.eshop::lang.currency.code
+        type: text
+    symbol:
+        label: bol.eshop::lang.currency.symbol
+        type: text
+    is_default:
+        label: bol.eshop::lang.currency.is_default
+        type: switch
+        sortable: true
+    is_active:
+        label: bol.eshop::lang.currency.is_active
+        type: switch
+        sortable: true
+    sort_order:
+        label: bol.eshop::lang.currency.sort_order
+        type: number
+        invisible: true
+        sortable: true
+    created_at:
+        label: bol.eshop::lang.currency.created_at
+        type: datetime
+        invisible: true
+    updated_at:
+        label: bol.eshop::lang.currency.updated_at
+        type: datetime
+        invisible: true
+        sortable: false

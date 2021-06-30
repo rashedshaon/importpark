@@ -1,0 +1,11 @@
+# ===================================
+#  Field Definitions
+# ===================================
+
+tabs:
+    fields:
+        show_currency:
+            span: left
+            label: Want to show currency with price?
+            type: switch
+            tab: 'Basic Settings'

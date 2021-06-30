@@ -1,0 +1,25 @@
+columns:
+    id:
+        label: bol.eshop::lang.order_status.id
+        type: number
+        invisible: true
+    name:
+        label: bol.eshop::lang.order_status.name
+        type: partial
+        searchable: true
+    color:
+        label: bol.eshop::lang.order_status.color
+        type: text
+    sort_order:
+        label: bol.eshop::lang.order_status.sort_order
+        type: number
+        invisible: true
+        sortable: true
+    created_at:
+        label: bol.eshop::lang.order_status.created_at
+        type: datetime
+        invisible: true
+    updated_at:
+        label: bol.eshop::lang.order_status.updated_at
+        type: datetime
+        invisible: true

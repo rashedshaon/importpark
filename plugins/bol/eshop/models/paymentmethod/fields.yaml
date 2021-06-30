@@ -1,0 +1,13 @@
+fields:
+    is_active:
+        label: bol.eshop::lang.payment_method.is_active
+        span: left
+        type: switch
+    name:
+        label: bol.eshop::lang.payment_method.name
+        span: left
+        type: text
+    code:
+        label: bol.eshop::lang.payment_method.code
+        span: auto
+        type: text

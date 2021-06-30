@@ -1,0 +1,33 @@
+columns:
+    id:
+        label: bol.eshop::lang.shipping_method.id
+        type: number
+        invisible: true
+    name:
+        label: bol.eshop::lang.shipping_method.name
+        type: text
+        searchable: true
+        sortable: true
+    code:
+        label: bol.eshop::lang.shipping_method.code
+        type: text
+    price:
+        label: bol.eshop::lang.shipping_method.price
+        type: text
+        sortable: true
+    is_active:
+        label: bol.eshop::lang.shipping_method.is_active
+        type: switch
+    sort_order:
+        label: bol.eshop::lang.shipping_method.sort_order
+        type: number
+        invisible: true
+        sortable: true
+    created_at:
+        label: bol.eshop::lang.shipping_method.created_at
+        type: datetime
+        invisible: true
+    updated_at:
+        label: bol.eshop::lang.shipping_method.updated_at
+        type: datetime
+        invisible: true

@@ -20,6 +20,27 @@ permissions:
     bol.eshop.manage_brands:
         tab: 'bol.eshop::lang.plugin.name'
         label: 'bol.eshop::lang.permission.manage_brands'
+    bol.eshop.manage_orders:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_orders'
+    bol.eshop.manage_order_statuses:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_order_statuses'
+    bol.eshop.manage_basic_settings:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_basic_settings'
+    bol.eshop.manage_units:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_units'
+    bol.eshop.manage_currencies:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_currencies'
+    bol.eshop.manage_shipping_methods:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_shipping_methods'
+    bol.eshop.manage_payment_methods:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_payment_methods'
 navigation:
     main-menu-item:
         label: 'bol.eshop::lang.plugin.name'

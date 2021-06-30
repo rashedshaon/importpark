@@ -1,0 +1,4 @@
+title: OrderStatuses
+modelClass: Bol\Eshop\Models\OrderStatus
+toolbar:
+    buttons: reorder_toolbar

@@ -1,0 +1,10 @@
+name: Units
+form: $/bol/eshop/models/unit/fields.yaml
+modelClass: Bol\Eshop\Models\Unit
+defaultRedirect: bol/eshop/units
+create:
+    redirect: 'bol/eshop/units/update/:id'
+    redirectClose: bol/eshop/units
+update:
+    redirect: bol/eshop/units
+    redirectClose: bol/eshop/units

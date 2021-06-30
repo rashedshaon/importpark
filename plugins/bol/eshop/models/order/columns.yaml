@@ -1,0 +1,44 @@
+columns:
+    id:
+        label: id
+        type: number
+        invisible: true
+    customer_name:
+        label: customer_name
+        type: text
+        searchable: true
+    payment_mothod:
+        label: payment_mothod
+        type: text
+    delivery_mothod:
+        label: delivery_mothod
+        type: text
+    tax_percent:
+        label: tax_percent
+        type: text
+    other_deduction:
+        label: other_deduction
+        type: text
+    coupon_name:
+        label: coupon_name
+        type: text
+    coupon_discount:
+        label: coupon_discount
+        type: text
+    payment_status:
+        label: payment_status
+        type: text
+    status:
+        label: status
+        type: text
+    remarks:
+        label: remarks
+        type: text
+    created_at:
+        label: created_at
+        type: datetime
+        invisible: true
+    updated_at:
+        label: updated_at
+        type: datetime
+        invisible: true

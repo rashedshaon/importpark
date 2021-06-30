@@ -36,3 +36,27 @@
 1.0.13:
     - 'Created table bol_eshop_order_status'
     - builder_table_create_bol_eshop_order_status.php
+1.0.14:
+    - 'Created table bol_eshop_carts'
+    - builder_table_create_bol_eshop_carts.php
+1.0.15:
+    - 'Created table bol_eshop_cart_items'
+    - builder_table_create_bol_eshop_cart_items.php
+1.0.16:
+    - 'Created table bol_eshop_currencies'
+    - builder_table_create_bol_eshop_currencies.php
+1.0.17:
+    - 'Created table bol_eshop_payment_methods'
+    - builder_table_create_bol_eshop_payment_methods.php
+1.0.18:
+    - 'Created table bol_eshop_shipping_methods'
+    - builder_table_create_bol_eshop_shipping_methods.php
+1.0.19:
+    - 'Updated table bol_eshop_currencies'
+    - builder_table_update_bol_eshop_currencies.php
+1.0.20:
+    - 'Updated table bol_eshop_payment_methods'
+    - builder_table_update_bol_eshop_payment_methods.php
+1.0.21:
+    - 'Updated table bol_eshop_shipping_methods'
+    - builder_table_update_bol_eshop_shipping_methods.php
