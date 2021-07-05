@@ -668,7 +668,7 @@ class Product extends Model
         return $options;
     }
 
-    public function getUnitOptions()
+    public function getUnitIdOptions()
     {
         $options = [
             null => Lang::get('bol.eshop::lang.product.select_a_unit')
@@ -676,7 +676,7 @@ class Product extends Model
 
         foreach (Unit::all() as $unit) 
         {
-            $options[$unit->name] = $unit->name;
+            $options[$unit->id] = $unit->name;
         }
 
         return $options;

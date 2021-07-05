@@ -11,3 +11,6 @@ fields:
         label: bol.eshop::lang.payment_method.code
         span: auto
         type: text
+        preset:
+            field: name
+            type: slug

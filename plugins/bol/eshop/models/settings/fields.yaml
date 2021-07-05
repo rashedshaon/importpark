@@ -1,11 +1,115 @@
-# ===================================
-#  Field Definitions
-# ===================================
-
 tabs:
     fields:
         show_currency:
             span: left
-            label: Want to show currency with price?
+            label: 'bol.eshop::lang.settings.want_to_show_currency_with_price'
             type: switch
-            tab: 'Basic Settings'
+            tab: 'bol.eshop::lang.settings.tab_basic_settings'
+        currency_label:
+            label: 'bol.eshop::lang.settings.which_type_of_currency_will_show'
+            options:
+                symbol: 'bol.eshop::lang.settings.currency_symbol'
+                name: 'bol.eshop::lang.settings.currency_name'
+            span: left
+            default: symbol
+            trigger:
+                action: show
+                field: show_currency
+                condition: checked
+            type: radio
+            tab: 'bol.eshop::lang.settings.tab_basic_settings'
+        open_review_section:
+            span: left
+            label: 'bol.eshop::lang.settings.open_review_section_for_customers'
+            type: switch
+            tab: 'bol.eshop::lang.settings.tab_basic_settings'
+        show_reviews:
+            span: left
+            label: 'bol.eshop::lang.settings.show_reviews_on_products'
+            type: switch
+            tab: 'bol.eshop::lang.settings.tab_basic_settings'
+        approve_reviews:
+            span: left
+            label: 'bol.eshop::lang.settings.approve_reviews_before_publishing'
+            type: switch
+            tab: 'bol.eshop::lang.settings.tab_basic_settings'
+        tax_deduction:
+            span: left
+            label: 'bol.eshop::lang.settings.enable_tax_deduction_for_purchase'
+            type: switch
+            tab: 'bol.eshop::lang.settings.tab_tax'
+        tax_percentage:
+            span: left
+            label: 'bol.eshop::lang.settings.tax_percentage'
+            type: number
+            trigger:
+                action: show
+                field: tax_deduction
+                condition: checked
+            tab: 'bol.eshop::lang.settings.tab_tax'
+        tax_apply_on:
+            label: 'bol.eshop::lang.settings.tax_apply_on'
+            options:
+                only_products: 'bol.eshop::lang.settings.only_cart_products'
+                with_shipping_charge: 'bol.eshop::lang.settings.products_with_shipping_charge'
+            span: left
+            default: only_products
+            trigger:
+                action: show
+                field: tax_deduction
+                condition: checked
+            type: radio
+            tab: 'bol.eshop::lang.settings.tab_tax'
+        show_stock:
+            span: left
+            label: 'bol.eshop::lang.settings.show_product_stock'
+            type: switch
+            tab: 'bol.eshop::lang.settings.tab_inventory'
+        enable_purchase_restriction:
+            span: left
+            label: 'bol.eshop::lang.settings.enable_purchase_restriction_depending_on_stock'
+            type: switch
+            tab: 'bol.eshop::lang.settings.tab_inventory'
+        inventory_deduction:
+            span: left
+            label: 'bol.eshop::lang.settings.which_order_status_deduct_product_quantity'
+            type: dropdown
+            tab: 'bol.eshop::lang.settings.tab_inventory'
+        inventory_revert_deduction:
+            span: left
+            label: 'bol.eshop::lang.settings.which_order_status_reverts_product_deduction_quantity'
+            type: dropdown
+            tab: 'bol.eshop::lang.settings.tab_inventory'
+        initial_order_status:
+            span: left
+            label: 'bol.eshop::lang.settings.what_will_be_initial_order_status'
+            type: dropdown
+            tab: 'bol.eshop::lang.settings.tab_inventory'
+        send_email_on_order_status_change:
+            span: left
+            label: 'bol.eshop::lang.settings.send_email_on_order_status_change'
+            type: switch
+            tab: 'bol.eshop::lang.settings.tab_emails'
+        order_status_template:
+            label: 'bol.eshop::lang.settings.select_order_status'
+            prompt: 'bol.eshop::lang.settings.add_new_template'
+            style: default
+            span: left
+            trigger:
+                action: show
+                field: send_email_on_order_status_change
+                condition: checked
+            type: repeater
+            tab: 'bol.eshop::lang.settings.tab_emails'
+            form:
+                fields:
+                    order_status:
+                        label: bol.eshop::lang.settings.order_status
+                        showSearch: true
+                        span: auto
+                        type: dropdown
+                    email_template:
+                        label: bol.eshop::lang.settings.email_template
+                        showSearch: true
+                        span: auto
+                        type: dropdown

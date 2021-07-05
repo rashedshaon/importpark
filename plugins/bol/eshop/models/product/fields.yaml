@@ -104,7 +104,7 @@ tabs:
             span: left
             type: dropdown
             tab: 'bol.eshop::lang.product.tab_others'
-        unit:
+        unit_id:
             label: 'bol.eshop::lang.product.unit'
             showSearch: false
             span: auto

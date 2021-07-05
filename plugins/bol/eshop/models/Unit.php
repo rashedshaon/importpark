@@ -21,6 +21,15 @@ class Unit extends Model
      */
     public $table = 'bol_eshop_unit_list';
 
+    public $implement = ['@RainLab.Translate.Behaviors.TranslatableModel'];
+
+    /**
+     * @var array Attributes that support translation, if available.
+     */
+    public $translatable = [
+        'name',
+    ];
+
     /**
      * @var array Validation rules
      */

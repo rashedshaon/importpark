@@ -3,6 +3,13 @@ fields:
         label: bol.eshop::lang.order_status.name
         span: auto
         type: text
+    code:
+        label: bol.eshop::lang.order_status.code
+        span: auto
+        type: text
+        preset:
+            field: name
+            type: slug
     color:
         label: bol.eshop::lang.order_status.color
         span: left

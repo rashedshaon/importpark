@@ -11,6 +11,9 @@ fields:
         label: bol.eshop::lang.shipping_method.code
         span: auto
         type: text
+        preset:
+            field: name
+            type: slug
     price:
         label: bol.eshop::lang.shipping_method.price
         span: auto

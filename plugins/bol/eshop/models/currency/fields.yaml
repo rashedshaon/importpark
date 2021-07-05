@@ -15,6 +15,9 @@ fields:
         label: bol.eshop::lang.currency.code
         span: auto
         type: text
+        preset:
+            field: name
+            type: slug
     symbol:
         label: bol.eshop::lang.currency.symbol
         span: auto

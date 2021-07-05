@@ -1,6 +1,9 @@
 <?php namespace Bol\Eshop\Models;
 
 use October\Rain\Database\Model;
+use Lang;
+use System\Models\MailTemplate;
+
 
 /**
  * Settings Model
@@ -24,6 +27,76 @@ class Settings extends Model
     public function initSettingsData()
     {
 
+    }
+
+    public function getInventoryDeductionOptions()
+    {
+        $options = [
+            null => Lang::get('bol.eshop::lang.order_status.select_status'),
+        ];
+
+        $items = OrderStatus::orderBy('sort_order', 'asc')->get();
+        $items->each(function ($item) use (&$options) {
+            return $options[$item->id] = $item->name;
+        });
+
+        return $options;
+    }
+
+    public function getInventoryRevertDeductionOptions()
+    {
+        $options = [
+            null => Lang::get('bol.eshop::lang.order_status.select_status'),
+        ];
+
+        $items = OrderStatus::orderBy('sort_order', 'asc')->get();
+        $items->each(function ($item) use (&$options) {
+            return $options[$item->id] = $item->name;
+        });
+
+        return $options;
+    }
+
+    public function getInitialOrderStatusOptions()
+    {
+        $options = [
+            null => Lang::get('bol.eshop::lang.order_status.select_status'),
+        ];
+
+        $items = OrderStatus::orderBy('sort_order', 'asc')->get();
+        $items->each(function ($item) use (&$options) {
+            return $options[$item->id] = $item->name;
+        });
+
+        return $options;
+    }
+
+    public function getOrderStatusOptions()
+    {
+        $options = [
+            null => Lang::get('bol.eshop::lang.order_status.select_status'),
+        ];
+
+        $items = OrderStatus::orderBy('sort_order', 'asc')->get();
+        $items->each(function ($item) use (&$options) {
+            return $options[$item->id] = $item->name;
+        });
+
+        return $options;
+    }
+
+    public function getEmailTemplateOptions()
+    {
+        $options = [
+            null => Lang::get('bol.eshop::lang.order_status.select_mail_template'),
+        ];
+
+        $items = MailTemplate::get();
+        $items->each(function ($item) use (&$options) {
+            return $options[$item->code] = $item->code;
+        });
+
+        return $options;
     }
 
     // /**

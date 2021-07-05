@@ -60,3 +60,9 @@
 1.0.21:
     - 'Updated table bol_eshop_shipping_methods'
     - builder_table_update_bol_eshop_shipping_methods.php
+1.0.22:
+    - 'Updated table bol_eshop_order_status'
+    - builder_table_update_bol_eshop_order_status.php
+1.0.23:
+    - 'Updated table bol_eshop_products'
+    - builder_table_update_bol_eshop_products.php
