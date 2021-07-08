@@ -20,4 +20,18 @@ class CartItem extends Model
      */
     public $rules = [
     ];
+
+    public $hasOne = [
+        'product' => ['Bol\Eshop\Models\Product', 'key' => 'id', 'otherKey' => 'product_id'],
+    ];
+
+    public function getSubtotalAttribute()
+    {
+        return $this->product->main_price * $this->quantity;
+    }
+
+    public function getDiscountSubtotalAttribute()
+    {
+        return $this->product->discount_amount * $this->quantity;
+    }
 }

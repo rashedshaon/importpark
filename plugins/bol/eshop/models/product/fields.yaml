@@ -92,6 +92,10 @@ tabs:
             mode: datetime
             span: left
             type: datepicker
+            trigger:
+                action: enable
+                field: is_published
+                condition: checked
             tab: 'bol.eshop::lang.product.tab_others'
         weight:
             label: 'bol.eshop::lang.product.weight'
@@ -130,7 +134,7 @@ tabs:
             tab: 'bol.eshop::lang.product.tab_others'
             form:
                 fields:
-                    colors:
+                    color:
                         label: bol.eshop::lang.product.select_color_variation
                         prompt: bol.eshop::lang.product.add_new_color_variation
                         style: default
@@ -140,6 +144,10 @@ tabs:
                         label: bol.eshop::lang.product.price
                         span: auto
                         type: number
+                    label:
+                        label: bol.eshop::lang.product.color_label
+                        span: auto
+                        type: text
         download_link:
             label: 'bol.eshop::lang.product.external_download_link'
             span: left
@@ -173,7 +181,7 @@ tabs:
             tab: 'bol.eshop::lang.product.tab_others'
             form:
                 fields:
-                    sizes:
+                    label:
                         label: bol.eshop::lang.product.size_label
                         span: auto
                         type: text

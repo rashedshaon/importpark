@@ -26,7 +26,8 @@ class Settings extends Model
 
     public function initSettingsData()
     {
-
+        $this->show_currency = 1;
+        $this->currency_label = 'symbol';
     }
 
     public function getInventoryDeductionOptions()

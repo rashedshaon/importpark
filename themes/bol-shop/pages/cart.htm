@@ -1,0 +1,70 @@
+title = "Cart"
+layout = "default"
+url = "/cart"
+==
+
+
+<!-- shop body section start -->
+    <section class="cart-body mb-90 mt-100 gray-border-top pt-35">
+        <div class="has-breadcrumb-content">
+            <div class="container container-1430">
+                <div class="breadcrumb-content" style="flex-direction: column;">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb p-0 m-0">
+                            <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Cart</li>
+                        </ol>
+                    </nav>
+                 <h2 class="cart-title mt-40">Cart</h2>
+                </div>
+
+                <div class="cart-body-content">
+                    <div class="row">
+                        <div class="col-xl-8">
+                            
+                            <div class="product-content">
+                                    <div class="table-responsive">
+                                        <table class="table table-2">
+                                            <thead>
+                                                <tr>
+                                                    <th class="remove-porduct"></th>
+                                                    <th class="product-image"></th>
+                                                    <th class="product-title">Product</th>
+                                                    <th>Price</th>
+                                                    <th class="quantity">Quantity</th>
+                                                    <th class="total">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="cart_items">
+                                                {% component 'shoppingCart' partial='cart-items' %}
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="cupon">
+                                        <form action="#" method="POST">
+                                            <input type="text" placeholder="Cupon code" class="text-left pl-3" style="margin-right: 20px; width: 119px;">
+                                            <button class="generic-btn border-0 red-hover-btn text-uppercase">Apply Cupon</button>
+                                            <a href="{{ url('/') }}" class="generic-btn border-0 red-hover-btn text-uppercase float-right">Continue Shopping</a>
+                                        </form>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="cart-widget">
+                                <h4 class="title">Cart Totals</h4>
+                                <table class="table table-2 no-border">
+                                    <tbody class="cart_summary">
+                                        {% component 'shoppingCart' partial='cart-summary' %}
+                                    </tbody>
+                                </table>
+                                <a href="checkout.html" class="mt-40 generic-btn red-hover-btn w-100 d-block" style="height: 50px;">Procced to checkout</a>
+                            </div>
+                            <!-- /. cart widget -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- shop body section end -->

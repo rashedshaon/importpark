@@ -818,7 +818,7 @@ header.header .submenu li:last-child a {
 }
 /* mega menu */
 .mega-menu {
-  background-image: url("../img/header/1.jpg");
+  background-image: url("../images/header/1.jpg");
   background-repeat: no-repeat;
   background-position: right;
   position: absolute;
@@ -2648,6 +2648,10 @@ ul.color-list li:hover {
   font-weight: 400;
 }
 
+.single-product-component {
+  display: table;
+}
+
 /* color input */
 .single-product-component h6 {
   color: #666;
@@ -2665,14 +2669,14 @@ ul.color-list li:hover {
   margin-right: 20px;
   float: left;
 }
+
 .color-input label {
-  width: 32px;
-  margin-bottom: 12px;
-  height: 32px;
-  border-radius: 50%;
+  width: 50px;
+  height: 50px;
 }
-.color-input label {
-  border: 1px solid #ddd;
+
+.color-input label.active {
+  border: 3px solid #252525;
 }
 
 .color-input span {
@@ -3315,7 +3319,7 @@ p.simple-text {
   overflow-y: auto;
   left: 50%;
   top: 50%;
-  background-image: url("../img/bg/1.jpg");
+  background-image: url("../images/bg/1.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   z-index: 99999;

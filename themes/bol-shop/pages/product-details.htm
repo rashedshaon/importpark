@@ -1,0 +1,610 @@
+url = "/:slug"
+layout = "default"
+title = "Product Details"
+
+[shopProduct]
+slug = "{{ :slug }}"
+categoryPage = "all-products"
+==
+
+    <!-- single product start -->
+    <section class="single-product mb-90 mt-100">
+        <div class="container-fluid">
+            <nav aria-label="breadcrumb" class="mb-40">
+                <ol class="breadcrumb p-0 m-0">
+                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url('/products') }}">Product</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+                </ol>
+            </nav>
+            {% component 'shopProduct' %}
+        </div>
+    </section>
+    <!-- single product end -->
+    
+    <!-- sugession start -->
+    <!-- <section class="sugession-product mt-120">
+        <div class="container-fluid">
+            <div class="generic-title text-center">
+                <h2 class="mb-20">You May Also Like</h2>
+            </div>
+            <div class="main-product-carousel owl-carousel red-nav mt-50">
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-1.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-1-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Light green crewneck
+                                        sweatshir</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$58.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-2.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-2-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Light green crewneck
+                                        sweatshir</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$58.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-4.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-4-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Tassels Pendant Earrings</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$85.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box mb-40">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-5.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-5-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Shoes</span></a>
+                                            <a href="shop3.html" class="product-category"><span>Sneaker</span></a>
+                                            <a href="shop3.html" class="product-category"><span>Women</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Leather Courriere duffle
+                                        bag</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$3.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box mb-40">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-6.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-6-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                    <span class="sale bg-red text-white">sale!</span>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Shoes</span></a>
+                                            <a href="shop3.html" class="product-category"><span>Sneaker</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Wood design bedroom clook</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$45-$10.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box mb-40">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-7.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-7-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                    <span class="sale bg-red text-white">sale!</span>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Capitalize on low hanging
+                                        fruit to</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$250.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box mb-40">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-8.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-8-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Light green crewneck
+                                        sweatshir</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$58.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box mb-40">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-9.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-9-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Tassels Pendant Earrings</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$85.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+    <!-- sugession end -->
+    <!-- related product start -->
+    <!-- <section class="related-product mt-120">
+        <div class="container-fluid">
+            <div class="generic-title text-center">
+                <h2 class="mb-20">Related Product</h2>
+            </div>
+            <div class="main-product-carousel owl-carousel red-nav mt-50">
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-1.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-1-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Light green crewneck
+                                        sweatshir</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$58.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-2.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-2-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Light green crewneck
+                                        sweatshir</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$58.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-4.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-4-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Tassels Pendant Earrings</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$85.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box mb-40">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-5.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-5-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Shoes</span></a>
+                                            <a href="shop3.html" class="product-category"><span>Sneaker</span></a>
+                                            <a href="shop3.html" class="product-category"><span>Women</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Leather Courriere duffle
+                                        bag</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$3.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box mb-40">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-6.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-6-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                    <span class="sale bg-red text-white">sale!</span>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Shoes</span></a>
+                                            <a href="shop3.html" class="product-category"><span>Sneaker</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Wood design bedroom clook</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$45-$10.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box mb-40">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-7.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-7-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                    <span class="sale bg-red text-white">sale!</span>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Capitalize on low hanging
+                                        fruit to</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$250.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box mb-40">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-8.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-8-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Light green crewneck
+                                        sweatshir</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$58.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-single-item">
+                    <div class="col-12">
+                        <div class="product-box mb-40">
+                            <div class="product-box-wrapper">
+                                <div class="product-img">
+                                    <img src="{{ 'images/product/farniture-9.jpg' | theme }}" class="w-100" alt="">
+                                    <a href="single-product-3.html" class="d-block">
+                                        <div class="second-img">
+                                            <img src="{{ 'images/product/farniture-9-hover.jpg' | theme }}" alt="" class="w-100">
+                                        </div>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="product-img-link quick-view-1 text-capitalize">Quick view</a>
+                                </div>
+
+                                <div class="product-desc pb-20">
+                                    <div class="product-desc-top">
+                                        <div class="categories">
+                                            <a href="shop3.html" class="product-category"><span>Woman</span></a>
+                                        </div>
+                                        <a href="wishlist.html" class="wishlist float-right"><span><i
+                                                    class="fal fa-heart"></i></span></a>
+                                    </div>
+                                    <a href="single-product-3.html" class="product-title">Tassels Pendant Earrings</a>
+                                    <div class="price-switcher">
+                                        <span class="price switcher-item">$85.00</span>
+                                        <a href="cart.html" class="add-cart text-capitalize switcher-item">+add to
+                                            cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+    <!-- related product end -->

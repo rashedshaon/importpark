@@ -1,0 +1,49 @@
+{% for item in cart.items %}
+<tr>
+    <td>
+        <div class="table-data">
+            <button class="close-btn"
+                data-request="onRemoveCartItem"
+                data-request-data="item_id: {{ item.id }}"
+                data-request-flash><i class="fal fa-times"></i></button>
+        </div>
+    </td>
+    <td>
+        <div class="table-data">
+            <img src="{{ item.product.featuredPhoto(64,76) }}" width="80" alt="">
+        </div>
+    </td>
+    <td>
+        <div class="table-data">
+            <h6><a href="{{ url('/') }}/{{ item.product.slug }}" class="title">{{ item.product.title }}</a></h6>
+            {{ item.color ? 'Color: ' ~ item.color : '' }} 
+            {{ item.size ? 'Size: ' ~ item.size : '' }}
+        </div>
+    </td>
+    <td>
+        <div class="table-data">
+            <span class="price">{{ item.product.price_label }}</span>
+        </div>
+    </td>
+    <td>
+        <div class="table-data">
+            <form id="form-{{ item.id }}">
+                <input name="item_id" type="hidden" value="{{ item.id }}">
+                <input name="quantity" type="number" min="1" value="{{ item.quantity }}" style="margin-right: 20px; width: 119px;"
+                onchange="$('#form-{{ item.id }}').request('onUpdateCartItem', {flash: true})">
+            </form>
+        </div>
+    </td>
+    <td>
+        <div class="table-data">
+            <span class="total">{{ item.subtotal }}</span>
+        </div>
+    </td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="6" class="text-center">
+        No item available
+    </td>
+</tr>
+{% endfor %}

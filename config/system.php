@@ -183,7 +183,7 @@ return [
     */
 
     'unencrypt_cookies' => env('UNENCRYPT_COOKIES', [
-        // 'my_cookie',
+        'my_cookie',
     ]),
 
     /*

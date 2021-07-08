@@ -1,0 +1,50 @@
+{% set cart = __SELF__.cart %}
+
+{% if cart %}
+<div class="minicart">
+    <div class="minicart-body">
+        <div class="minicart-content">
+            <ul class="text-left" style="width: 100%;">
+                {% for item in cart.items %}
+                <li style="width: 100%;">
+                    <div class="minicart-img">
+                        <a href="{{ url('/') }}/{{ item.product.slug }}" class="p-0"><img src="{{ item.product.featuredPhoto(64,76) }}"
+                                class="w-100" alt=""></a>
+                    </div>
+                    <div class="minicart-desc">
+                        <a href="{{ url('/') }}/{{ item.product.slug }}" class="p-0">{{ item.product.title }}</a>
+                        
+                        <div>
+                            <div>{{ item.color ? 'Color: ' ~ item.color : '' }} 
+                                {{ item.size ? 'Size: ' ~ item.size : '' }}</div>
+                            <strong>{{ item.quantity }} × {{ item.product.price_label }}</strong>
+                        </div>
+                    </div>
+                    <div class="remove">
+                        <button class="close-btn"
+                            data-request="onRemoveCartItem"
+                            data-request-data="item_id: {{ item.id }}"
+                            data-request-flash>
+                            <i class="fal fa-times"></i>
+                        </button>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="minicart-checkout">
+        <div class="minicart-checkout-heading mt-8 mb-25 overflow-hidden">
+            <strong class="float-left">Total:</strong>
+            <span class="price float-right">{{cart.total_label}}</span>
+        </div>
+        <div class="minicart-checkout-links">
+            <a href="{{ url('cart') }}"
+                class="generic-btn black-hover-btn text-uppercase w-100 mb-20">View
+                cart</a>
+            <a href="{{ url('checkout') }}"
+                class="generic-btn black-hover-btn text-uppercase w-100 mb-20">Checkout</a>
+        </div>
+    </div>
+</div>
+{% endif %}

@@ -3,6 +3,8 @@
 use Model;
 use Lang;
 use BackendAuth;
+use ValidationException;
+use Carbon\Carbon;
 
 /**
  * Model
@@ -27,6 +29,7 @@ class Product extends Model
         'slug'    => ['required', 'regex:/^[a-z0-9\/\:_\-\*\[\]\+\?\|]*$/i', 'unique:bol_eshop_products'],
         'short_description' => 'required',
         'description' => 'required',
+        'brand_id' => 'required',
     ];
 
     /**
@@ -109,32 +112,30 @@ class Product extends Model
      */
     public function filterFields($fields, $context = null)
     {
-        if (!isset($fields->published, $fields->published_at)) {
+        if (!isset($fields->is_published, $fields->published_at)) {
             return;
         }
 
         $user = BackendAuth::getUser();
 
         if (!$user->hasAnyAccess(['bol.eshop.access_publish'])) {
-            $fields->published->hidden = true;
-            $fields->published_at->hidden = true;
+            $fields->is_published->hidden = true;
+            $fields->is_published_at->hidden = true;
         }
         else {
-            $fields->published->hidden = false;
+            $fields->is_published->hidden = false;
             $fields->published_at->hidden = false;
         }
     }
 
     public function afterValidate()
     {
-        if ($this->published && !$this->published_at) {
+        if ($this->is_published && !$this->published_at) {
             throw new ValidationException([
                'published_at' => Lang::get('bol.eshop::lang.product.published_validation')
             ]);
         }
     }
-
-    
 
     public function beforeCreate()
     {
@@ -172,7 +173,7 @@ class Product extends Model
         }
 
         // Expose published year, month and day as URL parameters.
-        if ($this->published) {
+        if ($this->is_published) {
             $params['year']  = $this->published_at->format('Y');
             $params['month'] = $this->published_at->format('m');
             $params['day']   = $this->published_at->format('d');
@@ -218,8 +219,8 @@ class Product extends Model
     public function scopeIsPublished($query)
     {
         return $query
-            ->whereNotNull('published')
-            ->where('published', true)
+            ->whereNotNull('is_published')
+            ->where('is_published', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<', Carbon::now())
         ;
@@ -654,13 +655,86 @@ class Product extends Model
     }
 
 
+    public function getDefaultColorAttribute()
+    {
+        if(count($this->colors))
+        {
+            return $this->colors[0]['label'];
+        }
+
+        return '';
+    }
+
+    public function getDefaultSizeAttribute()
+    {
+        if(count($this->sizes))
+        {
+            return $this->sizes[0]['label'];
+        }
+        
+        return '';
+    }
+
+    public function getPriceLabelAttribute()
+    {
+        if(Settings::get('show_currency'))
+        {
+            $currency = Currency::where('is_default', 1)->where('is_active', 1)->get()->first();
+
+            if(Settings::get('currency_label') == 'symbol')
+            {
+                return $currency->symbol." ".$this->main_price;
+            }
+            else
+            {
+                return $this->main_price." ".$currency->name;
+            }
+        }
+
+        return $this->main_price;
+    }
+
+    public function getMainPriceAttribute()
+    {
+        if($this->discount)
+        {
+            if($this->discount_type == 'Amount')
+            {
+                return $this->price - $this->discount_amount;
+            }
+            else
+            {
+                return $this->price - $this->discount_amount;
+            }
+        }
+
+        return $this->price;
+    }
+
+    public function getDiscountAmountAttribute()
+    {
+        if($this->discount)
+        {
+            if($this->discount_type == 'Amount')
+            {
+                return $this->discount;
+            }
+            else
+            {
+                return ($this->price * $this->discount) / 100;
+            }
+        }
+
+        return 0;
+    }
+
     public function getBrandIdOptions()
     {
         $options = [
             null => Lang::get('bol.eshop::lang.product.select_a_brand')
         ];
 
-        foreach (Brand::all() as $brand) 
+        foreach (Brand::orderBy('sort_order', 'asc')->get() as $brand) 
         {
             $options[$brand->id] = $brand->name;
         }
@@ -671,7 +745,7 @@ class Product extends Model
     public function getUnitIdOptions()
     {
         $options = [
-            null => Lang::get('bol.eshop::lang.product.select_a_unit')
+            //null => Lang::get('bol.eshop::lang.product.select_a_unit')
         ];
 
         foreach (Unit::all() as $unit) 
@@ -680,5 +754,15 @@ class Product extends Model
         }
 
         return $options;
+    }
+
+    public function featuredPhoto($imageWidth = null, $imageHeight = null)
+    {
+        return isset($this->photos[0]) ? (($imageHeight && $imageWidth) ? $this->photos[0]->getThumb($imageWidth, $imageHeight, ['mode' => 'crop']) : $this->photos[0]->getPath()) :  (($imageHeight && $imageWidth) ? "https://dummyimage.com/$imageWidth"."x"."$imageHeight/e3e3e3/d5aa6d.jpg&text=++Product++" : "https://dummyimage.com/200x200/e3e3e3/d5aa6d.jpg&text=++Product++");
+    }
+
+    public function hoverPhoto($imageWidth = null, $imageHeight = null)
+    {
+        return isset($this->photos[1]) ? (($imageHeight && $imageWidth) ? $this->photos[1]->getThumb($imageWidth, $imageHeight, ['mode' => 'crop']) : $this->photos[1]->getPath()) :  (($imageHeight && $imageWidth) ? "https://dummyimage.com/$imageWidth"."x"."$imageHeight/e3e3e3/d5aa6d.jpg&text=++Product+Hover++" : "https://dummyimage.com/200x200/e3e3e3/d5aa6d.jpg&text=++Product+Hover++");
     }
 }

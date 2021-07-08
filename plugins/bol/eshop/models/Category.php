@@ -43,13 +43,13 @@ class Category extends Model
     ];
 
     public $belongsToMany = [
-        'products' => ['Bol\Eshop\Models\Products',
-            'table' => 'bol_eshop_products_categories',
+        'products' => ['Bol\Eshop\Models\Product',
+            'table' => 'bol_eshop_product_categories',
             'order' => 'published_at desc',
             'scope' => 'isPublished'
         ],
-        'products_count' => ['Bol\Eshop\Models\Products',
-            'table' => 'bol_eshop_products_categories',
+        'products_count' => ['Bol\Eshop\Models\Product',
+            'table' => 'bol_eshop_product_categories',
             'scope' => 'isPublished',
             'count' => true
         ]
@@ -79,7 +79,7 @@ class Category extends Model
      */
     public function getNestedPostCount()
     {
-        return $this->post_count + $this->children->sum(function ($category) {
+        return $this->products_count + $this->children->sum(function ($category) {
             return $category->getNestedPostCount();
         });
     }
@@ -263,10 +263,10 @@ class Category extends Model
                 'items' => []
             ];
 
-            $categories = self::with('posts_count')->orderBy('name')->get();
+            $categories = self::with('products_count')->orderBy('name')->get();
             foreach ($categories as $category) {
                 try {
-                    $postCount = $category->posts_count->first()->count ?? null;
+                    $postCount = $category->products_count->first()->count ?? null;
                     if ($postCount === 0) {
                         continue;
                     }

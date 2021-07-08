@@ -29,14 +29,14 @@ class Products extends Controller
 
     public function listExtendQuery($query)
     {
-        if (!$this->user->hasAnyAccess(['rainlab.blog.access_other_posts'])) {
+        if (!$this->user->hasAnyAccess(['bol.eshop.access_other_products'])) {
             $query->where('created_by', $this->user->id);
         }
     }
 
     public function formExtendQuery($query)
     {
-        if (!$this->user->hasAnyAccess(['rainlab.blog.access_other_posts'])) {
+        if (!$this->user->hasAnyAccess(['bol.eshop.access_other_products'])) {
             $query->where('created_by', $this->user->id);
         }
     }

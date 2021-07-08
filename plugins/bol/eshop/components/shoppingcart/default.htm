@@ -1,0 +1,17 @@
+{% if __SELF__.property('partial') == 'cart-items' %}
+
+{% partial __SELF__ ~ "::cart-items" %}
+
+{% elseif __SELF__.property('partial') == 'cart-summary' %}
+
+{% partial __SELF__ ~ "::cart-summary" %}
+
+
+{% elseif __SELF__.property('partial') == 'count' %}
+<a href="javascript:void(0)">
+    <i class="fal fa-shopping-bag"><span class="cartcount">{% partial __SELF__ ~ "::cart-count" %}</span></i>
+</a>
+
+{% partial __SELF__ ~ "::mini-cart" %}
+
+{% endif %}

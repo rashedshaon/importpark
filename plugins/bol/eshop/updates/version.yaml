@@ -66,3 +66,12 @@
 1.0.23:
     - 'Updated table bol_eshop_products'
     - builder_table_update_bol_eshop_products.php
+1.0.24:
+    - 'Updated table bol_eshop_product_categories'
+    - builder_table_update_bol_eshop_product_categories.php
+1.0.25:
+    - 'Updated table bol_eshop_carts'
+    - builder_table_update_bol_eshop_carts.php
+1.0.26:
+    - 'Updated table bol_eshop_carts'
+    - builder_table_update_bol_eshop_carts_2.php

@@ -17,6 +17,7 @@ class Plugin extends PluginBase
             'Bol\Eshop\Components\Product'       => 'shopProduct',
             'Bol\Eshop\Components\Products'      => 'shopProducts',
             'Bol\Eshop\Components\Categories'    => 'shopCategories',
+            'Bol\Eshop\Components\ShoppingCart'  => 'shoppingCart',
         ];
     }
 
