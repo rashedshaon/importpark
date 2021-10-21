@@ -1,0 +1,305 @@
+title = "Home"
+url = "/"
+layout = "default"
+is_hidden = 0
+
+[slideshow]
+slideshow = 1
+numberOfSlide = 5
+template = "modern"
+
+
+==
+use Bol\Eshop\Models\Product;
+
+function onStart()
+{
+   
+}
+
+public function onAjaxItemsLoad()
+{       
+    $data = post();
+    return $this->{$data['target_id']}($data['target_id'], $data['partial_name']);
+}
+
+public function latestShoe($target_id, $partial_name)
+{
+
+    $results = Product::where('is_published', 1)->inRandomOrder()->get();
+
+    // dd($partial_name);
+
+    return [
+        "#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+    ];
+}
+
+public function latestBag($target_id, $partial_name)
+{
+
+    $results = Product::where('is_published', 1)->inRandomOrder()->get();
+
+    return [
+        "#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+    ];
+}
+
+public function latestWatch($target_id, $partial_name)
+{
+
+    $results = Product::where('is_published', 1)->inRandomOrder()->get();
+
+    return [
+        "#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+    ];
+}
+
+public function featured($target_id, $partial_name)
+{
+
+    $results = Product::where('is_published', 1)->inRandomOrder()->get();
+
+    return [
+        "#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+    ];
+}
+
+==
+<!-- ========== MAIN CONTENT ========== -->
+<main id="content" role="main">
+    <!-- Slider Section -->
+    {% component 'slideshow'  %}
+    
+    <!-- End Slider Section -->
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-xl-3 col-wd-auto d-none d-xl-block">
+                <div class="max-width-270 min-width-270">
+            
+                    <aside class="mb-4">
+                        <div class="mb-2 position-relative">
+                            <dv class="d-flex justify-content-between border-bottom border-color-1 flex-md-nowrap flex-wrap border-sm-bottom-0">
+                                <h3 class="section-title section-title__sm mb-0 pb-3 font-size-18">{{ 'Latest Products'|_ }}</h3>
+                            </dv>
+                            <div class="js-slick-carousel u-slick u-slick--gutters-2 overflow-hidden u-slick-overflow-visble pt-3 position-static"
+                                data-slides-show="1"
+                                data-slides-scroll="1"
+                                data-arrows-classes="position-absolute top-0 font-size-17 u-slick__arrow-normal top-10"
+                                data-arrow-left-classes="fa fa-angle-left right-1"
+                                data-arrow-right-classes="fa fa-angle-right right-0">
+                                <div class="js-slide">
+                                    <ul id="latestShoe" class="list-unstyled products-group mb-0 overflow-visible">
+                                        {% partial 'ajax/ajax-load' target_id='latestShoe' partial_name='product-list' %}
+                                    </ul>
+                                </div>
+                                <div class="js-slide">
+                                    <ul id="latestBag" class="list-unstyled products-group mb-0 overflow-visible">
+                                        {% partial 'ajax/ajax-load' target_id='latestBag' partial_name='product-list' %}
+                                    </ul>
+                                </div>
+                                <div class="js-slide">
+                                    <ul id="latestWatch" class="list-unstyled products-group mb-0 overflow-visible">
+                                        {% partial 'ajax/ajax-load' target_id='latestWatch' partial_name='product-list' %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                    
+                </div>
+            </div>
+            <div class="col-xl-9 max-width-1130">
+                
+                <!-- Tab Prodcut Section -->
+                <div class="mb-6">
+                    <div class="position-relative bg-white text-center z-index-2">
+                        <ul class="nav nav-classic nav-tab justify-content-center" id="pills-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active js-animation-link" id="pills-one-example1-tab" data-toggle="pill" href="#pills-one-example1" role="tab" aria-controls="pills-one-example1" aria-selected="true"
+                                    data-target="#pills-one-example1"
+                                    data-link-group="groups"
+                                    data-animation-in="slideInUp">
+                                    <div class="d-md-flex justify-content-md-center align-items-md-center">
+                                        Featured
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link js-animation-link" id="pills-two-example1-tab" data-toggle="pill" href="#pills-two-example1" role="tab" aria-controls="pills-two-example1" aria-selected="false"
+                                    data-target="#pills-two-example1"
+                                    data-link-group="groups"
+                                    data-animation-in="slideInUp">
+                                    <div class="d-md-flex justify-content-md-center align-items-md-center">
+                                        On Sale
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link js-animation-link" id="pills-three-example1-tab" data-toggle="pill" href="#pills-three-example1" role="tab" aria-controls="pills-three-example1" aria-selected="false"
+                                    data-target="#pills-three-example1"
+                                    data-link-group="groups"
+                                    data-animation-in="slideInUp">
+                                    <div class="d-md-flex justify-content-md-center align-items-md-center">
+                                        Top Rated
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade pt-2 show active" id="pills-one-example1" role="tabpanel" aria-labelledby="pills-one-example1-tab" data-target-group="groups">
+                            <ul id="featured" class="row list-unstyled products-group no-gutters">
+                                {% partial 'ajax/ajax-load' target_id='featured' partial_name='top-list' %}
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade pt-2" id="pills-two-example1" role="tabpanel" aria-labelledby="pills-two-example1-tab" data-target-group="groups">
+                            <ul id="onSale" class="row list-unstyled products-group no-gutters">
+                                
+                            </ul>
+                        </div>
+                        <div class="tab-pane fade pt-2" id="pills-three-example1" role="tabpanel" aria-labelledby="pills-three-example1-tab" data-target-group="groups">
+                            <ul id="topRated" class="row list-unstyled products-group no-gutters">
+                                
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Tab Prodcut Section -->
+         
+                <!-- Full banner -->
+                <div class="mb-8">
+
+                    <ul id="selectedProduct" class="row list-unstyled products-group no-gutters">
+                        
+                    </ul>
+                    <!-- <a href="https://shaonlive/electro-html/2.0/html/shop/shop.html" class="d-block text-gray-90">
+                        <div class="bg-img-hero pt-3" style="background-image: url({{ 'assets/images/1400X206/img1.jpg);' | theme }}">
+                            <div class="space-top-2-md p-4 pt-4 pt-md-5 pt-lg-6 pt-xl-5 pb-lg-4 px-xl-8 px-lg-6">
+                                <div class="flex-horizontal-center overflow-auto overflow-md-visble">
+                                    <h1 class="text-lh-38 font-size-24 font-weight-light mb-0 flex-shrink-0 flex-md-shrink-1">SHOP AND <strong>SAVE BIG</strong> ON HOTTEST TABLETS</h1>
+                                    <div class="flex-content-center ml-4 flex-shrink-0">
+                                        <div class="bg-primary rounded-lg px-6 py-2">
+                                            <em class="font-size-14 font-weight-light">STARTING AT</em>
+                                            <div class="font-size-30 font-weight-bold text-lh-1">
+                                                <sup class="">$</sup>79<sup class="">99</sup>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a> -->
+                </div>
+                <!-- End Full banner -->
+                
+            </div>
+        </div>
+    </div>
+    <!-- Brand Carousel -->
+    <!-- <div class="container mb-8">
+        <div class="py-2 border-top border-bottom">
+            <div class="js-slick-carousel u-slick my-1"
+                data-slides-show="5"
+                data-slides-scroll="1"
+                data-arrows-classes="d-none d-lg-inline-block u-slick__arrow-normal u-slick__arrow-centered--y"
+                data-arrow-left-classes="fa fa-angle-left u-slick__arrow-classic-inner--left z-index-9"
+                data-arrow-right-classes="fa fa-angle-right u-slick__arrow-classic-inner--right"
+                data-responsive='[{
+                    "breakpoint": 992,
+                    "settings": {
+                        "slidesToShow": 2
+                    }
+                }, {
+                    "breakpoint": 768,
+                    "settings": {
+                        "slidesToShow": 1
+                    }
+                }, {
+                    "breakpoint": 554,
+                    "settings": {
+                        "slidesToShow": 1
+                    }
+                }]'>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img1.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img2.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img3.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img4.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img5.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img6.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <!-- End Brand Carousel -->
+</main>
+<!-- ========== END MAIN CONTENT ========== -->
+
+<!-- Load Facebook SDK for JavaScript -->
+<div id="fb-root"></div>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      xfbml            : true,
+      version          : 'v8.0'
+    });
+  };
+
+  (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<!-- Your Chat Plugin code -->
+<div class="fb-customerchat"
+  attribution=setup_tool
+  page_id="179175042740213"
+theme_color="#ff7e29"
+logged_in_greeting="Do you want to import product?"
+logged_out_greeting="Do you want to import product?">
+</div>
+
+
+{% put scripts %}
+
+    <script type="text/javascript">
+        var typed = new Typed('#search-product', {
+                        strings: ["{{'Give the product link or url to get shipping cost'|_}}", "{{'Upload or drop the product photo here to get shipping cost'|_}}", "{{'Give the product link or url to get shipping cost'|_}}", "{{'Source any product from all over the world'|_}}", "{{'Register in our website to get reliable service'|_}}"],
+                        typeSpeed: 30,
+                        backSpeed: 0,
+                        cursorChar: '|',
+                        attr: 'placeholder',
+                        smartBackspace: true,
+                        bindInputFocusEvents: true,
+                        loop: true
+                    });
+    </script>
+{% endput %}

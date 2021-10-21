@@ -212,17 +212,6 @@ class Cart extends Model
         return 0;
     }
 
-    // public static function getSessionId()
-    // {
-    //     if (!Session::get('cart_id')) 
-    //     {
-    //         $cart_id = time().rand('00000', '99999');
-    //         Session::put('cart_id', $cart_id);
-    //         return $cart_id;
-    //     }
-
-    //     return Session::get('cart_id');
-    // }
     public static function getSessionId()
     {
         if (!Cookie::get('cart_id')) 

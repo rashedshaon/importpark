@@ -19,7 +19,7 @@ class Settings extends Model
     const ACTIVATE_USER = 'user';
     const ACTIVATE_ADMIN = 'admin';
 
-    const LOGIN_EMAIL = 'email';
+    const LOGIN_EMAIL = 'phone';
     const LOGIN_USERNAME = 'username';
 
     const REMEMBER_ALWAYS = 'always';

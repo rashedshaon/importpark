@@ -1,0 +1,14 @@
+title = "Logout"
+url = "/logout"
+layout = "default"
+
+==
+
+function onStart()
+{
+    Auth::logout();
+
+    return Redirect::to('/');
+}
+
+==

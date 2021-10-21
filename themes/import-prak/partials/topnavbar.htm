@@ -1,0 +1,108 @@
+<!-- Topbar -->
+<div class="u-header-topbar py-2 d-none d-xl-block">
+    <div class="container">
+        <div class="d-flex align-items-center">
+            <div class="topbar-left">
+                <a href="#" class="text-gray-110 font-size-13 u-header-topbar__nav-link">{{'Welcome to Import Park'|_}}</a>
+            </div>
+            <div class="topbar-right ml-auto">
+                <ul class="list-inline mb-0">
+                    <!-- <li class="list-inline-item mr-0 u-header-topbar__nav-item u-header-topbar__nav-item-border">
+                        <a href="#" class="u-header-topbar__nav-link"><i class="ec ec-map-pointer mr-1"></i> Store Locator</a>
+                    </li> -->
+
+                    <li class="list-inline-item mr-0 u-header-topbar__nav-item u-header-topbar__nav-item-border u-header-topbar__nav-item-no-border u-header-topbar__nav-item-border-single">
+                        <div class="d-flex align-items-center">
+                            <!-- Language -->
+                            <div class="position-relative">
+                                <a id="languageDropdownInvoker" class="dropdown-nav-link dropdown-toggle d-flex align-items-center u-header-topbar__nav-link font-weight-normal" href="javascript:;" role="button"
+                                    aria-controls="languageDropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                    data-unfold-event="hover"
+                                    data-unfold-target="#languageDropdown"
+                                    data-unfold-type="css-animation"
+                                    data-unfold-duration="300"
+                                    data-unfold-delay="300"
+                                    data-unfold-hide-on-scroll="true"
+                                    data-unfold-animation-in="slideInUp"
+                                    data-unfold-animation-out="fadeOut">
+                                    <span class="d-none d-sm-inline-flex align-items-center"> {{ 'Language'|_ }}</span>
+                                </a>
+
+                                <div id="languageDropdown" class="dropdown-menu dropdown-unfold" aria-labelledby="languageDropdownInvoker">
+                                    <a class="dropdown-item" href="#" data-request="onSwitchLocale" data-request-data="locale: 'en'"><i class="flag-us"></i> {{'English'|_}}</a>
+									<a class="dropdown-item" href="#" data-request="onSwitchLocale" data-request-data="locale: 'bn'"><i class="flag-bn"></i> {{'Bangla'|_}}</a>
+                                </div>
+                            </div>
+                            <!-- End Language -->
+                        </div>
+                    </li>
+
+
+                    <li class="list-inline-item mr-0 u-header-topbar__nav-item u-header-topbar__nav-item-border">
+                        <a href="{{ url('search-hs-code') }}" class="u-header-topbar__nav-link"><i class="ec ec-search mr-1"></i> {{'HS CODE'|_}}</a>
+                    </li>
+                    <li class="list-inline-item mr-0 u-header-topbar__nav-item u-header-topbar__nav-item-border">
+                        <a href="{{ url('track-order') }}" class="u-header-topbar__nav-link"><i class="ec ec-transport mr-1"></i> {{'Track Your Order'|_}}</a>
+                    </li>
+                    
+                    <li class="list-inline-item mr-0 u-header-topbar__nav-item u-header-topbar__nav-item-border {{ user ? 'u-header-topbar__nav-item-no-border u-header-topbar__nav-item-border-single' : ''}}">
+
+                        {% if not user %}
+                        <!-- Account Sidebar Toggle Button -->
+                        <a id="sidebarNavToggler" href="javascript:;" role="button" class="u-header-topbar__nav-link"
+                            aria-controls="sidebarContent"
+                            aria-haspopup="true"
+                            aria-expanded="true"
+                            data-unfold-event="click"
+                            data-unfold-hide-on-scroll="false"
+                            data-unfold-target="#sidebarContent"
+                            data-unfold-type="css-animation"
+                            data-unfold-animation-in="fadeInLeft"
+                            data-unfold-animation-out="fadeOutLeft"
+                            data-unfold-duration="500">
+                            <i class="ec ec-user mr-1"></i> {{'Register'|_}} <span class="text-gray-50">{{'or'|_}}</span> {{'Sign in'|_}}
+                        </a>
+                        <!-- End Account Sidebar Toggle Button -->
+                        {% else %}
+
+                        <div class="d-flex align-items-center">
+                            <!-- Language -->
+                            <div class="position-relative">
+                                <a id="userDropdownInvoker" class="dropdown-nav-link dropdown-toggle d-flex align-items-center u-header-topbar__nav-link font-weight-normal" href="javascript:;" role="button"
+                                    aria-controls="userDropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                    data-unfold-event="hover"
+                                    data-unfold-target="#userDropdown"
+                                    data-unfold-type="css-animation"
+                                    data-unfold-duration="300"
+                                    data-unfold-delay="300"
+                                    data-unfold-hide-on-scroll="true"
+                                    data-unfold-animation-in="slideInUp"
+                                    data-unfold-animation-out="fadeOut">
+                                    <span class="d-none d-sm-inline-flex align-items-center"> <i class="ec ec-user mr-1"></i>{{'Hello'|_}}, {{ user.name }}</span>
+                                </a>
+
+                                <div id="userDropdown" class="dropdown-menu dropdown-unfold" aria-labelledby="userDropdownInvoker">
+                                    <a class="dropdown-item" href="{{ url('user-profile') }}"> {{'Update Profile'|_}}</a>
+									<a class="dropdown-item" href="#"> {{'Wishlist'|_}}</a>
+									<a class="dropdown-item" href="{{ url('order-requests') }}"> {{'Order List'|_}}</a>
+									<a class="dropdown-item" href="{{ url('logout') }}"> {{'Logout'|_}}</a>
+                                </div>
+                            </div>
+                            <!-- End Language -->
+                        </div>
+                        <!-- <a class="u-header-topbar__nav-link" href="{{ url('user-profile') }}"><i class="ec ec-user mr-1"></i>Hello, {{ user.name }}</a> -->
+                        {% endif %}
+
+                    </li>
+
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Topbar -->

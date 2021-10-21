@@ -1,24 +1,57 @@
 {% if not user %}
 
-    <div class="row">
+<aside id="sidebarContent" class="u-sidebar u-sidebar__lg backdrop" aria-labelledby="sidebarNavToggler" style="left: 0px;">
+    <div class="u-sidebar__scroller">
+        <div class="u-sidebar__container">
+            <div class="js-scrollbar u-header-sidebar__footer-offset pb-3">
+                <!-- Toggle Button -->
+                <!-- <div class="d-flex align-items-center pt-4 px-7">
+                    <button type="button" class="close ml-auto"
+                        aria-controls="sidebarContent"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        data-unfold-event="click"
+                        data-unfold-hide-on-scroll="false"
+                        data-unfold-target="#sidebarContent"
+                        data-unfold-type="css-animation"
+                        data-unfold-animation-in="fadeInLeft"
+                        data-unfold-animation-out="fadeOutLeft"
+                        data-unfold-duration="500">
+                        <i class="ec ec-close-remove"></i>
+                    </button>
+                </div> -->
+                <!-- End Toggle Button -->
 
-        <div class="col-md-6">
-            <h3>Sign in</h3>
-            {% partial __SELF__ ~ '::signin' %}
+                <!-- Content -->
+                <div class="js-scrollbar u-sidebar__body">
+                    <div class="u-sidebar__content u-header-sidebar__content">
+                        <!-- <form class="js-validate"> -->
+                            <!-- Login -->
+                            {% partial __SELF__ ~ '::signin' %}
+
+                            <!-- Signup -->
+                            {% partial __SELF__ ~ '::register' %}
+                           
+                            <!-- End Signup -->
+
+                            <!-- Forgot Password -->
+                            {% partial __SELF__ ~ '::recover' %}
+                            <!-- End Forgot Password -->
+                        <!-- </form> -->
+                    </div>
+                </div>
+                <!-- End Content -->
+            </div>
         </div>
-
-        <div class="col-md-6">
-            {% partial __SELF__ ~ '::register' %}
-        </div>
-
     </div>
+</aside>
+
+
 
 {% else %}
-
-    {% partial __SELF__ ~ '::activation_check' %}
+    {% if __SELF__.property('template') == 'update' %}
 
     {% partial __SELF__ ~ '::update' %}
-
-    {% partial __SELF__ ~ '::deactivate_link' %}
-
+        
+    {% endif %}
 {% endif %}

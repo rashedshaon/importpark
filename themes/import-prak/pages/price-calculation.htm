@@ -1,0 +1,397 @@
+title = "Price Calculation"
+url = "/price-calculation/:product_id?"
+layout = "default"
+is_hidden = 0
+
+[loadProducts toy]
+page_size = 12
+keywords = "toy"
+template = 'list'
+
+==
+use Goutte\Client;
+use GuzzleHttp\Client as GuzzleClient;
+
+use ItRail\ExportImport\Models\Product;
+use ItRail\ExportImport\Models\ShippingMethod;
+use ItRail\ExportImport\Models\Hscode;
+use ItRail\ExportImport\Models\Search;
+
+use ItRail\ExportImport\Classes\OrderData;
+
+
+
+function onStart()
+{
+    //$this->addCss('//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
+    //$this->addJs('https://code.jquery.com/jquery-1.12.4.js');
+    //$this->addJs('https://code.jquery.com/ui/1.12.1/jquery-ui.js');
+
+    if(get('hs_code'))
+    {
+        $this['hs_code'] = get('hs_code');
+    }
+
+    if(get('search_id'))
+    {
+        $search = Search::find(get('search_id'));
+        if($search->photo)
+        {
+            $this['product_photo'] = $search->photo->getPath();
+        }
+    }
+    
+    $product_id = $this->param('product_id');
+
+    if($product_id)
+    {
+        $product = Product::where('product_id', $product_id)->get()->first();
+
+        if(!$product)
+        {
+            $client = new Client();
+        
+            $guzzleClient = new GuzzleClient(array(
+                'timeout' => 600,
+            ));
+        
+            $client->setClient($guzzleClient);
+
+            $url = "https://wholesalecartbd.com/product/abb-".$product_id."/?show=".date('ymd');
+            $crawler = $client->request('GET', $url);
+
+            if($crawler->filter('.product_title')->count())
+            {
+                $product_name = trim($crawler->filter('.product_title')->text());
+                $product_photos = $crawler->filter('.azob_gallery_single_trigger img')->each(function ($node, $i) {
+                                        return ['url' => $node->attr('src')];
+                                    });
+                $product_price = preg_replace('/[^0-9]/', '', $crawler->filter('.vt_price')->text());
+                $product_weight = trim($crawler->filter('.azob_over_w')->text());
+                $product_specification = $crawler->filter('.azob_table tr')->each(function ($node, $i) {
+                                            return ['name' => trim($node->filter('td')->eq(0)->text()), 'value' => trim($node->filter('td')->eq(1)->text())];
+                                        });
+                $product_colors = $crawler->filter('.azob_image_trigger')->each(function ($node, $i) {
+                                            return [
+                                                    'value' => $node->filter('.azob_no_image')->count() ? trim($node->filter('.azob_no_image')->text()) : $node->filter('img')->attr('src'),
+                                                    'is_image' => $node->filter('.azob_no_image')->count() ? 0 : 1,
+                                                ];
+                                        });
+    
+                $product = new Product();
+                $product->product_id = $product_id;
+                $product->hscode_id = 0;
+                $product->shipping_method_id = 1;
+                $product->title = $product_name;
+                $product->slug = str_slug($product->title);
+                $product->photos = $product_photos;
+                $product->colors = $product_colors;
+                $product->size = [];
+                $product->price = $product_price;
+                $product->weight = $product_weight;
+                $product->specification = $product_specification;
+                $product->save();
+            }
+        }
+
+        if($product)
+        {
+            $product_photo = $product->photos[0]['url'];
+
+            //dd($product_photo);
+    
+            $this['product_name']   = $product->title;
+            $this['product_photo']  = $product_photo;
+            $this['product_price']  = $product->price;
+            $this['product_weight'] = $product->unit_gross_weight;
+            
+            
+
+            OrderData::refresh([
+                "name" => $product->title,
+                "price" => $product->price,
+                "qty" => 1,
+                "gross_weight" => $product->unit_gross_weight,
+                "product_photo" => $product_photo,
+                "product_url" => $product->slug,
+                "shipping_method_id" => 1,
+                "hscode_id" => '',
+                "unit" => 'Pcs',
+                "size" => '',
+            ]);
+        }
+    }
+
+    $this['shipping_methods'] = ShippingMethod::get();
+    
+    $this['selected_unit'] = Hscode::getUnit($this['hs_code']);
+    
+    $this['units'] = [
+        ['name' => 'Pcs', 'value' => 'Pcs'],
+        ['name' => 'Pair', 'value' => 'Pair'],
+    ];
+
+    $hs_code = Hscode::getData($this['hs_code']);
+
+    if($hs_code)
+    {
+        $total_cbm = 0;
+        $quantity = 1;
+        $product_weight = $this['product_weight'] > 1 ? $this['product_weight'] : 1;
+    
+        $shipping_method = ShippingMethod::find(1);
+    
+        $shipping_cost_in_kg = $product_weight * $shipping_method->charge;
+        $shipping_cost_in_cbm = $total_cbm * $shipping_method->cbm_charge;
+    
+        $total_price = $this['product_price'] * $quantity;
+        $this['tax'] = $hs_code->total;
+        $this['total_tax'] = ($total_price * $hs_code->total) / 100;
+        $this['total_shipping_cost'] =  round($shipping_cost_in_kg > $shipping_cost_in_cbm ?  $shipping_cost_in_kg : $shipping_cost_in_cbm);
+        $this['total_tax_shipping_cost'] = round(($this['total_tax'] + $this['total_shipping_cost']) / $product_weight);
+        $this['total_price'] = $total_price + $this['total_tax'] + $this['total_shipping_cost'];
+        $this['cost_per_pcs'] = round($this['total_price'] / $quantity, 2);
+        $this['unit'] = 'Pcs';
+        $this['quantity'] = $quantity;
+        $this['gross_weight'] = $product_weight;
+        $this['shipping_address'] = $shipping_method->warehouse;
+        $this['shipping_date'] = $shipping_method->shipping_date;
+        $this['total_cbm'] =  round($total_cbm, 2);
+    }
+
+    //dd($order_data);
+
+    $order_data = OrderData::get();
+     
+    if($order_data)
+    {
+        $this['product_url'] = $order_data->options['product_url'];
+        $this['product_name'] = $order_data->name;
+        //$this['hs_code'] = '';
+        $this['product_photo'] = $order_data->options['product_photo'];
+        $this['product_price'] = $order_data->price;
+        $this['product_weight'] = $order_data->options['gross_weight'];
+    }
+}
+
+function onUploadPhoto()
+{
+    $upload_photo = Input::file('upload_photo');
+
+    if($upload_photo)
+    {
+        $search = new Search();
+
+        $data = $search->UploadPhoto($upload_photo);
+
+        return Redirect::to("price-calculation"."/?search_id=$data->id");
+    }
+}
+
+
+function onCalculatePrice()
+{
+    $data = post();
+    
+    $rules = [
+        'name' => 'required',
+        'price' => 'required|min:0|not_in:0',
+        'quantity' => 'required|numeric|min:1',
+        'gross_weight' => 'required|numeric|min:0|not_in:0',
+    ];
+
+    $validation = Validator::make($data, $rules);
+
+    if ($validation->fails()) {
+        throw new ValidationException($validation);
+    }
+
+    if(!$hs_code = Hscode::getData($data['hs_code']))
+    {
+        return [
+            '.info-block' => ''
+        ];
+    }
+
+    
+
+    $meter_unit = 100;
+
+    $height = ($data['height']?:0) * $meter_unit;
+    $width = ($data['width']?:0) * $meter_unit;
+    $length = ($data['length']?:0) * $meter_unit;
+
+    
+    $total_cbm = $height * $width * $length;
+
+    $shipping_method = ShippingMethod::find($data['shipping_method_id']);
+
+    //dd($data['gross_weight']);
+
+    $total_weight = $data['gross_weight'] * $data['quantity'];
+    $gross_weight = $total_weight > 1 ? $total_weight : 1;
+
+    $shipping_cost_in_kg = $gross_weight * $shipping_method->charge;
+    $shipping_cost_in_cbm = $total_cbm * $shipping_method->cbm_charge;
+
+    $total_price = $data['price'] * $data['quantity'];
+    $this['tax'] = $hs_code->total;
+    $this['total_tax'] = ($total_price * $hs_code->total) / 100;
+    $this['total_shipping_cost'] =  round($shipping_cost_in_kg > $shipping_cost_in_cbm ?  $shipping_cost_in_kg : $shipping_cost_in_cbm);
+    $this['total_tax_shipping_cost'] = round(($this['total_tax'] + $this['total_shipping_cost']) / $gross_weight);
+    $this['total_price'] = $total_price + $this['total_tax'] + $this['total_shipping_cost'];
+    $this['cost_per_pcs'] = round($this['total_price'] / $data['quantity'], 2);
+    $this['unit'] = $data['unit'];
+    $this['quantity'] = $data['quantity'];
+    $this['gross_weight'] = $gross_weight;
+    $this['shipping_address'] = $shipping_method->warehouse;
+    $this['shipping_date'] = $shipping_method->shipping_date;
+    $this['total_cbm'] =  round($total_cbm, 2);
+
+    
+    $size = round($height).'x'.round($width).'x'.round($length);
+
+    OrderData::refresh([
+        "name" => $data['name'],
+        "price" => $data['price'],
+        "qty" => $data['quantity'],
+        "gross_weight" => $data['gross_weight'],
+        "product_photo" => $data['product_photo'],
+        "product_url" => $data['url'],
+        "shipping_method_id" => $data['shipping_method_id'],
+        "shipping_date" => $shipping_method->shipping_date,
+        "hscode_id" => Hscode::getId($data['hs_code']),
+        "unit" => $data['unit'],
+        "size" => $size,
+    ]);
+
+
+    return [
+        '.info-block' => $this->renderPartial('shipping-cost')
+    ];
+}
+
+function onSubmitPriceRequest()
+{
+    $data = post();
+
+    $rules = [
+        'product_photo' => 'required',
+        'name' => 'required',
+        'price' => 'required|min:0|not_in:0',
+        'quantity' => 'required|numeric|min:1',
+        'gross_weight' => 'required|numeric|min:0|not_in:0',
+    ];
+
+    $validation = Validator::make($data, $rules);
+
+    if ($validation->fails()) {
+        throw new ValidationException($validation);
+    }
+
+    $shipping_method = ShippingMethod::find($data['shipping_method_id']);
+
+    $meter_unit = 100;
+    
+
+    $total_weight = $data['gross_weight'] * $data['quantity'];
+    $gross_weight = $total_weight > 1 ? $total_weight : 1;
+
+    $height = ($data['height']?:0) * $meter_unit;
+    $width = ($data['width']?:0) * $meter_unit;
+    $length = ($data['length']?:0) * $meter_unit;
+
+    $size = round($height).'x'.round($width).'x'.round($length);
+
+
+    OrderData::refresh([
+        "name" => $data['name'],
+        "price" => $data['price'],
+        "qty" => $data['quantity'],
+        "gross_weight" => $gross_weight,
+        "product_photo" => $data['product_photo'],
+        "product_url" => $data['url'],
+        "shipping_method_id" => $data['shipping_method_id'],
+        "shipping_date" => $shipping_method->shipping_date,
+        "hscode_id" => Hscode::getId($data['hs_code']),
+        "unit" => $data['unit'],
+        "size" => $size,
+    ]);
+
+    return Redirect::to('submit-order-request');
+}
+
+==
+<!-- ========== MAIN CONTENT ========== -->
+<main id="content" role="main">
+    <div class="container">
+        <div class="mb-md-5 mt-md-5 mb-sm-1 mt-sm-1">
+            <h2 class="text-center">{{'Price Calculation'|_}}</h2>
+        </div>
+        <div class="row mb-10">
+            <div class="d-none d-xl-block col-xl-3 col-wd-2gdot5">
+                
+                <div class="mb-8">
+                    <div class="border-bottom border-color-1 mb-5">
+                        <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">{{ 'Latest Products'|_ }}</h3>
+                    </div>
+                    <ul class="list-unstyled">
+                        {% component 'toy'  %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-9 col-xs-12  mb-sm-8 mb-xs-1 mb-lg-0">
+                <div class="mr-xl-6">
+                    {% partial 'forms/calculation' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- ========== END MAIN CONTENT ========== -->
+
+<form  method="post" enctype="multipart/form-data" data-request="onUploadPhoto" data-request-files data-request-flash>
+    <input type="file" name="upload_photo" id="price-image-upload" style="display: none;" onchange="previewUpload()"/> 
+    <button id="photo-upload-btn" type="submit" style="display: none;"></button>
+</form>
+
+{% put scripts %}
+    <script type="text/javascript">
+        function previewUpload() 
+        {
+            var preview    = document.querySelector('#upload-preview');
+            var preview_xs = document.querySelector('#upload-preview-xs');
+            var file       = document.querySelector('#price-image-upload').files[0];
+            var reader     = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+                preview_xs.src = reader.result;
+                // document.querySelector('#imageClassicInvoker').click();
+                document.querySelector('#photo-upload-btn').click();
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "";
+                preview_xs.src = "";
+            }
+        }
+    </script>
+{% endput %}
+
+{% put styles %}
+    <style>
+        .xs-form .form-label{font-size: 0.775rem;}
+        .col-xs-8{
+            flex: 0 0 66.66667%;
+        }
+        .col-xs-6{
+            flex: 0 0 50%;
+        }
+        .col-xs-4{
+            flex: 0 0 33.33333%;
+        }
+    </style>
+{% endput %}

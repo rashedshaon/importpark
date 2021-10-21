@@ -1,0 +1,44 @@
+title = "User Profile"
+url = "/user-profile"
+layout = "default"
+is_hidden = 0
+
+[session]
+security = "user"
+redirect = "/"
+
+[loadProducts toy]
+page_size = 12
+keywords = "toy"
+template = 'list'
+
+==
+
+==
+<!-- ========== MAIN CONTENT ========== -->
+<main id="content" role="main">
+    <div class="container">
+        <div class="mb-md-5 mt-md-5 mb-sm-1 mt-sm-1">
+            <h4 class="text-center">{{'Update Profile'|_}}</h4>
+        </div>
+        <div class="row mb-10">
+            <div class="d-none d-xl-block col-xl-3 col-wd-2gdot5">
+                
+                <div class="mb-8">
+                    <div class="border-bottom border-color-1 mb-5">
+                        <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">{{ 'Latest Products'|_ }}</h3>
+                    </div>
+                    <ul class="list-unstyled">
+                        {% component 'toy'  %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-9 col-xs-12  mb-sm-8 mb-xs-1 mb-lg-0">
+                <div class="mr-xl-6">
+                    {% component 'account' template='update' %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- ========== END MAIN CONTENT ========== -->

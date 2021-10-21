@@ -1,0 +1,19 @@
+{% partial 'ajax/skeleton' %}
+
+<button 
+    id="ajax-{{target_id}}-btn"
+    class="d-none" 
+    data-request="onAjaxItemsLoad" 
+    data-request-data="partial_name: '{{partial_name}}', target_id:'{{target_id}}'"
+    data-request-complete="$.oc.stripeLoadIndicator.hide();">
+    Refresh
+</button>
+{% put styles %}
+    <link href="{{ 'assets/css/skeleton-animation.css' | theme }}" rel="stylesheet" />
+{% endput %}
+
+{% put scripts %}
+    <script type="text/javascript">
+        $('#ajax-{{target_id}}-btn').click();
+    </script>
+{% endput %}
