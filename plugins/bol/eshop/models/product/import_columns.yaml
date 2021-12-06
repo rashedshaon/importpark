@@ -1,0 +1,71 @@
+columns:
+    id:
+        label: 'Id'
+        type: text
+    title:
+        label: 'Title'
+        type: text
+    slug:
+        label: 'Slug'
+        type: text
+    short_description:
+        label: 'Short Description'
+        type: text
+    description:
+        label: 'Description'
+        type: text
+    video_url:
+        label: 'Video Url'
+        type: text
+    page_view:
+        label: 'Page View'
+        type: text
+    view:
+        label: 'View'
+        type: text
+    sizes:
+        label: 'Sizes'
+        type: text
+    colors:
+        label: 'Colors'
+        type: number
+    weight:
+        label: 'Weight'
+        type: text
+    type:
+        label: 'Type'
+        type: text
+    price:
+        label: 'Price'
+        type: switch
+    discount:
+        label: 'Discount'
+        type: text
+    discount_type:
+        label: 'Discount Type'
+        type: number
+    discount_start:
+        label: 'Discount Start'
+        type: text
+    discount_end:
+        label: 'Discount End'
+        type: text
+    meta_title:
+        label: 'Meta Title'
+        type: text
+    meta_description:
+        label: 'Meta Description'
+        type: switch
+    is_featured:
+        label: 'Is Featured'
+        type: text
+    is_published:
+        label: 'Is Published'
+        type: text
+    published_at:
+        label: 'Published At'
+        type: text
+    photos:
+        label: 'Photos'
+        type: text
+    

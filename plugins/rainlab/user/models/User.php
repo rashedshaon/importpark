@@ -50,6 +50,7 @@ class User extends UserBase
         'phone',
         'username',
         'email',
+        'address',
         'password',
         'password_confirmation',
         'created_ip_address',
@@ -517,5 +518,10 @@ class User extends UserBase
     protected function generatePassword()
     {
         $this->password = $this->password_confirmation = Str::random(static::getMinPasswordLength());
+    }
+
+    public function getPhoto($imageHeight = null, $imageWidth = null)
+    {
+        return $this->avatar ? ($imageHeight && $imageWidth) ? $this->avatar->getThumb($imageHeight, $imageWidth, ['mode' => 'crop']) : $this->avatar->getPath() : 'https://dummyimage.com/250x250/f0f0f0/f0f0f0.jpg';
     }
 }

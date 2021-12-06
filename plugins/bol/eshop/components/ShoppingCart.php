@@ -91,6 +91,8 @@ class ShoppingCart extends ComponentBase
     {
         $post = post();
 
+        // dd($post);
+
         Cart::updateCartItem($post['item_id'], $post['quantity']);
 
         $this->refresh();

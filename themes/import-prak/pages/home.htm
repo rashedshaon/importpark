@@ -260,6 +260,8 @@ public function featured($target_id, $partial_name)
 </main>
 <!-- ========== END MAIN CONTENT ========== -->
 
+{% component 'account' %}
+
 <!-- Load Facebook SDK for JavaScript -->
 <div id="fb-root"></div>
 <script>
@@ -286,6 +288,7 @@ theme_color="#ff7e29"
 logged_in_greeting="Do you want to import product?"
 logged_out_greeting="Do you want to import product?">
 </div>
+
 
 
 {% put scripts %}

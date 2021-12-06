@@ -5,7 +5,7 @@ use Model;
 /**
  * Model
  */
-class Order extends Model
+class OrderItem extends Model
 {
     use \October\Rain\Database\Traits\Validation;
     
@@ -13,7 +13,7 @@ class Order extends Model
     /**
      * @var string The database table used by the model.
      */
-    public $table = 'bol_eshop_orders';
+    public $table = 'bol_eshop_order_items';
 
     /**
      * @var array Validation rules
@@ -21,12 +21,7 @@ class Order extends Model
     public $rules = [
     ];
 
-    public $jsonable = [
-        'delivery_address',
-        'billing_address',
-    ];
-
-    public $hasMany = [
-        'items' => ['Bol\Eshop\Models\OrderItem', 'key' => 'cart_id', 'otherKey' => 'id'],
+    public $hasOne = [
+        'product' => ['Bol\Eshop\Models\Product', 'key' => 'id', 'otherKey' => 'product_id'],
     ];
 }

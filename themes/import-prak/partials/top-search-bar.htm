@@ -15,8 +15,8 @@
                 <form class="js-focus-state" method="post" enctype="multipart/form-data" data-request="onSearchProduct" data-request-files data-request-flash>
                     <label class="sr-only" for="searchProduct">Search</label>
                     <div class="input-group">
-                        <input type="text" class="form-control py-2 pl-5 font-size-15 border-0 height-40 rounded-left-pill" name="search_query" id="search-product" placeholder="{{'Give the product link or photo to get shipping cost'|_}}">
-                        <input type="file" name="product_photo" id="image-upload" style="display: none;" onchange="previewFile()"/> 
+                        <input type="text" class="form-control py-2 pl-5 font-size-15 border-0 height-40 rounded-left-pill" name="search_query" id="search-product" placeholder="{{'Search product you want'|_}}">
+                        <!-- <input type="file" name="product_photo" id="image-upload" style="display: none;" onchange="previewFile()"/>  -->
                         <div class="input-group-append"
                         data-container="body" >
                             <!-- Select -->
@@ -28,9 +28,9 @@
                                 <option value="four">Four</option>
                             </select> -->
                             <!-- End Select -->
-                            <button class="btn btn-dark height-40 py-2 px-3 " type="button" id="upload-photo" onclick="$('#image-upload').trigger('click');" data-toggle="popover" data-placement="bottom" data-html="true" data-content='<img id="img-preview" class="ml-2" src="https://dummyimage.com/100x100/fff/000000.jpg&text=Please+Wait" height="100" alt="Image Preview..."><div class="pl-2 font-size-12">Searching product...</div>'>
+                            <!-- <button class="btn btn-dark height-40 py-2 px-3 " type="button" id="upload-photo" onclick="$('#image-upload').trigger('click');" data-toggle="popover" data-placement="bottom" data-html="true" data-content='<img id="img-preview" class="ml-2" src="https://dummyimage.com/100x100/fff/000000.jpg&text=Please+Wait" height="100" alt="Image Preview..."><div class="pl-2 font-size-12">Searching product...</div>'>
                                 <span class="ec ec-cameras font-size-24"></span>
-                            </button>
+                            </button> -->
                             <button id="search-btn" class="btn btn-dark height-40 py-2 px-3 rounded-right-pill" type="submit">
                                 <span class="ec ec-search font-size-24"></span>
                             </button>
@@ -52,7 +52,9 @@
                         <li class="col pr-0">
                             <a href="{{url('shopping-cart')}}" class="text-gray-90 position-relative d-flex " data-toggle="tooltip" data-placement="top" title="Shopping Cart">
                                 <i class="font-size-22 ec ec-shopping-bag"></i>
-                                <span class="width-22 height-22 bg-dark position-absolute flex-content-center text-white rounded-circle left-12 top-8 font-weight-bold font-size-12">0</span>
+                                <span class="cartcount width-22 height-22 bg-dark position-absolute flex-content-center text-white rounded-circle left-12 top-8 font-weight-bold font-size-12">
+                                    {% component 'shoppingCart' partial='count' %}
+                                </span>
                                 <!-- <span class="font-weight-bold font-size-16 text-gray-90 ml-3">Orders</span> -->
                             </a>
                         </li>

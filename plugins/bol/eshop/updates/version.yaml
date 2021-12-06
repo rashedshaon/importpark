@@ -75,3 +75,15 @@
 1.0.26:
     - 'Updated table bol_eshop_carts'
     - builder_table_update_bol_eshop_carts_2.php
+1.0.27:
+    - 'Updated table bol_eshop_products'
+    - builder_table_update_bol_eshop_products_2.php
+1.0.28:
+    - 'Created table bol_eshop_districts'
+    - builder_table_create_bol_eshop_districts.php
+1.0.29:
+    - 'Created table bol_eshop_areas'
+    - builder_table_create_bol_eshop_areas.php
+1.0.30:
+    - 'Updated table bol_eshop_orders'
+    - builder_table_update_bol_eshop_orders_2.php

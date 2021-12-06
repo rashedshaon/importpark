@@ -8,10 +8,7 @@
 
 
 {% elseif __SELF__.property('partial') == 'count' %}
-<a href="javascript:void(0)">
-    <i class="fal fa-shopping-bag"><span class="cartcount">{% partial __SELF__ ~ "::cart-count" %}</span></i>
-</a>
+{% partial __SELF__ ~ "::cart-count" %}
 
-{% partial __SELF__ ~ "::mini-cart" %}
 
 {% endif %}

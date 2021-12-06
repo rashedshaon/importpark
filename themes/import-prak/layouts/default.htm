@@ -3,7 +3,7 @@ description = "Default layout"
 [localePicker]
 forceUrl = 1
 
-
+[shoppingCart]
 
 [staticMenu]
 
@@ -147,7 +147,7 @@ function onSearchProduct()
 
         <!-- ========== SECONDARY CONTENTS ========== -->
         <!-- Account Sidebar Navigation -->
-        {% component 'account' %}
+       
         
         <!-- End Account Sidebar Navigation -->
         <!-- ========== END SECONDARY CONTENTS ========== -->
@@ -215,7 +215,7 @@ function onSearchProduct()
 
             $(document).on('ready', function () {
 
-                setTimeout(function(){$('#sidebarNavToggler').click();}, 100)
+                // setTimeout(function(){$('#sidebarNavToggler').click();}, 100)
 
                 // initialization of header
                 $.HSCore.components.HSHeader.init($('#header'));

@@ -1,18 +1,16 @@
 {% for item in cart.items %}
 <tr>
-    <td>
-        <div class="table-data">
-            <button class="close-btn"
-                data-request="onRemoveCartItem"
+    <td class="text-center">
+        <a href="#" class="text-gray-32 font-size-26"
+        data-request="onRemoveCartItem"
                 data-request-data="item_id: {{ item.id }}"
-                data-request-flash><i class="fal fa-times"></i></button>
-        </div>
+                data-request-flash>×</a>
     </td>
-    <td>
-        <div class="table-data">
-            <img src="{{ item.product.featuredPhoto(64,76) }}" width="80" alt="">
-        </div>
+    
+    <td class="d-none d-md-table-cell">
+        <a href="#"><img class="img-fluid max-width-100 p-1 border border-color-1" src="{{ item.product.featuredPhoto(64,76) }}" alt="Image Description"></a>
     </td>
+
     <td>
         <div class="table-data">
             <h6><a href="{{ url('/') }}/{{ item.product.slug }}" class="title">{{ item.product.title }}</a></h6>
@@ -20,20 +18,39 @@
             {{ item.size ? 'Size: ' ~ item.size : '' }}
         </div>
     </td>
-    <td>
-        <div class="table-data">
-            <span class="price">{{ item.product.price_label }}</span>
-        </div>
+    
+    <td data-title="Price">
+        <span class="">{{ item.product.price_label }}</span>
     </td>
-    <td>
-        <div class="table-data">
-            <form id="form-{{ item.id }}">
-                <input name="item_id" type="hidden" value="{{ item.id }}">
-                <input name="quantity" type="number" min="1" value="{{ item.quantity }}" style="margin-right: 20px; width: 119px;"
-                onchange="$('#form-{{ item.id }}').request('onUpdateCartItem', {flash: true})">
-            </form>
+    
+
+    <td data-title="Quantity">
+        <span class="sr-only">Quantity</span>
+        <!-- Quantity -->
+        <div class="border rounded-pill py-1 width-122 w-xl-80 px-3 border-color-1">
+            <div class="js-quantity row align-items-center">
+                <div class="col">
+                    <form id="form-{{ item.id }}">
+                        <input name="item_id" type="hidden" value="{{ item.id }}">
+                        <input name="quantity" min="1" class="js-result form-control h-auto border-0 rounded p-0 shadow-none" 
+                               type="number"
+                               value="{{ item.quantity }}"
+                               onchange="$('#form-{{ item.id }}').request('onUpdateCartItem', {flash: true})">
+                    </form>
+                </div>
+                <!-- <div class="col-auto pr-1">
+                    <a class="js-minus btn btn-icon btn-xs btn-outline-secondary rounded-circle border-0" href="javascript:;">
+                        <small class="fas fa-minus btn-icon__inner"></small>
+                    </a>
+                    <a class="js-plus btn btn-icon btn-xs btn-outline-secondary rounded-circle border-0" href="javascript:;">
+                        <small class="fas fa-plus btn-icon__inner"></small>
+                    </a>
+                </div> -->
+            </div>
         </div>
+        <!-- End Quantity -->
     </td>
+
     <td>
         <div class="table-data">
             <span class="total">{{ item.subtotal }}</span>

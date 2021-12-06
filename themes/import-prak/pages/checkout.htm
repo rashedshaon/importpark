@@ -3,29 +3,19 @@ url = "/checkout"
 layout = "default"
 is_hidden = 0
 
-[session]
-security = "user"
-redirect = "/"
 
 ==
+<?php
 use Shipu\Aamarpay\Aamarpay;
-use ShoppingCart;
-use ItRail\ExportImport\Models\Hscode;
-use ItRail\ExportImport\Models\Order;
-use ItRail\ExportImport\Classes\CartData;
 use RainLab\User\Models\User;
+use Bol\Eshop\Models\District;
+use Bol\Eshop\Models\Order;
+use Bol\Eshop\Models\OrderItem;
+use Bol\Eshop\Models\Cart;
 
 function onStart()
 {
-    //ShoppingCart::instance('shopping_cart')->destroy();
-}
-
-function onEnd()
-{
-    //var_dump(ShoppingCart::instance('shopping_cart')->total()); die;
-    $this['cart_items'] = ShoppingCart::instance('shopping_cart')->content();
-    $this['grand_total'] = (float) str_replace(',', '', ShoppingCart::instance('shopping_cart')->total());
-    //dd(ShoppingCart::instance('shopping_cart')->content());
+    $this['districts'] = District::get();
 }
 
 
@@ -38,6 +28,11 @@ function onSubmitOrder()
     $rules = [
         'payment_term' => 'required',
         'terms' => 'required',
+        'name' => 'required',
+        'phone' => 'required',
+        'district' => 'required',
+        'area' => 'required',
+        'address' => 'required',
     ];
 
     if(post('address'))
@@ -45,99 +40,60 @@ function onSubmitOrder()
         $rules['address'] = 'required';
     }
 
-    $validation = Validator::make($data, $rules);
+    $messages = [
+        'payment_term.required' => 'Please select payment method.',
+        'terms.required' => 'Please select checkbox to accept terms & condition',
+    ];
+
+    $validation = Validator::make($data, $rules, $messages);
 
     if ($validation->fails()) {
         throw new ValidationException($validation);
     }
 
-
     $user = Auth::getUser();
-    
-    User::where('id', $user->id)->update(['address' => $data['address']??'']);
 
-    $order_data = CartData::get();
+    $cart = Cart::data();
 
-    //dd($_COOKIE);
-
-    if($order_data)
-    {
-
-        $order                     = new Order();
-        $order->user_id            = $user->id;
-        $order->name               = $order_data->name;
-        $order->url                = $order_data->options['product_url'];
-        $order->hscode_id          = $order_data->options['hscode_id'];
-        $order->price              = $order_data->options['price'];
-        $order->discount           = $order_data->options['discount'] ?? 0;
-        $order->unit               = $order_data->options['unit'];
-        $order->quantity           = $order_data->qty;
-        $order->size               = '';
-        $order->gross_weight       = $order_data->options['gross_weight'];
-        $order->shipping_method_id = $order_data->options['shipping_method_id'];
-        $order->shipping_date      = $order_data->options['shipping_date'];
-        $order->selected_color     = $order_data->options['color'];
-        $order->selected_size      = $order_data->options['size'];
-        $order->payment_term       = $data['payment_term'];
-        $order->service_type       = 1;
-        $order->status             = 3;
-        $order->delivery_method    = 1;
-        $order->save();
-    
-        if($order_data->options['product_photo'])
-        {
-            $order->addPhoto($order_data->options['product_photo']);
-        }
-
-        CartData::update($order_data->rowId, ['id' => $order->order_id]);
-
-        if($data['payment_term'])
-        {
-    
-            $payable_amount = $order_data->options['total_price'] - $order_data->options['total_cost'];
-
-            $payment = new Aamarpay(config('aamarpay'));
-        
-            $payment_url = $payment->paymentUrl();
-        
-            $payment_inputs = $payment->customer([
-                                'cus_name'  => $user->name,
-                                'cus_email' => 'shaon@live.com',
-                                'cus_phone' => $user->phone,
-                                'desc' => 'Remarks: '.$data['remarks'],
-                                'success_url' => url('order-requests').'/'.str_replace('/', '-', Hash::make($order->order_id)),
-                                'fail_url' => url('order-requests/cancel'),
-                                'cancel_url' => url('order-requests/cancel'),
-                            ])->transactionId($order->order_id)->amount($payable_amount)->hiddenValue();
-        
-            return ['#pay-online' => '<form id="form-pay-online" action="'.$payment_url.'" method="post">'.$payment_inputs.'</form>', 'status' => 1];
-        }
-        
-        
-        return Redirect::to('order-requests');
-    }
-    else
-    {
-        Flash::error('No data found');
-    }
-
-    //dd($payment);
-}
-
-
-function onSearchHscode()
-{
-    $search_query = post('search_query');
-    $this['hs_codes'] = Hscode::where(function($query) use ($search_query) {
-        $query->where('description_en','LIKE','%'.$search_query.'%')
-            ->orWhere('description_bn','LIKE','%'.$search_query.'%')
-            ->orWhere('tags','LIKE','%'.$search_query.'%')
-            ->orWhere('hscode','LIKE','%'.$search_query.'%');
-    })->take(15)->get();
-
-    return [
-        '#hs-code-list' => $this->renderPartial('hs-code-list')
+    $order = new Order();
+    $order->user_id = $user->id;
+    $order->customer_name = $user->name;
+    $order->delivery_address = [
+        'name' => $data['name'],
+        'phone' => $data['phone'],
+        'district' => $data['district'],
+        'area' => $data['area'],
+        'address' => $data['address'],
     ];
+    $order->billing_address = [];
+    $order->payment_mothod = $data['payment_term'];
+    $order->delivery_mothod = 'Cash';
+    $order->tax_percent = NULL;
+    $order->other_deduction = NULL;
+    $order->coupon_name = NULL;
+    $order->coupon_discount = NULL;
+    $order->payment_status = 0;
+    $order->status = 1;
+    $order->remarks = $data['remarks'];
+    $order->save();
+
+    foreach($cart->items()->get() as $item)
+    {
+        $order_item               = new OrderItem();
+        $order_item->order_id     = $order->id;
+        $order_item->product_id   = $item->product_id;
+        $order_item->title        = $item->product->title;
+        $order_item->quantity     = $item->quantity;
+        $order_item->unit         = 'Pcs';
+        $order_item->size         = $item->size;
+        $order_item->price        = $item->product->main_price;
+        $order_item->actual_price = $item->product->price;
+        $order_item->save();
+    }
+
+    Cart::clearCart();
+        
+    return Redirect::to('order-success');
 }
 
 ==
@@ -171,24 +127,39 @@ function onSearchHscode()
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% set total_cost = 0 %}
-                                        {% for data in cart_items %}
+                                        {% for item in cart.items %}
                                         <tr class="cart_item">
-                                            <td>{{ data.name }}&nbsp;<strong class="product-quantity">× {{ data.qty }}</strong></td>
-                                            <td>৳{{ data.total }}</td>
+                                            <td>{{ item.product.title }}&nbsp;<strong class="product-quantity">× {{ item.quantity }}</strong></td>
+                                            <td>৳{{ item.subtotal }}</td>
                                         </tr>
-                                        {% set total_cost = data.options.total_cost %}
+                                       
 
                                         {% endfor %}
 
                                         
                                     </tbody>
                                     <tfoot>
+                                        <tr>
+                                            <th>Subtotal</th>
+                                            <td>{{cart.subtotal_label}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total Discount</th>
+                                            <td>{{cart.total_discount_label}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Coupon Discount</th>
+                                            <td>{{cart.coupon_discount}}</td>
+                                        </tr>
+                                        <tr class="text-danger">
+                                            <th>{{'Net Payable Amount'|_}}</th>
+                                            <td><strong>{{cart.total_label}}</strong></td>
+                                        </tr>
                                         <!-- <tr>
                                             <th>Subtotal</th>
                                             <td>$1,785.00</td>
                                         </tr> -->
-                                        <tr>
+                                        <!-- <tr>
                                             <th>{{'Shipping + Tax'|_}}</th>
                                             <td>৳{{total_cost|number_format(2, '.', ',')}}</td>
                                         </tr>
@@ -199,7 +170,7 @@ function onSearchHscode()
                                         <tr class="text-danger">
                                             <th>{{'Net Payable Amount'|_}}</th>
                                             <td><strong>৳{{ (grand_total - total_cost) |number_format(2, '.', ',') }}</strong></td>
-                                        </tr>
+                                        </tr> -->
                                     </tfoot>
                                 </table>
                                 <!-- End Product Content -->
@@ -230,7 +201,7 @@ function onSearchHscode()
                                         <!-- <div class="border-bottom border-color-1 border-dotted-bottom">
                                             <div class="p-3" id="basicsHeadingThree">
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" id="thirdstylishRadio1" name="stylishRadio">
+                                                    <input type="radio" class="custom-control-input" id="thirdstylishRadio1" name="payment_term">
                                                     <label class="custom-control-label form-label collapsed" for="thirdstylishRadio1" data-toggle="collapse" data-target="#basicsCollapseThree" aria-expanded="false" aria-controls="basicsCollapseThree">
                                                         Cash on delivery
                                                     </label>
@@ -245,7 +216,7 @@ function onSearchHscode()
                                         <!-- End Card -->
 
                                          <!-- Card -->
-                                         <div class="border-bottom border-color-1 border-dotted-bottom">
+                                         <!-- <div class="border-bottom border-color-1 border-dotted-bottom">
                                             <div class="p-3" id="basicsHeadingOne">
                                                 <div class="custom-control custom-radio">
                                                     <input type="radio" class="custom-control-input" id="stylishRadio1" name="payment_term" value="0">
@@ -264,11 +235,11 @@ function onSearchHscode()
                                                     Branch:  Local Office Dhaka. Bangladesh <br>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <!-- End Card -->
 
                                         <!-- Card -->
-                                        <div class="border-bottom border-color-1 border-dotted-bottom">
+                                        <!-- <div class="border-bottom border-color-1 border-dotted-bottom">
                                             <div class="p-3" id="basicsHeadingFour">
                                                 <div class="custom-control custom-radio">
                                                     <input type="radio" class="custom-control-input" id="FourstylishRadio1" name="payment_term" value="1">
@@ -280,6 +251,23 @@ function onSearchHscode()
                                             <div id="basicsCollapseFour" class="collapse border-top border-color-1 border-dotted-top bg-dark-lighter" aria-labelledby="basicsHeadingFour" data-parent="#basicsAccordion1">
                                                 <div class="p-4">
                                                     {{'You can pay online with any of your credit / debit cards or mobile bank accounts.'|_}}
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                        <!-- End Card -->
+                                        <!-- Card -->
+                                        <div class="border-bottom border-color-1 border-dotted-bottom">
+                                            <div class="p-3" id="basicsHeadingFour">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" class="custom-control-input" id="FourstylishRadio1" name="payment_term" value="COD">
+                                                    <label class="custom-control-label form-label" for="FourstylishRadio1" data-toggle="collapse" data-target="#basicsCollapseFour" aria-expanded="false" aria-controls="basicsCollapseFour">
+                                                        {{'Cash on delivery'|_}}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div id="basicsCollapseFour" class="collapse border-top border-color-1 border-dotted-top bg-dark-lighter" aria-labelledby="basicsHeadingFour" data-parent="#basicsAccordion1">
+                                                <div class="p-4">
+                                                    {{'Pay when you received the product.'|_}}
                                                 </div>
                                             </div>
                                         </div>
@@ -299,7 +287,7 @@ function onSearchHscode()
 
                                 
                                 <button type="button" 
-                                    class="btn btn-primary-dark-w btn-block btn-pill font-size-20 mb-3 py-3"
+                                    class="btn btn-primary-dark btn-block btn-pill font-size-20 mb-3 py-3"
                                     onclick="this.style.display='none'; this.innerText='Processing…';" 
                                     data-request-form="#form-place-order" 
                                     data-request="onSubmitOrder" 
@@ -350,6 +338,40 @@ function onSearchHscode()
                                 <!-- End Input -->
                             </div>
 
+                            <div class="col-md-6">
+                                <!-- Input -->
+                                <div class="js-form-message mb-6">
+                                    <label class="form-label">
+                                        {{'District'|_}}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-control custom-select" name="district" id="">
+                                        <option value="">Select District</option>
+                                        {% for data in districts %}
+                                        <option value="{{ data.name }}">{{ data.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <!-- End Input -->
+                            </div>
+
+                            <div class="col-md-6">
+                                <!-- Input -->
+                                <div class="js-form-message mb-6">
+                                    <label class="form-label">
+                                        {{'Area'|_}}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-control custom-select" name="area" id="">
+                                        <option value="">Select Area</option>
+                                        {% for data in districts %}
+                                        <option value="{{ data.name }}">{{ data.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <!-- End Input -->
+                            </div>
+
                             <div class="w-100"></div>
 
                             <div class="col-md-12">
@@ -380,8 +402,7 @@ function onSearchHscode()
                         <!-- End Input -->
 
                         <!-- Accordion -->
-                        <div id="shopCartAccordion1" class="accordion rounded mb-6">
-                            <!-- Card -->
+                        <!-- <div id="shopCartAccordion1" class="accordion rounded mb-6">
                             <div class="card border-0">
                                 <div id="shopCartHeadingTwo" class="alert alert-primary mb-0" role="alert">
                                     {{'Have a coupon?'|_}} <a href="#" class="alert-link" data-toggle="collapse" data-target="#shopCartTwo" aria-expanded="false" aria-controls="shopCartTwo">{{'Click here to enter your code'|_}}</a>
@@ -400,8 +421,7 @@ function onSearchHscode()
                                     </form>
                                 </div>
                             </div>
-                            <!-- End Card -->
-                        </div>
+                        </div> -->
                         <!-- End Accordion -->
                     </div>
                 </div>
@@ -413,3 +433,13 @@ function onSearchHscode()
         
     </div>
 </main>
+
+{% component 'account' template='fixed' %}
+
+{% put scripts %}
+<script>
+    $(document).on('ready', function () {
+        setTimeout(function(){$('#sidebarNavToggler').click();}, 100);
+    });
+</script>
+{% endput %}

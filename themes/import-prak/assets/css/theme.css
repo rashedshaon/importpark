@@ -351,6 +351,10 @@ progress {
   vertical-align: baseline;
 }
 
+.prodcut-add-cart{
+  cursor: pointer;
+}
+
 [type="number"]::-webkit-inner-spin-button,
 [type="number"]::-webkit-outer-spin-button {
   height: auto;
@@ -5715,8 +5719,8 @@ input[type="button"].btn-block {
 
 .custom-control-input:checked ~ .custom-control-label::before {
   color: #fff;
-  border-color: #fed700;
-  background-color: #fed700;
+  border-color: #ff0303;
+  background-color: #ff0303;
 }
 
 .custom-control-input:focus ~ .custom-control-label::before {
@@ -35057,7 +35061,7 @@ blockquote:not(.blockquote) p {
   height: 2px;
   width: 114px;
   display: block;
-  background-color: #fed700;
+  background-color: #ff0303;
   position: absolute;
   bottom: -1px;
   left: 0;

@@ -13,15 +13,6 @@ items:
             cssClass: ''
             isExternal: '0'
     -
-        title: 'মূল্য গণনা'
-        type: url
-        url: price-calculation
-        code: ''
-        viewBag:
-            isHidden: '0'
-            cssClass: ''
-            isExternal: '0'
-    -
         title: 'আমাদের সম্পর্কে'
         nesting: null
         type: url

@@ -12,7 +12,7 @@ forceUrl = 1
 [session]
 security = "all"
 ==
-use Response;
+
 use ItRail\ExportImport\Models\Search;
 use ItRail\ExportImport\Models\Contact;
 
@@ -221,7 +221,7 @@ function onSearchProduct()
 
             $(document).on('ready', function () {
 
-                setTimeout(function(){$('#sidebarNavToggler').click();}, 100)
+                // setTimeout(function(){$('#sidebarNavToggler').click();}, 100)
 
                 // initialization of header
                 $.HSCore.components.HSHeader.init($('#header'));

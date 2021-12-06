@@ -12,9 +12,19 @@
                     <h5 class="product-item__title"><a href="{{ url('product-details/' ~  data.slug) }}" class="text-gray-90">{{ data.title | raw }}</a></h5>
                 </div>
                 <div class="flex-center-between">
-                    <div class="prodcut-price">
-                        <div class="text-gray-100 font-size-15 font-weight-bold">৳ {{ data.price }}</div>
+                    {% if data.discount > 0 %}
+                    <div class="prodcut-price d-flex align-items-center flex-wrap position-relative mt-2">
+                        <ins class="font-size-15 text-red text-decoration-none mr-2">{{ data.price_label }}</ins>
+                        <del class="font-size-12 tex-gray-6 position-absolute bottom-100">{{ data.original_price_label }}</del>
                     </div>
+                    {% else %}
+                    <div class="prodcut-price">
+                        <div class="text-gray-100 font-size-15 font-weight-bold">{{ data.price_label }}</div>
+                    </div>
+                    {% endif %}
+                    <!-- <div class="prodcut-price">
+                        <div class="text-gray-100 font-size-15 font-weight-bold">৳ {{ data.price_label }}</div>
+                    </div> -->
                 </div>
             </div>
         </div>

@@ -1,0 +1,8 @@
+# ===================================
+#  Import/Export Behavior Config
+# ===================================
+import:
+    title: 'Import Products'
+    modelClass: Bol\Eshop\Models\ProductImport
+    list: $/bol/eshop/models/product/import_columns.yaml
+    redirect: bol/eshop/products

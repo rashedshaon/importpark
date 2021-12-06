@@ -29,7 +29,7 @@ class Product extends Model
         'slug'    => ['required', 'regex:/^[a-z0-9\/\:_\-\*\[\]\+\?\|]*$/i', 'unique:bol_eshop_products'],
         'short_description' => 'required',
         'description' => 'required',
-        'brand_id' => 'required',
+        // 'brand_id' => 'required',
     ];
 
     /**
@@ -675,6 +675,25 @@ class Product extends Model
         return '';
     }
 
+    public function getOriginalPriceLabelAttribute()
+    {
+        if(Settings::get('show_currency'))
+        {
+            $currency = Currency::where('is_default', 1)->where('is_active', 1)->get()->first();
+
+            if(Settings::get('currency_label') == 'symbol')
+            {
+                return $currency->symbol." ".$this->price;
+            }
+            else
+            {
+                return $this->price." ".$currency->name;
+            }
+        }
+
+        return $this->price;
+    }
+
     public function getPriceLabelAttribute()
     {
         if(Settings::get('show_currency'))
@@ -754,6 +773,11 @@ class Product extends Model
         }
 
         return $options;
+    }
+
+    public function getPhoto($imageWidth = null, $imageHeight = null)
+    {
+        return isset($this->photo) ? (($imageHeight && $imageWidth) ? $this->photo->getThumb($imageWidth, $imageHeight, ['mode' => 'crop']) : $this->photo->getPath()) :  (($imageHeight && $imageWidth) ? "https://dummyimage.com/$imageWidth"."x"."$imageHeight/e3e3e3/d5aa6d.jpg&text=++Product++" : "https://dummyimage.com/200x200/e3e3e3/d5aa6d.jpg&text=++Product++");
     }
 
     public function featuredPhoto($imageWidth = null, $imageHeight = null)
