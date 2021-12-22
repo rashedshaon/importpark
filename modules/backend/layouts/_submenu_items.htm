@@ -1,4 +1,9 @@
 <?php foreach ($sideMenuItems as $sideItemCode => $item): ?>
+    <?php 
+         if (isset($hideNonHttpItems) && $hideNonHttpItems && $item->nonHttpItem) {
+             continue;
+         }
+    ?>
     <li
         class="
             mainmenu-item

@@ -183,19 +183,19 @@ body.richeditor-document-connector-resizing * {
   border: 1px solid #72809d;
 }
 .field-richeditor.vue-mode.size-tiny .editor-write {
-  min-height: 50px;
+  min-height: 95px;
 }
 .field-richeditor.vue-mode.size-small .editor-write {
-  min-height: 100px;
+  min-height: 145px;
 }
 .field-richeditor.vue-mode.size-large .editor-write {
-  min-height: 200px;
+  min-height: 245px;
 }
 .field-richeditor.vue-mode.size-huge .editor-write {
-  min-height: 250px;
+  min-height: 295px;
 }
 .field-richeditor.vue-mode.size-giant .editor-write {
-  min-height: 350px;
+  min-height: 395px;
 }
 .field-richeditor.vue-mode.stretch .editor-write {
   float: none;

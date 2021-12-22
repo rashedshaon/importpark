@@ -103,7 +103,7 @@ class FormController extends ControllerBehavior
     ];
 
     /**
-     * Behavior constructor
+     * __construct the behavior
      * @param Backend\Classes\Controller $controller
      */
     public function __construct($controller)
@@ -118,7 +118,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Initialize the form configuration against a model and context value.
+     * initForm initializes the form configuration against a model and context value.
      * This will process the configuration found in the `$formConfig` property
      * and prepare the Form widget, which is the underlying tool used for
      * actually rendering the form. The model used by this form is passed
@@ -219,7 +219,7 @@ class FormController extends ControllerBehavior
         try {
             $this->context = strlen($context) ? $context : $this->getConfig('create[context]', self::CONTEXT_CREATE);
             $this->controller->pageTitle = $this->controller->pageTitle
-                ?: $this->getLang('title', 'backend::lang.form.create_title');
+                ?: $this->getLang('create[title]', 'backend::lang.form.create_title');
 
             $model = $this->controller->formCreateModelObject();
             $model = $this->controller->formExtendModel($model) ?: $model;
@@ -294,7 +294,7 @@ class FormController extends ControllerBehavior
         try {
             $this->context = strlen($context) ? $context : $this->getConfig('update[context]', self::CONTEXT_UPDATE);
             $this->controller->pageTitle = $this->controller->pageTitle
-                ?: $this->getLang('title', 'backend::lang.form.update_title');
+                ?: $this->getLang('update[title]', 'backend::lang.form.update_title');
 
             $model = $this->controller->formFindModelObject($recordId);
             $this->initForm($model);
@@ -392,7 +392,7 @@ class FormController extends ControllerBehavior
         try {
             $this->context = strlen($context) ? $context : $this->getConfig('preview[context]', self::CONTEXT_PREVIEW);
             $this->controller->pageTitle = $this->controller->pageTitle
-                ?: $this->getLang('title', 'backend::lang.form.preview_title');
+                ?: $this->getLang('preview[title]', 'backend::lang.form.preview_title');
 
             $model = $this->controller->formFindModelObject($recordId);
             $this->initForm($model);

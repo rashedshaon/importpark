@@ -152,7 +152,9 @@ $.oc.module.register('backend.vuecomponents.richeditordocumentconnector.octoberc
         }, {
             key: 'browseVideo',
             value: function browseVideo($textarea) {
-                $textarea.froalaEditor('mediaManager.insertVideo');
+                $textarea.froalaEditor('mediaManager.insertVideo', function (url, title) {
+                    $textarea.froalaEditor('figures.insertVideo', url, title);
+                });
             }
         }, {
             key: 'addVideoByUrl',
@@ -217,7 +219,9 @@ $.oc.module.register('backend.vuecomponents.richeditordocumentconnector.octoberc
         }, {
             key: 'browseAudio',
             value: function browseAudio($textarea) {
-                $textarea.froalaEditor('mediaManager.insertAudio');
+                $textarea.froalaEditor('mediaManager.insertAudio', function (url, title) {
+                    $textarea.froalaEditor('figures.insertAudio', url, title);
+                });
             }
         }, {
             key: 'addAudioByUrl',

@@ -142,11 +142,9 @@ class OctoberMirror extends Command
     /**
      * mirrorFile mirrors a single file
      */
-    protected function mirrorFile(string $file)
+    protected function mirrorFile(string $src)
     {
-        $src = base_path().'/'.$file;
-
-        $dest = $this->getDestinationPath().'/'.$file;
+        $dest = $this->getDestinationPath().'/'.$src;
 
         if (!File::isFile($src) || File::isFile($dest)) {
             return false;
@@ -162,17 +160,15 @@ class OctoberMirror extends Command
 
         $this->makeSymlink($src, $dest);
 
-        $this->output->writeln(sprintf('<info> - Mirrored: %s</info>', $file));
+        $this->output->writeln(sprintf('<info> - Mirrored: %s</info>', $src));
     }
 
     /**
      * mirrorDirectory mirrors a directory
      */
-    protected function mirrorDirectory(string $directory)
+    protected function mirrorDirectory(string $src)
     {
-        $src = base_path().'/'.$directory;
-
-        $dest = $this->getDestinationPath().'/'.$directory;
+        $dest = $this->getDestinationPath().'/'.$src;
 
         if (!File::isDirectory($src) || File::isDirectory($dest)) {
             return false;
@@ -192,7 +188,7 @@ class OctoberMirror extends Command
 
         $this->makeSymlink($src, $dest);
 
-        $this->output->writeln(sprintf('<info> - Mirrored: %s</info>', $directory));
+        $this->output->writeln(sprintf('<info> - Mirrored: %s</info>', $src));
     }
 
     /**
@@ -222,8 +218,15 @@ class OctoberMirror extends Command
      */
     protected function makeSymlink(string $src, string $dest)
     {
+        if ($this->option('relative')) {
+            $finalSrc = $this->makeRelativePath($dest, $src);
+        }
+        else {
+            $finalSrc = base_path($src);
+        }
+
         try {
-            symlink($src, $dest);
+            symlink($finalSrc, $dest);
         }
         catch (Exception $ex) {
             $msg = $ex->getMessage();
@@ -243,8 +246,6 @@ class OctoberMirror extends Command
             str_replace('/', DIRECTORY_SEPARATOR, $dest)
         );
 
-        echo $cmd;
-
         $result = $code = null;
         exec($cmd . ' 2>&1', $result, $code);
 
@@ -253,6 +254,32 @@ class OctoberMirror extends Command
             $this->output->error("Could not mirror directory at ${dest}: ${msg}");
             exit(1);
         }
+    }
+
+    /**
+     * makeRelativePath will count the number of to reach the base using a relative path.
+     * For example: from:public/index.php, to:index.php = ../index.php
+     */
+    protected function makeRelativePath($from, $to)
+    {
+        $from = str_replace(DIRECTORY_SEPARATOR, '/', $from);
+        $to = str_replace(DIRECTORY_SEPARATOR, '/', $to);
+
+        $dir = explode('/', is_file($from) ? dirname($from) : rtrim($from, '/'));
+        $file = explode('/', $to);
+
+        while ($dir && $file && ($dir[0] === $file[0])) {
+            array_shift($dir);
+            array_shift($file);
+        }
+
+        $out = str_repeat('../', count($dir)) . implode('/', $file);
+
+        if (strpos($out, '../') === 0) {
+            $out = rtrim(substr($out, 3), '/');
+        }
+
+        return $out;
     }
 
     /**
@@ -288,7 +315,7 @@ class OctoberMirror extends Command
      */
     protected function useAutoMirror(): bool
     {
-        $setting = Config::get('system.auto_mirror_public');
+        $setting = Config::get('system.auto_mirror_public', false);
         if ($setting === null) {
             return !System::checkDebugMode();
         }
@@ -312,7 +339,8 @@ class OctoberMirror extends Command
     protected function getOptions()
     {
         return [
-            ['composer', null, InputOption::VALUE_NONE, 'Command triggered from composer.']
+            ['composer', null, InputOption::VALUE_NONE, 'Command triggered from composer.'],
+            ['relative', null, InputOption::VALUE_NONE, 'Create symlinks relative to the public directory.'],
         ];
     }
 
@@ -321,6 +349,6 @@ class OctoberMirror extends Command
      */
     protected function isWindows(): bool
     {
-        return defined('PHP_WINDOWS_VERSION_BUILD');
+        return '\\' === DIRECTORY_SEPARATOR;
     }
 }

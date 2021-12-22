@@ -179,6 +179,13 @@ class Form extends WidgetBase
      */
     public function render($options = [])
     {
+        $this->defineFormFields();
+        $this->applyFiltersFromModel();
+        $this->prepareVars();
+
+        /*
+         * Custom options
+         */
         if (isset($options['preview'])) {
             $this->previewMode = $options['preview'];
         }
@@ -215,8 +222,6 @@ class Form extends WidgetBase
             $targetPartial = $section ? 'section-container' : 'form-container';
         }
 
-        $this->prepareVars();
-
         /*
          * Force preview mode on all widgets
          */
@@ -227,6 +232,14 @@ class Form extends WidgetBase
         }
 
         return $this->makePartial($targetPartial, $extraVars);
+    }
+
+    /**
+     * renderFields renders the specified fields.
+     */
+    public function renderFields(array $fields): string
+    {
+        return $this->makePartial('form_fields', ['fields' => $fields]);
     }
 
     /**
@@ -241,6 +254,7 @@ class Form extends WidgetBase
      */
     public function renderField($field, $options = [])
     {
+        $this->defineFormFields();
         $this->prepareVars();
 
         if (is_string($field)) {
@@ -304,8 +318,6 @@ class Form extends WidgetBase
      */
     protected function prepareVars()
     {
-        $this->defineFormFields();
-        $this->applyFiltersFromModel();
         $this->vars['sessionKey'] = $this->getSessionKey();
         $this->vars['outsideTabs'] = $this->allTabs->outside;
         $this->vars['primaryTabs'] = $this->allTabs->primary;
@@ -353,7 +365,7 @@ class Form extends WidgetBase
     public function onRefresh()
     {
         $result = [];
-        $saveData = $this->getSaveData();
+        $saveData = $this->getSaveDataInternal();
 
         /**
          * @event backend.form.beforeRefresh
@@ -380,6 +392,7 @@ class Form extends WidgetBase
          * Set the form variables and prepare the widget
          */
         $this->setFormValues($saveData);
+        $this->applyFiltersFromModel();
         $this->prepareVars();
 
         /**
@@ -410,7 +423,6 @@ class Form extends WidgetBase
                     continue;
                 }
 
-                /** @var FormWidgetBase $fieldObject */
                 $fieldObject = $this->allFields[$field];
                 $result['#' . $fieldObject->getId('group')] = $this->makePartial('field', ['field' => $fieldObject]);
             }
@@ -740,7 +752,7 @@ class Form extends WidgetBase
                 $this->model->setValidationAttributeName($attrName, $fieldObj->label);
             }
 
-            $this->allFields[$name] = $fieldObj;
+            $this->allFields[$fieldObj->fieldName] = $fieldObj;
 
             switch (strtolower($addToArea)) {
                 case FormTabs::SECTION_PRIMARY:
@@ -1067,12 +1079,25 @@ class Form extends WidgetBase
     }
 
     /**
+     * hasFieldValue determines if the field value is found in the data.
+     */
+    protected function hasFieldValue($field, $data = null): bool
+    {
+        return $field->getValueFromData($data, FormField::NO_SAVE_DATA) !== FormField::NO_SAVE_DATA;
+    }
+
+    /**
      * Looks up the field value.
      * @param mixed $field
+     * @param mixed $data
      * @return string
      */
-    protected function getFieldValue($field)
+    protected function getFieldValue($field, $data = null)
     {
+        if ($data === null) {
+            $data = $this->data;
+        }
+
         if (is_string($field)) {
             if (!isset($this->allFields[$field])) {
                 throw new SystemException(Lang::get(
@@ -1085,7 +1110,7 @@ class Form extends WidgetBase
         }
 
         $defaultValue = $this->useDefaultValues()
-            ? $field->getDefaultFromData($this->data)
+            ? $field->getDefaultFromData($data)
             : null;
 
         // No translation on complex arrays (i.e repeater defaults)
@@ -1093,7 +1118,7 @@ class Form extends WidgetBase
             ? Lang::get($defaultValue)
             : $defaultValue;
 
-        return $field->getValueFromData($this->data, $defaultValue);
+        return $field->getValueFromData($data, $defaultValue);
     }
 
     /**
@@ -1155,7 +1180,20 @@ class Form extends WidgetBase
     public function getSaveData()
     {
         $this->defineFormFields();
-        $this->applyFiltersFromModel();
+
+        $saveData = $this->getSaveDataInternal();
+
+        $this->applyFiltersFromModel($saveData);
+
+        return $this->cleanSaveDataInternal($saveData);
+    }
+
+    /**
+     * getSaveDataInternal will return all possible data to save
+     */
+    protected function getSaveDataInternal(): array
+    {
+        $this->defineFormFields();
 
         $result = [];
 
@@ -1170,22 +1208,13 @@ class Form extends WidgetBase
         /*
          * Spin over each field and extract the postback value
          */
-        foreach ($this->allFields as $field) {
-            /*
-             * Disabled and hidden should be omitted from data set
-             */
-            if ($field->disabled || $field->hidden) {
-                continue;
-            }
-
+        foreach ($this->allFields as $name => $field) {
             /*
              * Handle HTML array, eg: item[key][another]
              */
-            $parts = HtmlHelper::nameToArray($field->fieldName);
+            $parts = HtmlHelper::nameToArray($name);
             if (($value = $this->dataArrayGet($data, $parts)) !== null) {
-                /*
-                 * Number fields should be converted to integers
-                 */
+                // Convert number to float
                 if ($field->type === 'number') {
                     $value = !strlen(trim($value)) ? null : (float) $value;
                 }
@@ -1198,38 +1227,67 @@ class Form extends WidgetBase
          * Give widgets an opportunity to process the data.
          */
         foreach ($this->formWidgets as $field => $widget) {
+            /*
+             * Handle HTML array, eg: item[key][another]
+             */
             $parts = HtmlHelper::nameToArray($field);
-
-            if (
-                (isset($widget->config->disabled) && $widget->config->disabled) ||
-                (isset($widget->config->hidden) && $widget->config->hidden)
-            ) {
-                continue;
+            if (($value = $this->dataArrayGet($data, $parts)) !== null) {
+                $widgetValue = $widget->getSaveValue($value);
+                $this->dataArraySet($result, $parts, $widgetValue);
             }
-
-            $widgetValue = $widget->getSaveValue($this->dataArrayGet($result, $parts));
-            $this->dataArraySet($result, $parts, $widgetValue);
         }
 
         return $result;
     }
 
     /**
+     * cleanSaveDataInternal will purge disabled and hidden fields from the dataset
+     */
+    protected function cleanSaveDataInternal(array $data): array
+    {
+        foreach ($this->allFields as $name => $field) {
+            if ($field->disabled || $field->hidden) {
+                $parts = HtmlHelper::nameToArray($name);
+                $this->dataArrayForget($data, $parts);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * applyFiltersFromModel allows the model to filter fields
      */
-    protected function applyFiltersFromModel()
+    protected function applyFiltersFromModel($applyData = null)
     {
+        $targetModel = clone $this->model;
+
+        /*
+         * Apply specified data before filtering
+         */
+        if ($applyData) {
+            if (method_exists($targetModel, 'fill')) {
+                $this->prepareModelsToSave($targetModel, $applyData);
+            }
+
+            foreach ($this->allFields as $field) {
+                if ($this->hasFieldValue($field, $applyData)) {
+                    $field->value = $this->getFieldValue($field, $applyData);
+                }
+            }
+        }
+
         /*
          * Standard usage
          */
-        if (method_exists($this->model, 'filterFields')) {
-            $this->model->filterFields((object) $this->allFields, $this->getContext());
+        if (method_exists($targetModel, 'filterFields')) {
+            $targetModel->filterFields((object) $this->allFields, $this->getContext());
         }
 
         /*
          * Advanced usage
          */
-        if (method_exists($this->model, 'fireEvent')) {
+        if (method_exists($targetModel, 'fireEvent')) {
             /**
              * @event model.form.filterFields
              * Called after the form is initialized
@@ -1252,7 +1310,7 @@ class Form extends WidgetBase
              *     });
              *
              */
-            $this->model->fireEvent('model.form.filterFields', [$this, (object) $this->allFields, $this->getContext()]);
+            $targetModel->fireEvent('model.form.filterFields', [$this, (object) $this->allFields, $this->getContext()]);
         }
     }
 
@@ -1290,14 +1348,10 @@ class Form extends WidgetBase
      * @param array $array
      * @param array $parts
      * @param null $default
-     * @return array|null
+     * @return mixed
      */
     protected function dataArrayGet(array $array, array $parts, $default = null)
     {
-        if ($parts === null) {
-            return $array;
-        }
-
         if (count($parts) === 1) {
             $key = array_shift($parts);
             if (isset($array[$key])) {
@@ -1328,10 +1382,6 @@ class Form extends WidgetBase
      */
     protected function dataArraySet(array &$array, array $parts, $value)
     {
-        if ($parts === null) {
-            return $value;
-        }
-
         while (count($parts) > 1) {
             $key = array_shift($parts);
 
@@ -1345,5 +1395,28 @@ class Form extends WidgetBase
         $array[array_shift($parts)] = $value;
 
         return $array;
+    }
+
+    /**
+     * Variant to array_forget() but preserves dots in key names.
+     *
+     * @param array $array
+     * @param array $parts
+     * @return void
+     */
+    protected function dataArrayForget(array &$array, array $parts)
+    {
+        while (count($parts) > 1) {
+            $part = array_shift($parts);
+
+            if (isset($array[$part]) && is_array($array[$part])) {
+                $array = &$array[$part];
+            }
+            else {
+                continue;
+            }
+        }
+
+        unset($array[array_shift($parts)]);
     }
 }

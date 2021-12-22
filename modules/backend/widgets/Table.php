@@ -47,9 +47,12 @@ class Table extends WidgetBase
      */
     protected $recordsKeyFrom;
 
+    /**
+     * @var array dataSourceAliases
+     */
     protected $dataSourceAliases = [
-        'client' => '\Backend\Widgets\Table\ClientMemoryDataSource',
-        'server' => '\Backend\Widgets\Table\ServerEventDataSource'
+        'client' => \Backend\Widgets\Table\ClientMemoryDataSource::class,
+        'server' => \Backend\Widgets\Table\ServerEventDataSource::class
     ];
 
     /**
@@ -78,21 +81,22 @@ class Table extends WidgetBase
 
         $this->dataSource = new $dataSourceClass($this->recordsKeyFrom);
 
+        // Load data into the client memory data source on POST
         if (Request::method() == 'POST' && $this->isClientDataSource()) {
             if (strpos($this->fieldName, '[') === false) {
-                $requestDataField = $this->fieldName . 'TableData';
+                $requestData = post($this->fieldName . 'TableData');
             }
             else {
-                $requestDataField = $this->fieldName . '[TableData]';
+                $requestData = post($this->fieldName . '[TableData]');
             }
 
-            // Use dot notation for request data field
-            $requestDataField = implode('.', HtmlHelper::nameToArray($requestDataField));
+            if ($requestData) {
+                $requestData = json_decode($requestData, true);
+            }
 
-            if (Request::exists($requestDataField)) {
-                // Load data into the client memory data source on POST
+            if ($requestData) {
                 $this->dataSource->purge();
-                $this->dataSource->initRecords(Request::input($requestDataField));
+                $this->dataSource->initRecords($requestData);
             }
         }
     }
@@ -124,7 +128,8 @@ class Table extends WidgetBase
         $this->vars['recordsKeyFrom'] = $this->recordsKeyFrom;
 
         $this->vars['recordsPerPage'] = $this->getConfig('recordsPerPage', false) ?: 'false';
-        $this->vars['postbackHandlerName'] = $this->getConfig('postbackHandlerName', 'onSave');
+        $this->vars['postbackHandlerName'] = $this->getConfig('postbackHandlerName');
+        $this->vars['postbackHandlerWild'] = $this->getConfig('postbackHandlerWild', false) ?: 'false';
         $this->vars['searching'] = $this->getConfig('searching', false);
         $this->vars['adding'] = $this->getConfig('adding', true);
         $this->vars['deleting'] = $this->getConfig('deleting', true);
@@ -195,7 +200,10 @@ class Table extends WidgetBase
         return $result;
     }
 
-    protected function isClientDataSource()
+    /**
+     * isClientDataSource
+     */
+    protected function isClientDataSource(): bool
     {
         return $this->dataSource instanceof \Backend\Widgets\Table\ClientMemoryDataSource;
     }
@@ -204,6 +212,9 @@ class Table extends WidgetBase
     // Event handlers
     //
 
+    /**
+     * onServerGetRecords
+     */
     public function onServerGetRecords()
     {
         // Disable asset broadcasting
@@ -226,6 +237,9 @@ class Table extends WidgetBase
         ];
     }
 
+    /**
+     * onServerSearchRecords
+     */
     public function onServerSearchRecords()
     {
         // Disable asset broadcasting
@@ -248,6 +262,9 @@ class Table extends WidgetBase
         ];
     }
 
+    /**
+     * onServerCreateRecord
+     */
     public function onServerCreateRecord()
     {
         if ($this->isClientDataSource()) {
@@ -263,6 +280,9 @@ class Table extends WidgetBase
         return $this->onServerGetRecords();
     }
 
+    /**
+     * onServerUpdateRecord
+     */
     public function onServerUpdateRecord()
     {
         if ($this->isClientDataSource()) {
@@ -272,6 +292,9 @@ class Table extends WidgetBase
         $this->dataSource->updateRecord(post('key'), post('recordData'));
     }
 
+    /**
+     * onServerDeleteRecord
+     */
     public function onServerDeleteRecord()
     {
         if ($this->isClientDataSource()) {
@@ -283,6 +306,9 @@ class Table extends WidgetBase
         return $this->onServerGetRecords();
     }
 
+    /**
+     * onGetDropdownOptions
+     */
     public function onGetDropdownOptions()
     {
         $columnName = Input::get('column');
@@ -300,6 +326,9 @@ class Table extends WidgetBase
         ];
     }
 
+    /**
+     * onGetAutocompleteOptions
+     */
     public function onGetAutocompleteOptions()
     {
         $columnName = Input::get('column');

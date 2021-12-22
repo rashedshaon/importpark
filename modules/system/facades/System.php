@@ -2,18 +2,29 @@
 
 use October\Rain\Support\Facade;
 
+/**
+ * System facade
+ *
+ * @method static bool hasModule(string $name)
+ * @method static array listModules()
+ * @method static bool hasDatabase()
+ * @method static bool checkDebugMode()
+ * @method static bool checkSafeMode()
+ * @method static bool checkBaseDir(string $filePath)
+ * @method static string composerToOctoberCode(string $name)
+ * @method static string octoberToComposerCode(string $name, string $type, bool $prefix)
+ *
+ * @see \System\Helpers\System
+ */
 class System extends Facade
 {
     /**
-     * @var string The October CMS major version.
+     * @var string VERSION for October CMS, including major and minor.
      */
-    const VERSION = '2.0';
+    const VERSION = '2.1';
 
     /**
-     * Get the registered name of the component.
-     *
-     * @see \System\Helpers\System
-     * @return string
+     * getFacadeAccessor gets the registered name of the component.
      */
     protected static function getFacadeAccessor()
     {

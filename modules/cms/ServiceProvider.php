@@ -8,6 +8,8 @@ use Cms\Models\ThemeLog;
 use Cms\Models\ThemeData;
 use Cms\Classes\CmsObject;
 use Cms\Classes\Page as CmsPage;
+use Cms\Classes\ThemeManager;
+use Cms\Classes\CmsObjectCache;
 use Cms\Classes\ComponentManager;
 use Backend\Models\UserRole;
 use Backend\Classes\WidgetManager;
@@ -25,17 +27,11 @@ class ServiceProvider extends ModuleServiceProvider
     {
         parent::register('cms');
 
+        $this->registerConsole();
         $this->registerComponents();
         $this->registerThemeLogging();
         $this->registerCombinerEvents();
         $this->registerHalcyonModels();
-
-        /*
-         * CMS module comes with Media module
-         */
-        if (class_exists(\Media\ServiceProvider::class)) {
-            App::register(\Media\ServiceProvider::class);
-        }
 
         /*
          * Backend specific
@@ -46,6 +42,8 @@ class ServiceProvider extends ModuleServiceProvider
             $this->registerBackendWidgets();
             $this->registerBackendSettings();
         }
+
+        CmsObjectCache::flush();
     }
 
     /**
@@ -62,8 +60,21 @@ class ServiceProvider extends ModuleServiceProvider
         $this->bootRichEditorEvents();
 
         if (App::runningInBackend()) {
-            $this->bootBackendLocalization();
+            $this->bootThemesForBackend();
         }
+    }
+
+    /**
+     * Register command line specifics
+     */
+    protected function registerConsole()
+    {
+        $this->registerConsoleCommand('theme.install', \Cms\Console\ThemeInstall::class);
+        $this->registerConsoleCommand('theme.remove', \Cms\Console\ThemeRemove::class);
+        $this->registerConsoleCommand('theme.list', \Cms\Console\ThemeList::class);
+        $this->registerConsoleCommand('theme.use', \Cms\Console\ThemeUse::class);
+        $this->registerConsoleCommand('theme.copy', \Cms\Console\ThemeCopy::class);
+        $this->registerConsoleCommand('theme.check', \Cms\Console\ThemeCheck::class);
     }
 
     /**
@@ -263,17 +274,11 @@ class ServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * bootBackendLocalization localization from an active theme for backend items.
+     * bootThemesForBackend localization from an active theme for backend items.
      */
-    protected function bootBackendLocalization()
+    protected function bootThemesForBackend()
     {
-        if ($theme = \Cms\Classes\Theme::getActiveTheme()) {
-            $langPath = $theme->getPath() . '/lang';
-
-            if (\File::isDirectory($langPath)) {
-                \Lang::addNamespace("theme.{$theme->getId()}", $langPath);
-            }
-        }
+        ThemeManager::instance()->bootAllBackend();
     }
 
     /**

@@ -90,9 +90,9 @@ class Repeater extends FormWidgetBase
     protected $groupDefinitions = [];
 
     /**
-     * @var boolean Determines if repeater has been initialised previously
+     * @var boolean isLoaded is true when the request is made via postback
      */
-    protected $loaded = false;
+    protected $isLoaded = false;
 
     /**
      * @inheritDoc
@@ -113,13 +113,12 @@ class Repeater extends FormWidgetBase
             $this->previewMode = true;
         }
 
-        // Check for loaded flag in POST
-        if (post($this->alias . '_loaded')) {
-            $this->loaded = true;
-        }
-
         $this->processGroupMode();
 
+        $this->processLoadedState();
+
+        // First pass will contain postback, then raw attributes
+        // This occurs to bind widgets to the controller early
         if (!self::$onAddItemCalled) {
             $this->processItems();
         }
@@ -139,11 +138,9 @@ class Repeater extends FormWidgetBase
      */
     public function prepareVars()
     {
-        // Refresh the loaded data to support being modified by filterFields.
-        // This logic needs review because it doesn't work fully, filterFields
-        // does not appear to modify the repeater on the second pass anyway
-        // because the refreshed values come from the postback -sg
-        if (!self::$onAddItemCalled && !$this->loaded) {
+        // Second pass will contain filtered attributes, then postback
+        // This occurs to apply filtered values to the widget data
+        if (!self::$onAddItemCalled) {
             $this->processItems();
         }
 
@@ -153,6 +150,7 @@ class Repeater extends FormWidgetBase
             }
         }
 
+        $this->vars['name'] = $this->getFieldName();
         $this->vars['prompt'] = $this->prompt;
         $this->vars['formWidgets'] = $this->formWidgets;
         $this->vars['titleFrom'] = $this->titleFrom;
@@ -178,25 +176,49 @@ class Repeater extends FormWidgetBase
      */
     public function getSaveValue($value)
     {
-        return (array) $this->processSaveValue($value);
+        return $this->processSaveValue($value);
+    }
+
+    /**
+     * processLoadedState is special logic that occurs during a postback,
+     * the form field value is set directly from the postback data, this occurs
+     * during initialization so that nested form widgets can be bound to the controller.
+     */
+    protected function processLoadedState()
+    {
+        if (!post($this->alias . '_loaded')) {
+            return;
+        }
+
+        $this->formField->value = post($this->formField->getName());
+        $this->isLoaded = true;
     }
 
     /**
      * processSaveValue splices in some meta data (group and index values) to the dataset
      * @param array $value
-     * @return array
+     * @return array|null
      */
     protected function processSaveValue($value)
     {
         if (!is_array($value) || !$value) {
-            return $value;
+            return null;
         }
 
         if ($this->minItems && count($value) < $this->minItems) {
-            throw new ApplicationException(Lang::get('backend::lang.repeater.min_items_failed', ['name' => $this->fieldName, 'min' => $this->minItems, 'items' => count($value)]));
+            throw new ApplicationException(Lang::get('backend::lang.repeater.min_items_failed', [
+                'name' => $this->fieldName,
+                'min' => $this->minItems,
+                'items' => count($value)
+            ]));
         }
+
         if ($this->maxItems && count($value) > $this->maxItems) {
-            throw new ApplicationException(Lang::get('backend::lang.repeater.max_items_failed', ['name' => $this->fieldName, 'max' => $this->maxItems, 'items' => count($value)]));
+            throw new ApplicationException(Lang::get('backend::lang.repeater.max_items_failed', [
+                'name' => $this->fieldName,
+                'max' => $this->maxItems,
+                'items' => count($value)
+            ]));
         }
 
         /*
@@ -217,20 +239,18 @@ class Repeater extends FormWidgetBase
     }
 
     /**
-     * processItems processes form data and applies it to the form widgets
+     * processItems processes data and applies it to the form widgets
      */
     protected function processItems()
     {
-        $currentValue = $this->loaded === true
-            ? post($this->formField->getName())
-            : $this->getLoadValue();
+        $currentValue = $this->getLoadValue();
 
         // This lets record finder work inside a repeater with some hacks
         // since record finder spawns outside the form and its AJAX calls
         // don't reinitialize this repeater's items. We a need better way
         // remove if year >= 2023 -sg
         $handler = $this->controller->getAjaxHandler();
-        if (!$this->loaded && starts_with($handler, $this->alias . 'Form')) {
+        if (!$this->isLoaded && starts_with($handler, $this->alias . 'Form')) {
             $handler = str_after($handler, $this->alias . 'Form');
             preg_match("~^(\d+)~", $handler, $matches);
 
@@ -240,31 +260,25 @@ class Repeater extends FormWidgetBase
             }
         }
 
-        if ($currentValue === null) {
+        // Pad current value with minimum items and disable for groups,
+        // which cannot predict their item types
+        if (!$this->useGroups && $this->minItems > 0) {
+            if (!is_array($currentValue)) {
+                $currentValue = [];
+            }
+
+            if (count($currentValue) < $this->minItems) {
+                $currentValue = array_pad($currentValue, $this->minItems, []);
+            }
+        }
+
+        // Repeater value is empty or invalid
+        if ($currentValue === null || !is_array($currentValue)) {
             $this->formWidgets = [];
             return;
         }
 
-        // Ensure that the minimum number of items are preinitialized
-        // only done when not in group mode
-        if (!$this->useGroups && $this->minItems > 0) {
-            if (!is_array($currentValue)) {
-                $currentValue = [];
-                for ($i = 0; $i < $this->minItems; $i++) {
-                    $currentValue[$i] = [];
-                }
-            }
-            elseif (count($currentValue) < $this->minItems) {
-                for ($i = 0; $i < ($this->minItems - count($currentValue)); $i++) {
-                    $currentValue[] = [];
-                }
-            }
-        }
-
-        if (!is_array($currentValue)) {
-            return;
-        }
-
+        // Load up the necessary form widgets
         foreach ($currentValue as $index => $value) {
             $this->makeItemFormWidget($index, array_get($value, '_group', null));
         }
@@ -293,7 +307,7 @@ class Repeater extends FormWidgetBase
             $config->enableDefaults = true;
         }
 
-        $widget = $this->makeWidget('Backend\Widgets\Form', $config);
+        $widget = $this->makeWidget(\Backend\Widgets\Form::class, $config);
         $widget->previewMode = $this->previewMode;
         $widget->bindToController();
 
@@ -310,9 +324,7 @@ class Repeater extends FormWidgetBase
      */
     protected function getValueFromIndex($index)
     {
-        $value = $this->loaded === true
-            ? post($this->formField->getName())
-            : $this->getLoadValue();
+        $value = $this->getLoadValue();
 
         if (!is_array($value)) {
             $value = [];
@@ -374,19 +386,10 @@ class Repeater extends FormWidgetBase
      */
     protected function getNextIndex(): int
     {
-        if ($this->loaded === true) {
-            $data = post($this->formField->getName());
+        $data = $this->getLoadValue();
 
-            if (is_array($data) && count($data)) {
-                return (max(array_keys($data)) + 1);
-            }
-        }
-        else {
-            $data = $this->getLoadValue();
-
-            if (is_array($data)) {
-                return count($data);
-            }
+        if (is_array($data) && count($data)) {
+            return max(array_keys($data)) + 1;
         }
 
         return 0;

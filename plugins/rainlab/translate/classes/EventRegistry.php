@@ -1,10 +1,10 @@
 <?php namespace RainLab\Translate\Classes;
 
 use App;
-use Exception;
-use File;
 use Str;
+use File;
 use Cms\Classes\Page;
+use Cms\Classes\Theme;
 use Cms\Classes\Content;
 use System\Classes\MailManager;
 use System\Classes\PluginManager;
@@ -12,6 +12,7 @@ use RainLab\Translate\Models\Message;
 use RainLab\Translate\Models\Locale as LocaleModel;
 use RainLab\Translate\Classes\Translator;
 use RainLab\Translate\Classes\ThemeScanner;
+use Exception;
 
 /**
  * Registrant class for bootstrapping events
@@ -29,6 +30,10 @@ class EventRegistry
 
     public function extendEditorPageToolbar($dataHolder)
     {
+        if (!LocaleModel::isAvailable()) {
+            return;
+        }
+
         $locales = LocaleModel::listAvailable();
         $defaultLocale = LocaleModel::getDefault()->code ?? null;
 
@@ -78,7 +83,6 @@ class EventRegistry
             'button' => 'rainlab.translate::lang.plugin.name',
             'icon' => 'octo-icon-globe',
             'popupTitle' => 'Translate Page Properties',
-            'useViewBag' => true,
             'properties' => $properties
         ];
     }
@@ -190,15 +194,15 @@ class EventRegistry
             return;
         }
 
-        if (!empty($widget->config->fields) && !$widget->isNested) {
+        if (!empty($widget->fields) && !$widget->isNested) {
             $widget->fields = $this->processFormMLFields($widget->fields, $model);
         }
 
-        if (!empty($widget->config->tabs['fields'])) {
+        if (!empty($widget->tabs['fields'])) {
             $widget->tabs['fields'] = $this->processFormMLFields($widget->tabs['fields'], $model);
         }
 
-        if (!empty($widget->config->secondaryTabs['fields'])) {
+        if (!empty($widget->secondaryTabs['fields'])) {
             $widget->secondaryTabs['fields'] = $this->processFormMLFields($widget->secondaryTabs['fields'], $model);
         }
     }
@@ -249,12 +253,12 @@ class EventRegistry
     //
 
     /**
-     * Import messages defined by the theme
+     * importMessagesFromTheme
      */
-    public function importMessagesFromTheme()
+    public function importMessagesFromTheme($themeCode)
     {
         try {
-            (new ThemeScanner)->scanThemeConfigForMessages();
+            (new ThemeScanner)->scanThemeConfigForMessages($themeCode);
         }
         catch (Exception $ex) {}
     }

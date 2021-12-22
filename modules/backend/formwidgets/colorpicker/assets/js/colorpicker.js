@@ -18,11 +18,11 @@
     // ============================
 
     var ColorPicker = function(element, options) {
-        this.options   = options
-        this.$el       = $(element)
+        this.options = options;
+        this.$el = $(element);
 
         // Init
-        this.init()
+        this.init();
     }
 
     ColorPicker.DEFAULTS = {
@@ -33,18 +33,18 @@
     }
 
     ColorPicker.prototype.init = function() {
-        var self = this
-        this.$dataLocker  = $(this.options.dataLocker, this.$el)
-        this.$colorList = $('>ul', this.$el)
-        this.$customColor = $('[data-custom-color]', this.$el)
-        this.$customColorSpan = $('>span', this.$customColor)
-        this.originalColor = this.$customColor.data('hexColor')
+        var self = this;
+        this.$dataLocker  = $(this.options.dataLocker, this.$el);
+        this.$colorList = $('>ul', this.$el);
+        this.$customColor = $('[data-custom-color]', this.$el);
+        this.$customColorSpan = $('>span', this.$customColor);
+        this.originalColor = this.$customColor.data('hexColor');
 
         if (!this.options.disabled) {
             this.$colorList.on('click', '>li', function(){
-                self.selectColor(this)
-                self.$dataLocker.trigger('change')
-            })
+                self.selectColor(this);
+                self.$dataLocker.trigger('change');
+            });
         }
 
         /*
@@ -62,49 +62,51 @@
                 appendTo: 'parent',
                 disabled: this.options.disabled,
                 hide: function(color) {
-                    var hex = color ? color.toHexString() : ''
-                    self.$customColorSpan.css('background', hex)
+                    var hex = color ? color.toHexString() : '';
+                    self.$customColorSpan.css('background', hex);
                 },
                 show: function(color) {
-                    self.selectColor(self.$customColor)
+                    var hex = color ? color.toHexString() : '';
+                    self.showCustomColor(hex);
                 },
                 move: function(color) {
-                    var hex = color ? color.toHexString() : ''
-                    self.$customColorSpan.css('background', hex)
+                    var hex = color ? color.toHexString() : '';
+                    self.$customColorSpan.css('background', hex);
                 },
                 change: function(color) {
-                    var hex = color ? color.toHexString() : ''
-                    self.setCustomColor(hex)
+                    var hex = color ? color.toHexString() : '';
+                    self.setCustomColor(hex);
                 }
-            })
+            });
         }
+    }
+
+    ColorPicker.prototype.showCustomColor = function(hex) {
+        this.$customColor.data('hexColor', hex);
+        this.selectColor(this.$customColor);
     }
 
     ColorPicker.prototype.setCustomColor = function(hexColor) {
         if (this.$customColor.length) {
-            this.$customColor.data('hexColor', hexColor)
-            this.$customColor.spectrum('set', hexColor)
+            this.$customColor.data('hexColor', hexColor);
+            this.$customColor.spectrum('set', hexColor);
         }
 
-        this.setColor(hexColor)
+        this.setColor(hexColor);
     }
 
     ColorPicker.prototype.setColor = function(hexColor) {
-        this.$dataLocker.val(hexColor)
+        this.$dataLocker.val(hexColor);
     }
 
     ColorPicker.prototype.selectColor = function(el) {
-        var $item = $(el)
+        var $item = $(el);
 
         $item
             .addClass('active')
-            .siblings().removeClass('active')
+            .siblings().removeClass('active');
 
-        this.setColor($item.data('hexColor'))
-
-        if($item.data('hexColor').length > 0) {
-            $item.addClass('sp-clear-display')
-        }
+        this.setColor($item.data('hexColor'));
     }
 
     // COLORPICKER PLUGIN DEFINITION

@@ -58,9 +58,9 @@ class DatePicker extends FormWidgetBase
     public $showWeekNumber = false;
 
     /**
-     * @var bool ignoreTimezone will not apply timezone modifications
+     * @var bool useTimezone will convert the date and time to the user preference
      */
-    public $ignoreTimezone = false;
+    public $useTimezone = true;
 
     //
     // Object properties
@@ -84,13 +84,18 @@ class DatePicker extends FormWidgetBase
             'yearRange',
             'firstDay',
             'showWeekNumber',
-            'ignoreTimezone',
+            'useTimezone',
         ]);
 
         $this->mode = strtolower($this->mode);
 
+        // @deprecated API
+        if ($this->getConfig('ignoreTimezone', false)) {
+            $this->useTimezone = false;
+        }
+
         if ($this->mode === 'time' || $this->mode === 'date') {
-            $this->ignoreTimezone = true;
+            $this->useTimezone = false;
         }
 
         if ($this->minDate !== null) {
@@ -134,7 +139,7 @@ class DatePicker extends FormWidgetBase
         $this->vars['yearRange'] = $this->yearRange;
         $this->vars['firstDay'] = $this->firstDay;
         $this->vars['showWeekNumber'] = $this->showWeekNumber;
-        $this->vars['ignoreTimezone'] = $this->ignoreTimezone;
+        $this->vars['useTimezone'] = $this->useTimezone;
         $this->vars['format'] = $this->format;
         $this->vars['formatMoment'] = $this->getDateFormatMoment();
         $this->vars['formatAlias'] = $this->getDateFormatAlias();
@@ -145,10 +150,6 @@ class DatePicker extends FormWidgetBase
      */
     public function getSaveValue($value)
     {
-        if ($this->formField->disabled || $this->formField->hidden) {
-            return FormField::NO_SAVE_DATA;
-        }
-
         if (!strlen($value)) {
             return null;
         }

@@ -295,7 +295,7 @@ return [
     'mail_brand' => [
         'menu_label' => 'Mail Branding',
         'menu_description' => 'Modify the colors and appearance of mail templates.',
-        'page_title' => 'Customize mail appearance',
+        'page_title' => 'Customize Mail Appearance',
         'sample_template' => [
             'heading' => 'Heading',
             'paragraph' => 'This is a paragraph filled with Lorem Ipsum and a link. Cumque dicta <a>doloremque eaque</a>, enim error laboriosam pariatur possimus tenetur veritatis voluptas.',
@@ -367,8 +367,11 @@ return [
         'plugin_latest' => 'Latest',
         'plugin_author' => 'Author',
         'plugin_not_found' => 'Plugin not found',
+        'plugin_version_not_found' => 'Plugin version not found',
         'theme_not_found' => 'Theme not found',
         'core_current_build' => 'Current Build',
+        'core_updates_available' => 'Updates Available',
+        'core_up_to_date' => 'Up to Date',
         'core_latest_build' => 'Latest Build',
         'core_view_changelog' => 'View Changelog',
         'core_build' => 'Build :build',

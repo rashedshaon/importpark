@@ -20,11 +20,11 @@ class DbBackendUsers extends Migration
             $table->text('permissions')->nullable();
             $table->boolean('is_activated')->default(0);
             $table->boolean('is_superuser')->default(false);
-            $table->integer('role_id')->unsigned()->nullable()->index('admin_role_index');
             $table->timestamp('activated_at')->nullable();
             $table->timestamp('last_login')->nullable();
-            $table->timestamps();
             $table->timestamp('deleted_at')->nullable();
+            $table->integer('role_id')->unsigned()->nullable()->index('admin_role_index');
+            $table->timestamps();
         });
     }
 

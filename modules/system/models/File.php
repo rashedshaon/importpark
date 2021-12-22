@@ -63,13 +63,20 @@ class File extends FileBase
      */
     public function getPublicPath()
     {
-        $diskUrl = $this->getDisk()->url($this->getStorageDirectory());
+        $uploadsPath = Config::get('system.storage.uploads.path', '/storage/app/uploads');
 
-        if ($this->isLocalStorage() && Config::get('system.relative_links') !== true) {
-            return Url::asset($diskUrl) . '/';
+        if ($this->isPublic()) {
+            $uploadsPath .= '/public';
+        }
+        else {
+            $uploadsPath .= '/protected';
         }
 
-        return $diskUrl;
+        if ($this->isLocalStorage() && Config::get('system.relative_links') !== true) {
+            return Url::asset($uploadsPath) . '/';
+        }
+
+        return $uploadsPath . '/';
     }
 
     /**

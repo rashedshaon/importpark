@@ -26,6 +26,10 @@
         <?php endif ?>
     <?php endif ?>
 <?php else: ?>
+    <input
+        type="hidden"
+        name="<?= $field->getName() ?>"
+        value="" />
     <select
         id="<?= $field->getId() ?>"
         name="<?= $field->getName() ?>[]"

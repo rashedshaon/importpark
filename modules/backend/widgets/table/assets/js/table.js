@@ -19,78 +19,83 @@
     // ============================
 
     var Table = function(element, options) {
-        this.el = element
-        this.$el = $(element)
+        this.el = element;
+        this.$el = $(element);
 
-        this.options = options
-        this.disposed = false
+        this.options = options;
+        this.disposed = false;
 
         //
         // State properties
         //
 
         // The data source object
-        this.dataSource = null
+        this.dataSource = null;
 
         // The cell processors list
-        this.cellProcessors = {}
+        this.cellProcessors = {};
 
         // A reference to the currently active cell processor
-        this.activeCellProcessor = null
+        this.activeCellProcessor = null;
 
         // A reference to the currently active table cell
-        this.activeCell = null
+        this.activeCell = null;
 
         // A reference to the tables container
-        this.tableContainer = null
+        this.tableContainer = null;
 
         // A reference to the data table container
-        this.dataTableContainer = null
+        this.dataTableContainer = null;
 
         // The key of the row which is being edited at the moment.
         // This key corresponds the data source row key which
         // uniquely identifies the row in the data set. When the
         // table grid notices that a cell in another row is edited it commits
         // the previously edited record to the data source.
-        this.editedRowKey = null
+        this.editedRowKey = null;
 
         // A reference to the data table
-        this.dataTable = null
+        this.dataTable = null;
 
         // A reference to the header table
-        this.headerTable = null
+        this.headerTable = null;
 
         // A reference to the toolbar
-        this.toolbar = null
+        this.toolbar = null;
 
         // Event handlers
-        this.clickHandler = this.onClick.bind(this)
-        this.keydownHandler = this.onKeydown.bind(this)
-        this.documentClickHandler = this.onDocumentClick.bind(this)
-        this.toolbarClickHandler = this.onToolbarClick.bind(this)
+        this.clickHandler = this.onClick.bind(this);
+        this.keydownHandler = this.onKeydown.bind(this);
+        this.documentClickHandler = this.onDocumentClick.bind(this);
+        this.toolbarClickHandler = this.onToolbarClick.bind(this);
 
-        if (this.options.postback && this.options.clientDataSourceClass == 'client')
-            this.formSubmitHandler = this.onFormSubmit.bind(this)
+        if (this.options.postback && this.options.clientDataSourceClass == 'client') {
+            if (!this.options.postbackHandlerName) {
+                var formHandler = this.$el.closest('form').data('request');
+                this.options.postbackHandlerName = formHandler || 'onSave';
+            }
+            this.formSubmitHandler = this.onFormSubmit.bind(this);
+        }
 
         // Navigation helper
-        this.navigation = null
+        this.navigation = null;
 
         // Search helper
-        this.search = null
+        this.search = null;
 
         // Number of records added or deleted during the session
-        this.recordsAddedOrDeleted = 0
+        this.recordsAddedOrDeleted = 0;
 
         // Bound reference to dispose() - ideally the class should use the October foundation library base class
-        this.disposeBound = this.dispose.bind(this)
+        this.disposeBound = this.dispose.bind(this);
 
         //
         // Initialization
         //
 
-        this.init()
+        this.init();
 
-        $.oc.foundation.controlUtils.markDisposable(element)
+        $.oc.foundation.controlUtils.markDisposable(element);
     }
 
     // INTERNAL METHODS
@@ -144,18 +149,20 @@
     }
 
     Table.prototype.registerHandlers = function() {
-        this.el.addEventListener('click', this.clickHandler)
-        this.el.addEventListener('keydown', this.keydownHandler)
-        this.$el.one('dispose-control', this.disposeBound)
+        this.el.addEventListener('click', this.clickHandler);
+        this.el.addEventListener('keydown', this.keydownHandler);
+        this.$el.one('dispose-control', this.disposeBound);
 
-        document.addEventListener('click', this.documentClickHandler)
+        document.addEventListener('click', this.documentClickHandler);
 
-        if (this.options.postback && this.options.clientDataSourceClass == 'client')
-            this.$el.closest('form').bind('oc.beforeRequest', this.formSubmitHandler)
+        if (this.options.postback && this.options.clientDataSourceClass == 'client') {
+            this.$el.closest('form').bind('oc.beforeRequest', this.formSubmitHandler);
+        }
 
-        var toolbar = this.getToolbar()
-        if (toolbar)
+        var toolbar = this.getToolbar();
+        if (toolbar) {
             toolbar.addEventListener('click', this.toolbarClickHandler);
+        }
     }
 
     Table.prototype.unregisterHandlers = function() {
@@ -168,14 +175,15 @@
         this.keydownHandler = null
 
         var toolbar = this.getToolbar()
-        if (toolbar)
+        if (toolbar) {
             toolbar.removeEventListener('click', this.toolbarClickHandler);
+        }
 
-        this.toolbarClickHandler = null
+        this.toolbarClickHandler = null;
 
         if (this.formSubmitHandler) {
-            this.$el.closest('form').unbind('oc.beforeRequest', this.formSubmitHandler)
-            this.formSubmitHandler = null
+            this.$el.closest('form').unbind('oc.beforeRequest', this.formSubmitHandler);
+            this.formSubmitHandler = null;
         }
     }
 
@@ -204,75 +212,77 @@
     }
 
     Table.prototype.buildUi = function() {
-        this.tableContainer = document.createElement('div')
-        this.tableContainer.setAttribute('class', 'table-container')
+        this.tableContainer = document.createElement('div');
+        this.tableContainer.setAttribute('class', 'table-container');
 
         // Build the toolbar
         if (this.options.toolbar) {
-            this.buildToolbar()
+            this.buildToolbar();
         }
 
         // Build the headers table
-        this.tableContainer.appendChild(this.buildHeaderTable())
+        this.tableContainer.appendChild(this.buildHeaderTable());
 
         // Append the table container to the element
-        this.el.insertBefore(this.tableContainer, this.el.children[0])
+        this.el.insertBefore(this.tableContainer, this.el.children[0]);
 
         if (!this.options.height) {
-            this.dataTableContainer = this.tableContainer
+            this.dataTableContainer = this.tableContainer;
         }
         else {
-            this.dataTableContainer = this.buildScrollbar()
+            this.dataTableContainer = this.buildScrollbar();
         }
 
         // Build the data table
-        this.updateDataTable()
+        this.updateDataTable();
     }
 
     Table.prototype.buildToolbar = function() {
         if (!this.options.adding && !this.options.deleting) {
-            return
+            return;
         }
 
-        this.toolbar = $($('[data-table-toolbar]', this.el).html()).appendTo(this.tableContainer).get(0)
+        this.toolbar = $($('[data-table-toolbar]', this.el).html()).appendTo(this.tableContainer).get(0);
 
         if (!this.options.adding) {
-            $('[data-cmd^="record-add"]', this.toolbar).remove()
+            $('[data-cmd^="record-add"]', this.toolbar).remove();
         }
         else {
             if (this.navigation.paginationEnabled() || !this.options.rowSorting) {
                 // When the pagination is enabled, or sorting is disabled,
                 // new records can only be added to the bottom of the
                 // table, so just show the general "Add row" button.
-                $('[data-cmd=record-add-below], [data-cmd=record-add-above]', this.toolbar).remove()
+                $('[data-cmd=record-add-below], [data-cmd=record-add-above]', this.toolbar).remove();
             }
             else {
-                $('[data-cmd=record-add]', this.toolbar).remove()
+                $('[data-cmd=record-add]', this.toolbar).remove();
             }
         }
 
         if (!this.options.deleting) {
-            $('[data-cmd="record-delete"]', this.toolbar).remove()
+            $('[data-cmd="record-delete"]', this.toolbar).remove();
         }
     }
 
     Table.prototype.buildScrollbar = function() {
         var scrollbar = document.createElement('div'),
-            scrollbarContent = document.createElement('div')
+            scrollbarContent = document.createElement('div');
 
-        scrollbar.setAttribute('class', 'control-scrollbar')
+        scrollbar.setAttribute('class', 'control-scrollbar');
 
-        if (this.options.dynamicHeight)
-            scrollbar.setAttribute('style', 'max-height: ' + this.options.height + 'px')
-        else
-            scrollbar.setAttribute('style', 'height: ' + this.options.height + 'px')
+        if (this.options.dynamicHeight) {
+            scrollbar.setAttribute('style', 'max-height: ' + this.options.height + 'px');
+        }
+        else {
+            scrollbar.setAttribute('style', 'height: ' + this.options.height + 'px');
+        }
 
-        scrollbar.appendChild(scrollbarContent)
-        this.tableContainer.appendChild(scrollbar)
+        scrollbar.appendChild(scrollbarContent);
+        this.tableContainer.appendChild(scrollbar);
 
-        $(scrollbar).scrollbar({animation: false})
+        $(scrollbar).scrollbar({animation: false});
 
-        return scrollbarContent
+        return scrollbarContent;
     }
 
     Table.prototype.buildHeaderTable = function() {
@@ -795,26 +805,31 @@
         }
     }
 
+    // Validate table contents and manipulate request directly
     Table.prototype.onFormSubmit = function(ev, data) {
-        if (data.handler == this.options.postbackHandlerName) {
-            this.unfocusTable()
+        var isSubmitHandler = data.handler === this.options.postbackHandlerName;
+
+        if (isSubmitHandler) {
+            this.unfocusTable();
 
             if (!this.validate()) {
-                ev.preventDefault()
-                return
+                ev.preventDefault();
+                return;
             }
+        }
 
+        if (isSubmitHandler || this.options.postbackHandlerWild) {
             var fieldName = this.options.fieldName.indexOf('[') > -1
                 ? this.options.fieldName + '[TableData]'
-                : this.options.fieldName + 'TableData'
+                : this.options.fieldName + 'TableData';
 
-            data.options.data[fieldName] = this.dataSource.getAllData()
+            data.options.data[fieldName] = JSON.stringify(this.dataSource.getAllData());
         }
     }
 
     Table.prototype.onToolbarClick = function(ev) {
         var target = this.getEventTarget(ev, 'BUTTON'),
-            cmd = target.getAttribute('data-cmd')
+            cmd = target && target.getAttribute('data-cmd');
 
         if (!cmd) {
             return
@@ -1101,7 +1116,7 @@
                     this.getCellColumnName(cellElement),
                     value,
                     this.getCellRowIndex(cellElement)
-                ])
+                ]);
             }
         }
     }
@@ -1112,7 +1127,8 @@
         recordsPerPage: false,
         data: null,
         postback: true,
-        postbackHandlerName: 'onSave',
+        postbackHandlerName: null,
+        postbackHandlerWild: false,
         adding: true,
         deleting: true,
         toolbar: true,

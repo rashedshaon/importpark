@@ -47,17 +47,17 @@ class UpdateManager
     protected $tempDirectory;
 
     /**
-     * @var System\Classes\PluginManager
+     * @var PluginManager
      */
     protected $pluginManager;
 
     /**
-     * @var Cms\Classes\ThemeManager
+     * @var ThemeManager
      */
     protected $themeManager;
 
     /**
-     * @var System\Classes\VersionManager
+     * @var VersionManager
      */
     protected $versionManager;
 
@@ -72,12 +72,12 @@ class UpdateManager
     protected $secret;
 
     /**
-     * @var Illuminate\Database\Migrations\Migrator
+     * @var \Illuminate\Database\Migrations\Migrator
      */
     protected $migrator;
 
     /**
-     * @var Illuminate\Database\Migrations\DatabaseMigrationRepository
+     * @var \Illuminate\Database\Migrations\DatabaseMigrationRepository
      */
     protected $repository;
 
@@ -360,7 +360,7 @@ class UpdateManager
         };
 
         $plugins = $themes = [];
-        $packages = (new ComposerProcess)->listPackages();
+        $packages = (new ComposerProcess)->listAllPackages();
         $project = $this->requestProjectDetails();
 
         foreach (($project['plugins'] ?? []) as $plugin) {
@@ -494,11 +494,19 @@ class UpdateManager
     {
         $version = SystemHelper::VERSION;
 
-        if ($build = Parameter::get('system::core.build')) {
+        if ($build = $this->getCurrentBuildNumber()) {
             $version .= '.' . $build;
         }
 
         return $version;
+    }
+
+    /**
+     * getCurrentBuildNumber return the current build number
+     */
+    public function getCurrentBuildNumber(): ?string
+    {
+        return Parameter::get('system::core.build');
     }
 
     /**
@@ -575,7 +583,7 @@ class UpdateManager
         $plugin = $this->pluginManager->findByIdentifier($name);
 
         if (!$plugin) {
-            $this->note('<error>Unable to find:</error> ' . $name);
+            $this->note('<error>Unable to find</error> ' . $name);
             return $this;
         }
 
@@ -596,16 +604,43 @@ class UpdateManager
         $plugin = $this->pluginManager->findByIdentifier($name);
 
         if (!$plugin && $this->versionManager->purgePlugin($name)) {
-            $this->note('<info>Purged from database:</info> ' . $name);
+            $this->note('<info>Purged from database</info> ' . $name);
             return $this;
         }
 
         if ($this->versionManager->removePlugin($plugin)) {
-            $this->note('<info>Rolled back:</info> ' . $name);
+            $this->note('<info>Rolled back</info> ' . $name);
             return $this;
         }
 
-        $this->note('<error>Unable to find:</error> ' . $name);
+        $this->note('<error>Unable to find</error> ' . $name);
+        return $this;
+    }
+
+    /**
+     * rollbackPlugin removes an existing plugin database and version record
+     */
+    public function rollbackPluginToVersion(string $name, string $toVersion): UpdateManager
+    {
+        $toVersion = ltrim($toVersion, 'v');
+
+        $plugin = $this->pluginManager->findByIdentifier($name);
+
+        if (!$plugin && $this->versionManager->purgePlugin($name)) {
+            $this->note('<info>Purged from database</info> ' . $name);
+            return $this;
+        }
+
+        if (!$this->versionManager->hasVersion($plugin, $toVersion)) {
+            throw new ApplicationException(Lang::get('system::lang.updates.plugin_version_not_found'));
+        }
+
+        if ($this->versionManager->removePluginToVersion($plugin, $toVersion)) {
+            $this->note("<info>Rolled back</info> ${name} <info>to version</info> {$toVersion}");
+            return $this;
+        }
+
+        $this->note('<error>Unable to find</error> ' . $name);
         return $this;
     }
 
@@ -689,7 +724,7 @@ class UpdateManager
      */
     public function requestChangelog()
     {
-        $result = Http::get('https://octobercms.com/changelog?json=2.0');
+        $result = Http::get('https://octobercms.com/changelog?json='.SystemHelper::VERSION);
 
         if ($result->code === 404) {
             throw new ApplicationException(Lang::get('system::lang.server.response_empty'));

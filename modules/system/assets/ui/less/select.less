@@ -38,6 +38,13 @@
 .select2-container--default {
     display: block;
 
+    button {
+        padding: 0;
+        border: 0;
+        background: transparent;
+        line-height: 20px;
+    }
+
     .select2-selection {
         .select-input-defaults();
         outline: 0;
@@ -61,12 +68,12 @@
         }
     }
 
-    .select2-dropdown--below {
-        .select2-search--dropdown {
-            &:after {
-            }
-        }
-    }
+    // .select2-dropdown--below {
+    //     .select2-search--dropdown {
+    //         &:after {
+    //         }
+    //     }
+    // }
 
     .select2-search__field {
         outline: 0;
@@ -257,7 +264,7 @@
     }
 
     .select2-dropdown.select-hide-selected {
-        li[aria-selected=true] {
+        .select2-results__option--selected {
             display: none !important;
         }
     }
@@ -313,7 +320,7 @@
 
         .select2-selection__rendered {
             box-sizing: border-box;
-            display: block;
+            display: inline;
             line-height: @line-height-base;
             list-style: none;
             margin: 0;
@@ -347,15 +354,14 @@
         //
         // Minus 2px borders.
         //
-        .select2-search--inline {
-            .select2-search__field {
-                background: transparent;
-                padding: 0 @padding-base-horizontal;
-                height: @input-height-base - 2;
-                line-height: @line-height-base;
-                margin-top: 0;
-                min-width: 5em;
-            }
+        .select2-search--inline .select2-search__field {
+            background: transparent;
+            padding: 0 @padding-base-horizontal;
+            height: @input-height-base - 2;
+            line-height: @line-height-base + 1;
+            margin-top: 0;
+            margin-left: 0;
+            min-width: 5em;
         }
 
         .select2-selection__choice__remove {
@@ -364,8 +370,7 @@
             display: inline-block;
             font-weight: normal;
             font-size: 13px;
-            float: right;
-            margin: 0 0 0 6px;
+            margin: 0 6px 0 0;
 
             &:hover {
                 color: @brand-danger;
@@ -420,7 +425,7 @@
                 padding: 0 @padding-small-horizontal;
                 font-size: @font-size-small;
                 height: @input-height-small - 2;
-                line-height: @line-height-small;
+                line-height: @line-height-small + 1;
             }
 
             .select2-selection__clear {
@@ -467,7 +472,7 @@
                 padding: 0 @padding-large-horizontal;
                 font-size: @font-size-large;
                 height: @input-height-large - 2;
-                line-height: @line-height-large;
+                line-height: @line-height-large + 1;
             }
 
             .select2-selection__clear {

@@ -110,44 +110,11 @@ class CmsObject extends HalcyonModel implements CmsObjectContract
     public static function loadCached($theme, $fileName)
     {
         try {
-            $cacheKey = static::makeInternalCacheKey($theme, $fileName);
-
-            if (ObjectMemoryCache::has($cacheKey)) {
-                return ObjectMemoryCache::get($cacheKey, new static);
-            }
-
-            $result = static::inTheme($theme)
-                ->remember(Config::get('cms.template_cache_ttl', 1440))
-                ->find($fileName)
-            ;
-
-            ObjectMemoryCache::put($cacheKey, $result);
-
-            return $result;
+            return CmsObjectCache::lookup(static::inTheme($theme), $fileName);
         }
         catch (Exception $ex) {
             static::throwHalcyonException($ex);
         }
-    }
-
-    /**
-     * makeCacheKey makes a unique key for this object
-     */
-    protected static function makeInternalCacheKey($theme, string $fileName): string
-    {
-        $objRef = get_called_class();
-
-        $themeDir = is_string($theme) ? $theme : $theme->getDirName();
-
-        return "${objRef}.${themeDir}.${fileName}";
-    }
-
-    /**
-     * clearInternalCache clears the request-level object cache
-     */
-    public static function clearInternalCache()
-    {
-        ObjectMemoryCache::flush();
     }
 
     /**
@@ -327,7 +294,7 @@ class CmsObject extends HalcyonModel implements CmsObjectContract
      */
     public function getTwigCacheKey()
     {
-        $key = $this->getFilePath();
+        $key = $this->theme->getDirName().'/'.$this->getObjectTypeDirName().'/'.$this->fileName;
 
         if ($event = $this->fireEvent('cmsObject.getTwigCacheKey', compact('key'), true)) {
             $key = $event;

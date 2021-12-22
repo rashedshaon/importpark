@@ -92,18 +92,6 @@ class MediaFinder extends FormWidgetBase
     /**
      * @inheritDoc
      */
-    public function getSaveValue($value)
-    {
-        if ($this->formField->disabled || $this->formField->hidden) {
-            return FormField::NO_SAVE_DATA;
-        }
-
-        return $value;
-    }
-
-    /**
-     * @inheritDoc
-     */
     protected function loadAssets()
     {
         $this->addJs('js/mediafinder.js', 'core');

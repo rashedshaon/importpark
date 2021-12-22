@@ -3,8 +3,8 @@ if(window.jQuery===undefined){throw new Error('The jQuery library is not loaded!
 if(window.jQuery.request!==undefined){throw new Error('The October CMS framework is already loaded!');}
 +function($){"use strict";var Request=function(element,handler,options){var $el=this.$el=$(element);this.options=options||{};if(handler===undefined){throw new Error('The request handler name is not specified.');}
 if(!handler.match(/^(?:\w+\:{2})?on*/)){throw new Error('Invalid handler name. The correct handler name format is: "onEvent".');}
-var $form=options.form?$(options.form):$el.closest('form'),$triggerEl=!!$form.length?$form:$el,context={handler:handler,options:options};if((options.browserValidate!==undefined)&&typeof document.createElement('input').reportValidity=='function'&&$form&&$form[0]&&!$form[0].checkValidity()){$form[0].reportValidity();return false;}
-$el.trigger('ajaxSetup',[context]);var _event=jQuery.Event('oc.beforeRequest');$triggerEl.trigger(_event,context);if(_event.isDefaultPrevented()){return;}
+var context={handler:handler,options:options};$el.trigger('ajaxSetup',[context]);var $form=options.form?$(options.form):$el.closest('form'),$triggerEl=!!$form.length?$form:$el;if(options.browserValidate!==undefined&&typeof document.createElement('input').reportValidity==='function'&&!!$form.length&&!$form.get(0).checkValidity()){$form.get(0).reportValidity();return false;}
+var _event=jQuery.Event('oc.beforeRequest');$triggerEl.trigger(_event,context);if(_event.isDefaultPrevented()){return;}
 var loading=options.loading!==undefined?options.loading:null,url=options.url!==undefined?options.url:window.location.href,isRedirect=options.redirect!==undefined&&options.redirect.length,useFlash=options.flash!==undefined,useFiles=options.files!==undefined;if(useFiles&&typeof FormData==='undefined'){console.warn('This browser does not support file uploads via FormData');useFiles=false;}
 if($.type(loading)=='string'){loading=$(loading);}
 var requestHeaders={'X-OCTOBER-REQUEST-HANDLER':handler,'X-OCTOBER-REQUEST-PARTIALS':this.extractPartials(options.update)};if(useFlash){requestHeaders['X-OCTOBER-REQUEST-FLASH']=1;}

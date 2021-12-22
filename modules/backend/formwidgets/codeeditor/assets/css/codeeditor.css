@@ -10,7 +10,8 @@
 .field-codeeditor .ace_search .ace_search_form.ace_nomatch{outline:none !important}
 .field-codeeditor .ace_search .ace_search_form.ace_nomatch .ace_search_field{border:.0625rem solid red;-webkit-box-shadow:0 0 .1875rem .125rem red;box-shadow:0 0 .1875rem .125rem red;z-index:1;position:relative}
 .field-codeeditor .editor-code{-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
-.field-codeeditor .editor-toolbar{position:absolute;padding:0 5px;bottom:10px;right:25px;z-index:10;background:rgba(0,0,0,0.8);border-radius:5px}
+.field-codeeditor .editor-toolbar{position:absolute;padding:0 5px;bottom:10px;right:25px;z-index:10;background:rgba(0,0,0,0.8);border-radius:5px;border:none}
+.field-codeeditor .editor-toolbar:before{display:none}
 .field-codeeditor .editor-toolbar>ul,
 .field-codeeditor .editor-toolbar ul>li{list-style-type:none;padding:0;margin:0}
 .field-codeeditor .editor-toolbar>ul>li{float:left}

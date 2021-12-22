@@ -54,7 +54,7 @@ class FileUpload extends FormWidgetBase
     public $mimeTypes = false;
 
     /**
-     * @var mixed maxFilesize allowed
+     * @var mixed maxFilesize allowed (MB)
      */
     public $maxFilesize;
 
@@ -67,7 +67,7 @@ class FileUpload extends FormWidgetBase
      * @var array thumbOptions used for generating thumbnails
      */
     public $thumbOptions = [
-        'mode'      => 'crop',
+        'mode' => 'crop',
         'extension' => 'auto'
     ];
 
@@ -105,6 +105,8 @@ class FileUpload extends FormWidgetBase
         $this->maxFilesize = $this->getUploadMaxFilesize();
 
         $this->fillFromConfig([
+            'imageWidth',
+            'imageHeight',
             'fileTypes',
             'maxFilesize',
             'maxFiles',
@@ -143,8 +145,9 @@ class FileUpload extends FormWidgetBase
             $this->useCaption = false;
         }
 
-        if ($this->maxFilesize > $this->getUploadMaxFilesize()) {
-            throw new ApplicationException('Maximum allowed size for uploaded files: ' . $this->getUploadMaxFilesize());
+        $maxPhpSetting = $this->getUploadMaxFilesize();
+        if ($maxPhpSetting && $this->maxFilesize > $maxPhpSetting) {
+            throw new ApplicationException('Maximum allowed size for uploaded files: ' . $maxPhpSetting);
         }
 
         $this->vars['fileList'] = $fileList = $this->getFileList();
@@ -290,7 +293,7 @@ class FileUpload extends FormWidgetBase
             $types = implode(',', FileDefinitions::get($definitionCode));
         }
 
-        if (!$types || $types == '*') {
+        if (!$types || $types === '*') {
             return null;
         }
 
@@ -352,8 +355,6 @@ class FileUpload extends FormWidgetBase
             $this->vars['file'] = $file;
             $this->vars['displayMode'] = $this->getDisplayMode();
             $this->vars['cssDimensions'] = $this->getCssDimensions();
-            $this->vars['relationManageId'] = post('manage_id');
-            $this->vars['relationField'] = post('_relation_field');
 
             return $this->makePartial('config_form');
         }
@@ -499,17 +500,42 @@ class FileUpload extends FormWidgetBase
 
     /**
      * getUploadMaxFilesize returns max upload filesize in MB
-     * @return integer
      */
-    protected function getUploadMaxFilesize()
+    protected function getUploadMaxFilesize(): float
     {
-        $size = ini_get('upload_max_filesize');
-        if (preg_match('/^([\d\.]+)([KMG])$/i', $size, $match)) {
-            $pos = array_search($match[2], ['K', 'M', 'G']);
-            if ($pos !== false) {
-                $size = $match[1] * pow(1024, $pos + 1);
-            }
+        $maxSizeBytes = min(
+            $this->convertPhpSizeToBytes(ini_get('post_max_size')),
+            $this->convertPhpSizeToBytes(ini_get('upload_max_filesize'))
+        );
+
+        return round($maxSizeBytes / 1024 / 1024, 4);
+    }
+
+    /**
+     * convertPhpSizeToBytes converts a PHP size shorthand notation to bytes
+     */
+    protected function convertPhpSizeToBytes($size): float
+    {
+        $suffix = strtoupper(substr($size, -1));
+        if (!in_array($suffix, ['P', 'T', 'G', 'M', 'K'])){
+            return (float) $size;
         }
-        return floor($size / 1024 / 1024);
+
+        $value = substr($size, 0, -1);
+        switch ($suffix) {
+            case 'P':
+                $value *= 1024;
+            case 'T':
+                $value *= 1024;
+            case 'G':
+                $value *= 1024;
+            case 'M':
+                $value *= 1024;
+            case 'K':
+                $value *= 1024;
+                break;
+        }
+
+        return (float) $value;
     }
 }

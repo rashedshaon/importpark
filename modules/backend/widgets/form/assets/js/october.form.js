@@ -197,7 +197,6 @@
         }
 
         this.toggleEmptyTabsTimer = window.setTimeout(function() {
-
             var tabControl = $('[data-control=tab]', self.$el),
                 tabContainer = $('.nav-tabs', tabControl);
 
@@ -209,9 +208,11 @@
              * Check each tab pane for form field groups
              */
             $('.tab-pane:not(.is-lazy)', tabControl).each(function() {
+                var hasControls = $('.form-group:not(:empty):not(.hide)', $(this)).length;
+
                 $('[data-target="#' + $(this).attr('id') + '"]', tabControl)
                     .closest('li')
-                    .toggle(!!$('> .form-group:not(:empty):not(.hide)', $(this)).length);
+                    .toggle(!!hasControls);
             });
 
             /*

@@ -3,32 +3,9 @@
 $.oc={}
 if($.oc.table===undefined)
 $.oc.table={}
-var Table=function(element,options){this.el=element
-this.$el=$(element)
-this.options=options
-this.disposed=false
-this.dataSource=null
-this.cellProcessors={}
-this.activeCellProcessor=null
-this.activeCell=null
-this.tableContainer=null
-this.dataTableContainer=null
-this.editedRowKey=null
-this.dataTable=null
-this.headerTable=null
-this.toolbar=null
-this.clickHandler=this.onClick.bind(this)
-this.keydownHandler=this.onKeydown.bind(this)
-this.documentClickHandler=this.onDocumentClick.bind(this)
-this.toolbarClickHandler=this.onToolbarClick.bind(this)
-if(this.options.postback&&this.options.clientDataSourceClass=='client')
-this.formSubmitHandler=this.onFormSubmit.bind(this)
-this.navigation=null
-this.search=null
-this.recordsAddedOrDeleted=0
-this.disposeBound=this.dispose.bind(this)
-this.init()
-$.oc.foundation.controlUtils.markDisposable(element)}
+var Table=function(element,options){this.el=element;this.$el=$(element);this.options=options;this.disposed=false;this.dataSource=null;this.cellProcessors={};this.activeCellProcessor=null;this.activeCell=null;this.tableContainer=null;this.dataTableContainer=null;this.editedRowKey=null;this.dataTable=null;this.headerTable=null;this.toolbar=null;this.clickHandler=this.onClick.bind(this);this.keydownHandler=this.onKeydown.bind(this);this.documentClickHandler=this.onDocumentClick.bind(this);this.toolbarClickHandler=this.onToolbarClick.bind(this);if(this.options.postback&&this.options.clientDataSourceClass=='client'){if(!this.options.postbackHandlerName){var formHandler=this.$el.closest('form').data('request');this.options.postbackHandlerName=formHandler||'onSave';}
+this.formSubmitHandler=this.onFormSubmit.bind(this);}
+this.navigation=null;this.search=null;this.recordsAddedOrDeleted=0;this.disposeBound=this.dispose.bind(this);this.init();$.oc.foundation.controlUtils.markDisposable(element);}
 Table.prototype.init=function(){this.createDataSource()
 this.initCellProcessors()
 this.navigation=new $.oc.table.helper.navigation(this)
@@ -44,23 +21,14 @@ Table.prototype.createDataSource=function(){var dataSourceClass=this.options.cli
 if($.oc.table.datasource===undefined||$.oc.table.datasource[dataSourceClass]==undefined)
 throw new Error('The table client-side data source class "'+dataSourceClass+'" is not '+'found in the $.oc.table.datasource namespace.')
 this.dataSource=new $.oc.table.datasource[dataSourceClass](this)}
-Table.prototype.registerHandlers=function(){this.el.addEventListener('click',this.clickHandler)
-this.el.addEventListener('keydown',this.keydownHandler)
-this.$el.one('dispose-control',this.disposeBound)
-document.addEventListener('click',this.documentClickHandler)
-if(this.options.postback&&this.options.clientDataSourceClass=='client')
-this.$el.closest('form').bind('oc.beforeRequest',this.formSubmitHandler)
-var toolbar=this.getToolbar()
-if(toolbar)
-toolbar.addEventListener('click',this.toolbarClickHandler);}
+Table.prototype.registerHandlers=function(){this.el.addEventListener('click',this.clickHandler);this.el.addEventListener('keydown',this.keydownHandler);this.$el.one('dispose-control',this.disposeBound);document.addEventListener('click',this.documentClickHandler);if(this.options.postback&&this.options.clientDataSourceClass=='client'){this.$el.closest('form').bind('oc.beforeRequest',this.formSubmitHandler);}
+var toolbar=this.getToolbar();if(toolbar){toolbar.addEventListener('click',this.toolbarClickHandler);}}
 Table.prototype.unregisterHandlers=function(){this.el.removeEventListener('click',this.clickHandler);document.removeEventListener('click',this.documentClickHandler)
 this.clickHandler=null
 this.el.removeEventListener('keydown',this.keydownHandler);this.keydownHandler=null
 var toolbar=this.getToolbar()
-if(toolbar)
-toolbar.removeEventListener('click',this.toolbarClickHandler);this.toolbarClickHandler=null
-if(this.formSubmitHandler){this.$el.closest('form').unbind('oc.beforeRequest',this.formSubmitHandler)
-this.formSubmitHandler=null}}
+if(toolbar){toolbar.removeEventListener('click',this.toolbarClickHandler);}
+this.toolbarClickHandler=null;if(this.formSubmitHandler){this.$el.closest('form').unbind('oc.beforeRequest',this.formSubmitHandler);this.formSubmitHandler=null;}}
 Table.prototype.initCellProcessors=function(){for(var i=0,len=this.options.columns.length;i<len;i++){var columnConfiguration=this.options.columns[i],column=columnConfiguration.key,columnType=columnConfiguration.type
 if(columnType===undefined){columnType='string'
 this.options.columns[i].type=columnType}
@@ -68,30 +36,18 @@ if($.oc.table.processor===undefined||$.oc.table.processor[columnType]==undefined
 throw new Error('The table cell processor for the column type "'+columnType+'" is not '+'found in the $.oc.table.processor namespace.')
 this.cellProcessors[column]=new $.oc.table.processor[columnType](this,column,columnConfiguration)}}
 Table.prototype.getCellProcessor=function(columnName){return this.cellProcessors[columnName]}
-Table.prototype.buildUi=function(){this.tableContainer=document.createElement('div')
-this.tableContainer.setAttribute('class','table-container')
-if(this.options.toolbar){this.buildToolbar()}
-this.tableContainer.appendChild(this.buildHeaderTable())
-this.el.insertBefore(this.tableContainer,this.el.children[0])
-if(!this.options.height){this.dataTableContainer=this.tableContainer}
-else{this.dataTableContainer=this.buildScrollbar()}
-this.updateDataTable()}
-Table.prototype.buildToolbar=function(){if(!this.options.adding&&!this.options.deleting){return}
-this.toolbar=$($('[data-table-toolbar]',this.el).html()).appendTo(this.tableContainer).get(0)
-if(!this.options.adding){$('[data-cmd^="record-add"]',this.toolbar).remove()}
-else{if(this.navigation.paginationEnabled()||!this.options.rowSorting){$('[data-cmd=record-add-below], [data-cmd=record-add-above]',this.toolbar).remove()}
-else{$('[data-cmd=record-add]',this.toolbar).remove()}}
-if(!this.options.deleting){$('[data-cmd="record-delete"]',this.toolbar).remove()}}
-Table.prototype.buildScrollbar=function(){var scrollbar=document.createElement('div'),scrollbarContent=document.createElement('div')
-scrollbar.setAttribute('class','control-scrollbar')
-if(this.options.dynamicHeight)
-scrollbar.setAttribute('style','max-height: '+this.options.height+'px')
-else
-scrollbar.setAttribute('style','height: '+this.options.height+'px')
-scrollbar.appendChild(scrollbarContent)
-this.tableContainer.appendChild(scrollbar)
-$(scrollbar).scrollbar({animation:false})
-return scrollbarContent}
+Table.prototype.buildUi=function(){this.tableContainer=document.createElement('div');this.tableContainer.setAttribute('class','table-container');if(this.options.toolbar){this.buildToolbar();}
+this.tableContainer.appendChild(this.buildHeaderTable());this.el.insertBefore(this.tableContainer,this.el.children[0]);if(!this.options.height){this.dataTableContainer=this.tableContainer;}
+else{this.dataTableContainer=this.buildScrollbar();}
+this.updateDataTable();}
+Table.prototype.buildToolbar=function(){if(!this.options.adding&&!this.options.deleting){return;}
+this.toolbar=$($('[data-table-toolbar]',this.el).html()).appendTo(this.tableContainer).get(0);if(!this.options.adding){$('[data-cmd^="record-add"]',this.toolbar).remove();}
+else{if(this.navigation.paginationEnabled()||!this.options.rowSorting){$('[data-cmd=record-add-below], [data-cmd=record-add-above]',this.toolbar).remove();}
+else{$('[data-cmd=record-add]',this.toolbar).remove();}}
+if(!this.options.deleting){$('[data-cmd="record-delete"]',this.toolbar).remove();}}
+Table.prototype.buildScrollbar=function(){var scrollbar=document.createElement('div'),scrollbarContent=document.createElement('div');scrollbar.setAttribute('class','control-scrollbar');if(this.options.dynamicHeight){scrollbar.setAttribute('style','max-height: '+this.options.height+'px');}
+else{scrollbar.setAttribute('style','height: '+this.options.height+'px');}
+scrollbar.appendChild(scrollbarContent);this.tableContainer.appendChild(scrollbar);$(scrollbar).scrollbar({animation:false});return scrollbarContent;}
 Table.prototype.buildHeaderTable=function(){var headersTable=document.createElement('table'),row=document.createElement('tr')
 headersTable.className='headers'
 headersTable.appendChild(row)
@@ -280,13 +236,9 @@ for(var i=0,len=this.options.columns.length;i<len;i++){var column=this.options.c
 if(this.cellProcessors[column].onKeyDown(ev)===false){return}}
 if(this.navigation.onKeydown(ev)===false){return}
 if(this.search.onKeydown(ev)===false){return}}
-Table.prototype.onFormSubmit=function(ev,data){if(data.handler==this.options.postbackHandlerName){this.unfocusTable()
-if(!this.validate()){ev.preventDefault()
-return}
-var fieldName=this.options.fieldName.indexOf('[')>-1?this.options.fieldName+'[TableData]':this.options.fieldName+'TableData'
-data.options.data[fieldName]=this.dataSource.getAllData()}}
-Table.prototype.onToolbarClick=function(ev){var target=this.getEventTarget(ev,'BUTTON'),cmd=target.getAttribute('data-cmd')
-if(!cmd){return}
+Table.prototype.onFormSubmit=function(ev,data){var isSubmitHandler=data.handler===this.options.postbackHandlerName;if(isSubmitHandler){this.unfocusTable();if(!this.validate()){ev.preventDefault();return;}}
+if(isSubmitHandler||this.options.postbackHandlerWild){var fieldName=this.options.fieldName.indexOf('[')>-1?this.options.fieldName+'[TableData]':this.options.fieldName+'TableData';data.options.data[fieldName]=JSON.stringify(this.dataSource.getAllData());}}
+Table.prototype.onToolbarClick=function(ev){var target=this.getEventTarget(ev,'BUTTON'),cmd=target&&target.getAttribute('data-cmd');if(!cmd){return}
 switch(cmd){case'record-add':case'record-add-below':this.addRecord('below')
 break
 case'record-add-above':this.addRecord('above')
@@ -382,8 +334,8 @@ Table.prototype.setCellValue=function(cellElement,value,suppressEvents){var data
 if(dataContainer.value!=value){dataContainer.value=value
 this.markCellRowDirty(cellElement)
 this.notifyRowProcessorsOnChange(cellElement)
-if(suppressEvents===undefined||!suppressEvents){this.$el.trigger('oc.tableCellChanged',[this.getCellColumnName(cellElement),value,this.getCellRowIndex(cellElement)])}}}
-Table.DEFAULTS={clientDataSourceClass:'client',keyColumn:'id',recordsPerPage:false,data:null,postback:true,postbackHandlerName:'onSave',adding:true,deleting:true,toolbar:true,searching:false,rowSorting:false,height:false,dynamicHeight:false}
+if(suppressEvents===undefined||!suppressEvents){this.$el.trigger('oc.tableCellChanged',[this.getCellColumnName(cellElement),value,this.getCellRowIndex(cellElement)]);}}}
+Table.DEFAULTS={clientDataSourceClass:'client',keyColumn:'id',recordsPerPage:false,data:null,postback:true,postbackHandlerName:null,postbackHandlerWild:false,adding:true,deleting:true,toolbar:true,searching:false,rowSorting:false,height:false,dynamicHeight:false}
 var old=$.fn.table
 $.fn.table=function(option){var args=Array.prototype.slice.call(arguments,1),result=undefined
 this.each(function(){var $this=$(this)

@@ -8,6 +8,7 @@ use Cms\Classes\Content;
 use Cms\Classes\Layout;
 use Cms\Classes\EditorExtension;
 use Cms\Classes\ComponentHelpers;
+use Cms\Classes\ComponentManager;
 use System\Classes\PluginManager;
 use Backend\VueComponents\TreeView\NodeDefinition;
 use Backend\VueComponents\DropdownMenu\ItemDefinition;
@@ -25,10 +26,20 @@ trait EditorExtensionState
             $this->makeMetadataForNewTemplate(EditorExtension::DOCUMENT_TYPE_PAGE)
         );
 
+        // Always inject a view bag so that custom template properties
+        // defined using the CMS extensibility API can use it.
+        // Empty view bags get automatically removed from templates
+        // before they are saved.
+        //
+        $manager = ComponentManager::instance();
+        $viewBagComponent = $this->makeTemplateComponent($manager, 'viewBag', [], 'viewBag');
+
         $description->setIcon(EditorExtension::ICON_COLOR_PAGE, 'backend-icon-background entity-small cms-page');
         $description->setInitialDocumentData([
             'title' => trans('cms::lang.page.new'),
-            'components' => [],
+            'components' => [
+                $viewBagComponent
+            ],
             'code' => '',
             'markup' => ''
         ]);

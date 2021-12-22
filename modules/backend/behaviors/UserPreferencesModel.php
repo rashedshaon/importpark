@@ -40,7 +40,8 @@ class UserPreferencesModel extends SettingsModel
             return self::$instances[$this->recordCode];
         }
 
-        if (!$item = $this->getSettingsRecord()) {
+        $item = $this->getSettingsRecord();
+        if (!$item) {
             $this->model->initSettingsData();
             $item = $this->model;
         }

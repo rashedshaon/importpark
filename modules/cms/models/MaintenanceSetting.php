@@ -1,12 +1,15 @@
 <?php namespace Cms\Models;
 
 use Model;
+use System;
+use BackendAuth;
 use Cms\Classes\Page;
 use Cms\Classes\Theme;
 use ApplicationException;
+use Exception;
 
 /**
- * Maintenance mode settings
+ * MaintenanceSetting for maintenance mode
  *
  * @package october\cms
  * @author Alexey Bobkov, Samuel Georges
@@ -16,29 +19,29 @@ class MaintenanceSetting extends Model
     use \October\Rain\Database\Traits\Validation;
 
     /**
-     * @var array Behaviors implemented by this model.
+     * @var array implement behaviors
      */
     public $implement = [
         \System\Behaviors\SettingsModel::class
     ];
 
     /**
-     * @var string Unique code
+     * @var string settingsCode is a unique code
      */
     public $settingsCode = 'cms_maintenance_settings';
 
     /**
-     * @var mixed Settings form field defitions
+     * @var mixed settingsFields defitions
      */
     public $settingsFields = 'fields.yaml';
 
     /**
-     * Validation rules
+     * @var array rules for validation
      */
     public $rules = [];
 
     /**
-     * Initialize the seed data for this model. This only executes when the
+     * initSettingsData initializes the seed data for this model. This only executes when the
      * model is first created or reset to default.
      * @return void
      */
@@ -47,22 +50,38 @@ class MaintenanceSetting extends Model
         $this->is_enabled = false;
     }
 
-    public function getCmsPageOptions()
+    /**
+     * isEnabled returns true if maintenance mode should be used
+     */
+    public static function isEnabled(): bool
     {
-        if (!$theme = Theme::getActiveTheme()) {
-            throw new ApplicationException('Unable to find the active theme.');
+        if (!System::hasDatabase() || BackendAuth::getUser()) {
+            return false;
         }
 
-        return Page::listInTheme($theme)->lists('fileName', 'fileName');
+        return self::get('is_enabled', false);
     }
 
     /**
-     * Ensure each theme has its own CMS page, store it inside a mapping array.
-     * @return void
+     * getCmsPageOptions
+     */
+    public function getCmsPageOptions()
+    {
+        if (!$theme = $this->findTargetTheme()) {
+            throw new ApplicationException('Unable to find the active theme.');
+        }
+
+        return array_map(function($code) use ($theme) {
+            return "{$theme->getDirName()}/${code}";
+        }, Page::listInTheme($theme)->lists('fileName', 'fileName'));
+    }
+
+    /**
+     * beforeValidate ensures each theme has its own CMS page, store it inside a mapping array.
      */
     public function beforeValidate()
     {
-        if (!$theme = Theme::getEditTheme()) {
+        if (!$theme = $this->findTargetTheme()) {
             throw new ApplicationException('Unable to find the active theme.');
         }
 
@@ -72,14 +91,13 @@ class MaintenanceSetting extends Model
     }
 
     /**
-     * Restore the CMS page found in the mapping array, or disable the
+     * afterFetch restores the CMS page found in the mapping array, or disable the
      * maintenance mode.
-     * @return void
      */
     public function afterFetch()
     {
         if (
-            ($theme = Theme::getEditTheme())
+            ($theme = $this->findTargetTheme())
             && ($themeMap = array_get($this->attributes, 'theme_map'))
             && ($cmsPage = array_get($themeMap, $theme->getDirName()))
         ) {
@@ -87,6 +105,19 @@ class MaintenanceSetting extends Model
         }
         else {
             $this->is_enabled = false;
+        }
+    }
+
+    /**
+     * findTargetTheme will attempt to use the edit theme, with active theme fallback.
+     */
+    protected function findTargetTheme()
+    {
+        try {
+            return Theme::getEditTheme();
+        }
+        catch (Exception $ex) {
+            return Theme::getActiveTheme();
         }
     }
 }

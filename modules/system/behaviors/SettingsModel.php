@@ -73,9 +73,8 @@ class SettingsModel extends ModelBehavior
             return self::$instances[$this->recordCode];
         }
 
-        if (!System::hasDatabase() ||
-            (!$item = $this->getSettingsRecord())
-        ) {
+        $item = $this->getSettingsRecord();
+        if (!$item) {
             $this->model->initSettingsData();
             $item = $this->model;
         }
@@ -88,11 +87,14 @@ class SettingsModel extends ModelBehavior
      */
     public function resetDefault()
     {
-        if ($record = $this->getSettingsRecord()) {
-            $record->delete();
-            unset(self::$instances[$this->recordCode]);
-            Cache::forget($this->getCacheKey());
+        $record = $this->getSettingsRecord();
+        if (!$record) {
+            return;
         }
+
+        $record->delete();
+        unset(self::$instances[$this->recordCode]);
+        Cache::forget($this->getCacheKey());
     }
 
     /**
@@ -101,7 +103,7 @@ class SettingsModel extends ModelBehavior
      */
     public function isConfigured()
     {
-        return System::hasDatabase() && $this->getSettingsRecord() !== null;
+        return $this->getSettingsRecord() !== null;
     }
 
     /**
@@ -110,6 +112,10 @@ class SettingsModel extends ModelBehavior
      */
     public function getSettingsRecord()
     {
+        if (!System::hasDatabase()) {
+            return null;
+        }
+
         $record = $this->model
             ->where('item', $this->recordCode)
             ->remember(1440, $this->getCacheKey())

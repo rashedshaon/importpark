@@ -8,13 +8,13 @@
 <!-- Checkbox List -->
 <?php if ($readOnly && $field->value): ?>
 
-    <div class="field-checkboxlist">
+    <div class="field-checkboxlist control-disabled">
         <?php $index = 0; foreach ($fieldOptions as $value => $option): ?>
             <?php
                 $index++;
                 $checkboxId = 'checkbox_'.$field->getId().'_'.$index;
                 if (!in_array($value, $checkedValues)) continue;
-                if (is_string($option)) $option = [$option];
+                if (!is_array($option)) $option = [$option];
             ?>
             <div class="checkbox custom-checkbox">
                 <input
@@ -23,7 +23,7 @@
                     name="<?= $field->getName() ?>[]"
                     value="<?= e($value) ?>"
                     disabled="disabled"
-                    checked="checked">
+                    checked="checked" />
 
                 <label class="storm-icon-pseudo" for="<?= $checkboxId ?>">
                     <?= e(trans($option[0])) ?>
@@ -64,13 +64,13 @@
             <input
                 type="hidden"
                 name="<?= $field->getName() ?>"
-                value="0" />
+                value="" />
 
             <?php $index = 0; foreach ($fieldOptions as $value => $option): ?>
                 <?php
                     $index++;
                     $checkboxId = 'checkbox_'.$field->getId().'_'.$index;
-                    if (is_string($option)) $option = [$option];
+                    if (!is_array($option)) $option = [$option];
                 ?>
                 <div class="checkbox custom-checkbox">
                     <input

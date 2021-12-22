@@ -35,7 +35,7 @@ class Cache
         $instance->clearCombiner();
         $instance->clearCache();
 
-        if (!Config::get('cms.enable_twig_cache', true)) {
+        if (Config::get('cms.enable_twig_cache', true)) {
             $instance->clearTwig();
         }
 
@@ -78,7 +78,17 @@ class Cache
     public function clearMeta()
     {
         File::delete(storage_path().'/cms/disabled.json');
+
+        File::delete(App::getCachedClassesPath());
+
         File::delete(App::getCachedCompilePath());
+
+        File::delete(App::getCachedConfigPath());
+
         File::delete(App::getCachedServicesPath());
+
+        File::delete(App::getCachedPackagesPath());
+
+        File::delete(App::getCachedRoutesPath());
     }
 }

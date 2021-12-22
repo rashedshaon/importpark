@@ -23,9 +23,9 @@ class User extends UserBase
      * Validation rules
      */
     public $rules = [
-        'name'    => 'required|between:6,255',
-        'phone'    => 'required|regex:/^[0-1]{2}[0-9]{9}$/|unique:users',
+        'email'    => 'required|between:6,255|email|unique:users',
         'avatar'   => 'nullable|image|max:4000',
+        'username' => 'required|between:2,255|unique:users',
         'password' => 'required:create|between:8,255|confirmed',
         'password_confirmation' => 'required_with:password|between:8,255',
     ];
@@ -47,22 +47,20 @@ class User extends UserBase
     protected $fillable = [
         'name',
         'surname',
-        'phone',
+        'login',
         'username',
         'email',
-        'address',
         'password',
         'password_confirmation',
         'created_ip_address',
         'last_ip_address'
     ];
-    
+
     /**
      * Reset guarded fields, because we use $fillable instead.
      * @var array The attributes that aren't mass assignable.
      */
     protected $guarded = ['*'];
-
 
     /**
      * Purge attributes from data set.
@@ -461,11 +459,16 @@ class User extends UserBase
      */
     public function isOnline()
     {
-        return $this->getLastSeen() > $this->freshTimestamp()->subMinutes(5);
+        if (!$this->last_seen) {
+            return false;
+        }
+
+        return $this->last_seen > $this->freshTimestamp()->subMinutes(5);
     }
 
     /**
      * Returns the date this user was last seen.
+     * @deprecated use last_seen attribute
      * @return Carbon\Carbon
      */
     public function getLastSeen()
@@ -518,10 +521,5 @@ class User extends UserBase
     protected function generatePassword()
     {
         $this->password = $this->password_confirmation = Str::random(static::getMinPasswordLength());
-    }
-
-    public function getPhoto($imageHeight = null, $imageWidth = null)
-    {
-        return $this->avatar ? ($imageHeight && $imageWidth) ? $this->avatar->getThumb($imageHeight, $imageWidth, ['mode' => 'crop']) : $this->avatar->getPath() : 'https://dummyimage.com/250x250/f0f0f0/f0f0f0.jpg';
     }
 }

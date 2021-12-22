@@ -52,7 +52,9 @@ class MarkdownEditor extends FormWidgetBase
             'legacyMode'
         ]);
 
-        $this->controller->registerVueComponent(\Backend\VueComponents\DocumentMarkdownEditor::class);
+        if (!$this->legacyMode) {
+            $this->controller->registerVueComponent(\Backend\VueComponents\DocumentMarkdownEditor::class);
+        }
     }
 
     /**

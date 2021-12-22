@@ -85,7 +85,7 @@
             })
         }
 
-        function onInsertVideo() {
+        function onInsertVideo(callback) {
             new $.oc.mediaManager.popup({
                 alias: 'ocmediamanager',
                 cropAndInsertButton: false,
@@ -107,16 +107,21 @@
                         return
                     }
 
-                    var $richEditorNode = editor.$el.closest('[data-control="richeditor"]')
+                    if (!callback) {
+                        var $richEditorNode = editor.$el.closest('[data-control="richeditor"]')
 
-                    $richEditorNode.richEditor('insertVideo', item.publicUrl, item.title)
+                        $richEditorNode.richEditor('insertVideo', item.publicUrl, item.title)
+                    }
+                    else {
+                        callback(item.publicUrl, item.title)
+                    }
 
                     this.hide()
                 }
             })
         }
 
-        function onInsertAudio() {
+        function onInsertAudio(callback) {
             new $.oc.mediaManager.popup({
                 alias: 'ocmediamanager',
                 cropAndInsertButton: false,
@@ -138,9 +143,13 @@
                         return
                     }
 
-                    var $richEditorNode = editor.$el.closest('[data-control="richeditor"]')
-
-                    $richEditorNode.richEditor('insertAudio', item.publicUrl, item.title)
+                    if (!callback) {
+                        var $richEditorNode = editor.$el.closest('[data-control="richeditor"]')
+                        $richEditorNode.richEditor('insertAudio', item.publicUrl, item.title)
+                    }
+                    else {
+                        callback(item.publicUrl, item.title)
+                    }
 
                     this.hide()
                 }

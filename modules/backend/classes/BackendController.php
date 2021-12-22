@@ -69,7 +69,7 @@ class BackendController extends ControllerBase
     protected function runCmsPage($url)
     {
         if (System::hasModule('Cms')) {
-            return App::make('Cms\Classes\Controller')->run($url);
+            return App::make(\Cms\Classes\Controller::class)->run($url);
         }
         else {
             return Response::make(View::make('backend::404'), 404);
@@ -200,7 +200,7 @@ class BackendController extends ControllerBase
     protected function parseAction($actionName)
     {
         if (strpos($actionName, '-') !== false) {
-            return snake_case($actionName);
+            return snake_case(camel_case($actionName));
         }
 
         return $actionName;

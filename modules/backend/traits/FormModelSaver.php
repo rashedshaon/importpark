@@ -2,7 +2,7 @@
 
 use Str;
 use Backend\Classes\FormField;
-use October\Rain\Halcyon\Model as HalcyonModel;
+use October\Rain\Database\Model as DatabaseModel;
 
 /**
  * FormModelSaver implements special logic for processing form data, typically
@@ -61,7 +61,7 @@ trait FormModelSaver
             return;
         }
 
-        if ($model instanceof HalcyonModel) {
+        if (!$model instanceof DatabaseModel) {
             $model->fill($saveData);
             return;
         }

@@ -1,7 +1,7 @@
 {% for item in items if not item.viewBag.isHidden %}
-    <li role="presentation" class="{{ item.isActive ? 'active' : '' }} {{ item.isChildActive ? 'child-active' : '' }} {{ item.viewBag.cssClass }} nav-item u-header__nav-item">
+    <li role="presentation" class="{{ item.isActive ? 'active' : '' }} {{ item.isChildActive ? 'child-active' : '' }} {{ item.viewBag.cssClass }}">
         {% if item.url %}
-            <a class="nav-link u-header__nav-link" href="{{ item.url }}" {{ item.viewBag.isExternal ? 'target="_blank"' }}>
+            <a href="{{ item.url }}" {{ item.viewBag.isExternal ? 'target="_blank"' }}>
                 {{ item.title }}
             </a>
         {% else %}

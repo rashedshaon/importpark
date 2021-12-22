@@ -42,7 +42,7 @@ trait EditorExtensionExtensibility
             $propertyDefinition['property'] = 'settings.'.$propertyDefinition['property'];
             $settings[] = $propertyDefinition;
         }
-        
+
         return $settings;
     }
 
@@ -78,7 +78,11 @@ trait EditorExtensionExtensibility
         });
 
         foreach ($dataHolder->buttons as &$buttonDefinition) {
-            if (isset($buttonDefinition['useViewBag'])) {
+            if (!array_key_exists('useViewBag', $buttonDefinition) ) {
+                $buttonDefinition['useViewBag'] = true;
+            }
+
+            if ($buttonDefinition['useViewBag']) {
                 continue;
             }
 

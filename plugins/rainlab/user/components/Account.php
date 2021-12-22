@@ -2,7 +2,6 @@
 
 use Lang;
 use Auth;
-use Hash;
 use Mail;
 use Event;
 use Flash;
@@ -67,7 +66,10 @@ class Account extends ComponentBase
 
     public function getRedirectOptions()
     {
-        return [''=>'- refresh page -', '0' => '- no redirect -'] + Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
+        return [
+            '' => '- refresh page -',
+            '0' => '- no redirect -'
+        ] + Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
     /**
@@ -165,6 +167,23 @@ class Account extends ComponentBase
     }
 
     /**
+     * useRememberLogin returns true if persistent authentication should be used.
+     */
+    protected function useRememberLogin(): bool
+    {
+        switch ($this->rememberLoginMode()) {
+            case UserSettings::REMEMBER_ALWAYS:
+                return true;
+
+            case UserSettings::REMEMBER_NEVER:
+                return false;
+
+            case UserSettings::REMEMBER_ASK:
+                return (bool) post('remember', false);
+        }
+    }
+
+    /**
      * Looks for the activation code from the URL parameter. If nothing
      * is found, the GET parameter 'activate' is used instead.
      * @return string
@@ -196,16 +215,25 @@ class Account extends ComponentBase
             $data = post();
             $rules = [];
 
-            $rules = [
-                'phone' => 'required|regex:/^[0-1]{2}[0-9]{9}$/',
-                'password' => 'required|between:4,255',
-            ];
+            $rules['login'] = $this->loginAttribute() == UserSettings::LOGIN_USERNAME
+                ? 'required|between:2,255'
+                : 'required|email|between:6,255';
 
-            $message = [
-                'phone.regex' => 'Please enter a valid phone number'
-            ];
+            $rules['password'] = 'required|between:4,255';
 
-            $validation = Validator::make($data, $rules, $message);
+            if (!array_key_exists('login', $data)) {
+                $data['login'] = post('username', post('email'));
+            }
+
+            $data['login'] = trim($data['login']);
+
+            $validation = Validator::make(
+                $data,
+                $rules,
+                $this->getValidatorMessages(),
+                $this->getCustomAttributes()
+            );
+
             if ($validation->fails()) {
                 throw new ValidationException($validation);
             }
@@ -214,14 +242,13 @@ class Account extends ComponentBase
              * Authenticate user
              */
             $credentials = [
-                'phone'    => array_get($data, 'phone'),
+                'login'    => array_get($data, 'login'),
                 'password' => array_get($data, 'password')
             ];
 
-
             Event::fire('rainlab.user.beforeAuthenticate', [$this, $credentials]);
 
-            $user = Auth::authenticate($credentials, true);
+            $user = Auth::authenticate($credentials, $this->useRememberLogin());
             if ($user->isBanned()) {
                 Auth::logout();
                 throw new AuthException(/*Sorry, this user is currently not activated. Please contact us for further assistance.*/'rainlab.user::lang.account.banned');
@@ -257,9 +284,9 @@ class Account extends ComponentBase
                 throw new ApplicationException(Lang::get(/*Registrations are currently disabled.*/'rainlab.user::lang.account.registration_disabled'));
             }
 
-            // if ($this->isRegisterThrottled()) {
-            //     throw new ApplicationException(Lang::get(/*Registration is throttled. Please try again later.*/'rainlab.user::lang.account.registration_throttled'));
-            // }
+            if ($this->isRegisterThrottled()) {
+                throw new ApplicationException(Lang::get(/*Registration is throttled. Please try again later.*/'rainlab.user::lang.account.registration_throttled'));
+            }
 
             /*
              * Validate input
@@ -270,20 +297,19 @@ class Account extends ComponentBase
                 $data['password_confirmation'] = post('password');
             }
 
-            // $rules = (new UserModel)->rules;
+            $rules = (new UserModel)->rules;
 
-            
-            // dd($rules);
+            if ($this->loginAttribute() !== UserSettings::LOGIN_USERNAME) {
+                unset($rules['username']);
+            }
 
-            $rules = [
-                'name'    => 'required|between:6,255',
-                'phone'    => 'required|regex:/^[0-1]{2}[0-9]{9}$/|unique:users',
-                'avatar'   => 'nullable|image|max:4000',
-                'password' => 'required:create|between:4,255|confirmed',
-                'password_confirmation' => 'required_with:password|between:4,255',
-            ];
+            $validation = Validator::make(
+                $data,
+                $rules,
+                $this->getValidatorMessages(),
+                $this->getCustomAttributes()
+            );
 
-            $validation = Validator::make($data, $rules);
             if ($validation->fails()) {
                 throw new ValidationException($validation);
             }
@@ -303,30 +329,42 @@ class Account extends ComponentBase
             $requireActivation = UserSettings::get('require_activation', true);
             $automaticActivation = UserSettings::get('activate_mode') == UserSettings::ACTIVATE_AUTO;
             $userActivation = UserSettings::get('activate_mode') == UserSettings::ACTIVATE_USER;
+            $adminActivation = UserSettings::get('activate_mode') == UserSettings::ACTIVATE_ADMIN;
             $user = Auth::register($data, $automaticActivation);
 
             Event::fire('rainlab.user.register', [$user, $data]);
 
-            // /*
-            //  * Activation is by the user, send the email
-            //  */
-            // if ($userActivation) {
-            //     $this->sendActivationEmail($user);
+            /*
+             * Activation is by the user, send the email
+             */
+            if ($userActivation) {
+                $this->sendActivationEmail($user);
 
-            //     Flash::success(Lang::get(/*An activation email has been sent to your email address.*/'rainlab.user::lang.account.activation_email_sent'));
-            // }
+                Flash::success(Lang::get(/*An activation email has been sent to your email address.*/'rainlab.user::lang.account.activation_email_sent'));
+            }
+
+            $intended = false;
+
+            /*
+             * Activation is by the admin, show message
+             * For automatic email on account activation RainLab.Notify plugin is needed
+             */
+            if ($adminActivation) {
+                Flash::success(Lang::get(/*You have successfully registered. Your account is not yet active and must be approved by an administrator.*/'rainlab.user::lang.account.activation_by_admin'));
+            }
 
             /*
              * Automatically activated or not required, log the user in
              */
             if ($automaticActivation || !$requireActivation) {
-                Auth::login($user);
+                Auth::login($user, $this->useRememberLogin());
+                $intended = true;
             }
 
             /*
              * Redirect to the intended page after successful sign in
              */
-            if ($redirect = $this->makeRedirection(true)) {
+            if ($redirect = $this->makeRedirection($intended)) {
                 return $redirect;
             }
         }
@@ -374,7 +412,7 @@ class Account extends ComponentBase
             /*
              * Sign in the user
              */
-            Auth::login($user);
+            Auth::login($user, $this->useRememberLogin());
 
         }
         catch (Exception $ex) {
@@ -549,6 +587,7 @@ class Account extends ComponentBase
         if ($property === '0') {
             return;
         }
+
         // Refresh page
         if ($property === '') {
             return Redirect::refresh();
@@ -590,5 +629,27 @@ class Account extends ComponentBase
         }
 
         return UserModel::isRegisterThrottled(Request::ip());
+    }
+
+    /**
+     * getValidatorMessages
+     */
+    protected function getValidatorMessages(): array
+    {
+        return (array) (new UserModel)->customMessages;
+    }
+
+    /**
+     * getCustomAttributes
+     */
+    protected function getCustomAttributes(): array
+    {
+        return [
+            'login' => $this->loginAttributeLabel(),
+            'password' => Lang::get('rainlab.user::lang.account.password'),
+            'email' => Lang::get('rainlab.user::lang.account.email'),
+            'username' => Lang::get('rainlab.user::lang.user.username'),
+            'name' => Lang::get('rainlab.user::lang.account.full_name')
+        ];
     }
 }

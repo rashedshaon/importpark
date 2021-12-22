@@ -48,6 +48,12 @@
         background: rgba(0,0,0,.8);
         border-radius: 5px;
 
+        // Conflict with easymde
+        border: none;
+        &:before {
+            display: none;
+        }
+
         > ul, ul > li { list-style-type: none; padding: 0; margin: 0; }
         > ul > li {
             float: left;

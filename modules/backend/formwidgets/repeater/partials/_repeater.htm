@@ -1,11 +1,15 @@
 <div class="field-repeater"
-     data-control="fieldrepeater"
-     <?= $titleFrom ? 'data-title-from="'.$titleFrom.'"' : '' ?>
-     <?= $minItems ? 'data-min-items="'.$minItems.'"' : '' ?>
-     <?= $maxItems ? 'data-max-items="'.$maxItems.'"' : '' ?>
-     <?= $style ? 'data-style="'.$style.'"' : '' ?>
-     data-sortable-container="#<?= $this->getId('items') ?>"
-     data-sortable-handle=".<?= $this->getId('items') ?>-handle">
+    data-control="fieldrepeater"
+    <?= $titleFrom ? 'data-title-from="'.$titleFrom.'"' : '' ?>
+    <?= $minItems ? 'data-min-items="'.$minItems.'"' : '' ?>
+    <?= $maxItems ? 'data-max-items="'.$maxItems.'"' : '' ?>
+    <?= $style ? 'data-style="'.$style.'"' : '' ?>
+    data-sortable-container="#<?= $this->getId('items') ?>"
+    data-sortable-handle=".<?= $this->getId('items') ?>-handle">
+
+    <!-- Passable fields -->
+    <input type="hidden" name="<?= $name ?>" value="" data-repeater-pointer-input disabled />
+    <input type="hidden" name="<?= $this->alias ?>_loaded" value="1" />
 
     <ul id="<?= $this->getId('items') ?>" class="field-repeater-items">
         <?php foreach ($formWidgets as $index => $widget): ?>
@@ -36,7 +40,6 @@
             <?php endif ?>
         </div>
 
-        <input type="hidden" name="<?= $this->alias ?>_loaded" value="1" />
     <?php endif ?>
 
     <script type="text/template" data-group-palette-template>

@@ -59,8 +59,10 @@ tabs:
         parent:
             label: cms::lang.theme.parent_label
             type: dropdown
+            tab: cms::lang.theme.advanced_tab
 
         database:
             label: cms::lang.theme.database_templates_label
             comment: cms::lang.theme.database_templates_description
             type: checkbox
+            tab: cms::lang.theme.advanced_tab

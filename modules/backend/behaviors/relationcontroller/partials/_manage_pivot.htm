@@ -1,5 +1,7 @@
-<div id="relationManagePivotPopup" data-request-data="_relation_field: '<?= $relationField ?>'">
+<div id="relationManagePivotPopup">
     <?= Form::open() ?>
+        <input type="hidden" name="_relation_field" value="<?= $relationField ?>" />
+
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="popup">&times;</button>
             <h4 class="modal-title">
@@ -14,6 +16,9 @@
         <div class="list-flush">
             <?php if ($relationSearchWidget): ?>
                 <?= $relationSearchWidget->render() ?>
+            <?php endif ?>
+            <?php if ($relationManageFilterWidget): ?>
+                <?= $relationManageFilterWidget->render() ?>
             <?php endif ?>
             <?= $relationManageWidget->render() ?>
         </div>
@@ -42,7 +47,7 @@
 </div>
 <script>
     setTimeout(
-            function(){ $('#relationManagePivotPopup input.form-control:first').focus() },
-            310
-    )
+        function() { $('#relationManagePivotPopup input.form-control:first').focus() },
+        310
+    );
 </script>

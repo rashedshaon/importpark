@@ -23,21 +23,13 @@ abstract class PluginTestCase extends TestCase
     public function createApplication()
     {
         $app = require __DIR__.'/../../../bootstrap/app.php';
-        $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
-
-        $app['cache']->setDefaultDriver('array');
-        $app->setLocale('en');
+        $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
         $app->singleton('auth', function ($app) {
             $app['auth.loaded'] = true;
 
             return AuthManager::instance();
         });
-
-        /*
-         * Modify the plugin path away from the test context
-         */
-        $app->setPluginsPath(realpath(base_path().Config::get('cms.pluginsPath')));
 
         return $app;
     }
@@ -62,7 +54,7 @@ abstract class PluginTestCase extends TestCase
         /*
          * Ensure system is up to date
          */
-        $this->runOctoberUpCommand();
+        $this->runOctoberMigrateCommand();
 
         /*
          * Detect plugin from test and autoload it
@@ -92,9 +84,9 @@ abstract class PluginTestCase extends TestCase
     }
 
     /**
-     * runOctoberUpCommand migrates database using october:migrate command
+     * runOctoberMigrateCommand migrates database using october:migrate command
      */
-    protected function runOctoberUpCommand()
+    protected function runOctoberMigrateCommand()
     {
         Artisan::call('october:migrate');
     }
@@ -152,7 +144,7 @@ abstract class PluginTestCase extends TestCase
         /*
          * Execute the command
          */
-        Artisan::call('plugin:refresh', ['name' => $code]);
+        Artisan::call('plugin:refresh', ['name' => $code, '--force' => true]);
     }
 
     /**
@@ -177,15 +169,15 @@ abstract class PluginTestCase extends TestCase
     protected function flushModelEventListeners()
     {
         foreach (get_declared_classes() as $class) {
-            if ($class == 'October\Rain\Database\Pivot') {
+            if ($class == \October\Rain\Database\Pivot::class) {
                 continue;
             }
 
             $reflectClass = new ReflectionClass($class);
             if (
                 !$reflectClass->isInstantiable() ||
-                !$reflectClass->isSubclassOf('October\Rain\Database\Model') ||
-                $reflectClass->isSubclassOf('October\Rain\Database\Pivot')
+                !$reflectClass->isSubclassOf(\October\Rain\Database\Model::class) ||
+                $reflectClass->isSubclassOf(\October\Rain\Database\Pivot::class)
             ) {
                 continue;
             }
