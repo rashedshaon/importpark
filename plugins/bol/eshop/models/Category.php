@@ -6,6 +6,7 @@ use Url;
 use Cms\Classes\Page as CmsPage;
 use Cms\Classes\Theme;
 
+
 /**
  * Model
  */
@@ -123,7 +124,7 @@ class Category extends Model
     {
         $result = [];
 
-        if ($type == 'product-category') {
+        if ($type == 'shop-category') {
             $result = [
                 'references'   => self::listSubCategoryOptions(),
                 'nesting'      => true,
@@ -131,7 +132,7 @@ class Category extends Model
             ];
         }
 
-        if ($type == 'all-product-categories') {
+        if ($type == 'all-shop-categories') {
             $result = [
                 'dynamicItems' => true
             ];
@@ -211,7 +212,7 @@ class Category extends Model
     {
         $result = null;
 
-        if ($item->type == 'product-category') {
+        if ($item->type == 'shop-category') {
             if (!$item->reference || !$item->cmsPage) {
                 return;
             }
@@ -258,7 +259,7 @@ class Category extends Model
                 $result['items'] = $iterator($category->children);
             }
         }
-        elseif ($item->type == 'all-product-categories') {
+        elseif ($item->type == 'all-shop-categories') {
             $result = [
                 'items' => []
             ];
@@ -319,5 +320,10 @@ class Category extends Model
         $url = CmsPage::url($page->getBaseFileName(), [$paramName => $category->slug]);
 
         return $url;
+    }
+
+    public function getPhoto($imageWidth = null, $imageHeight = null)
+    {
+        return isset($this->photos) ? (($imageHeight && $imageWidth) ? $this->photos->getThumb($imageWidth, $imageHeight, ['mode' => 'crop']) : $this->photos->getPath()) :  (($imageHeight && $imageWidth) ? "https://dummyimage.com/$imageWidth"."x"."$imageHeight/e3e3e3/d5aa6d.jpg&text=++Product++" : "https://dummyimage.com/200x200/e3e3e3/d5aa6d.jpg&text=++Product++");
     }
 }

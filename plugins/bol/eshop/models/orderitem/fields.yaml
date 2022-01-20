@@ -1,0 +1,9 @@
+fields:
+    product_id:
+        label: 'Product'
+        span: auto
+        type: dropdown
+    quantity:
+        label: Quantity
+        span: left
+        type: number

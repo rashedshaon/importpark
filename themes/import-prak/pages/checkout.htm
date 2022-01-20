@@ -3,99 +3,9 @@ url = "/checkout"
 layout = "default"
 is_hidden = 0
 
+[shopUser]
 
-==
-<?php
-use Shipu\Aamarpay\Aamarpay;
-use RainLab\User\Models\User;
-use Bol\Eshop\Models\District;
-use Bol\Eshop\Models\Order;
-use Bol\Eshop\Models\OrderItem;
-use Bol\Eshop\Models\Cart;
-
-function onStart()
-{
-    $this['districts'] = District::get();
-}
-
-
-function onSubmitOrder()
-{
-    $data = post();
-
-    //dd($data);
-
-    $rules = [
-        'payment_term' => 'required',
-        'terms' => 'required',
-        'name' => 'required',
-        'phone' => 'required',
-        'district' => 'required',
-        'area' => 'required',
-        'address' => 'required',
-    ];
-
-    if(post('address'))
-    {
-        $rules['address'] = 'required';
-    }
-
-    $messages = [
-        'payment_term.required' => 'Please select payment method.',
-        'terms.required' => 'Please select checkbox to accept terms & condition',
-    ];
-
-    $validation = Validator::make($data, $rules, $messages);
-
-    if ($validation->fails()) {
-        throw new ValidationException($validation);
-    }
-
-    $user = Auth::getUser();
-
-    $cart = Cart::data();
-
-    $order = new Order();
-    $order->user_id = $user->id;
-    $order->customer_name = $user->name;
-    $order->delivery_address = [
-        'name' => $data['name'],
-        'phone' => $data['phone'],
-        'district' => $data['district'],
-        'area' => $data['area'],
-        'address' => $data['address'],
-    ];
-    $order->billing_address = [];
-    $order->payment_mothod = $data['payment_term'];
-    $order->delivery_mothod = 'Cash';
-    $order->tax_percent = NULL;
-    $order->other_deduction = NULL;
-    $order->coupon_name = NULL;
-    $order->coupon_discount = NULL;
-    $order->payment_status = 0;
-    $order->status = 1;
-    $order->remarks = $data['remarks'];
-    $order->save();
-
-    foreach($cart->items()->get() as $item)
-    {
-        $order_item               = new OrderItem();
-        $order_item->order_id     = $order->id;
-        $order_item->product_id   = $item->product_id;
-        $order_item->title        = $item->product->title;
-        $order_item->quantity     = $item->quantity;
-        $order_item->unit         = 'Pcs';
-        $order_item->size         = $item->size;
-        $order_item->price        = $item->product->main_price;
-        $order_item->actual_price = $item->product->price;
-        $order_item->save();
-    }
-
-    Cart::clearCart();
-        
-    return Redirect::to('order-success');
-}
-
+[shopCheckout]
 ==
 
 <main id="content" role="main" class="checkout-page">
@@ -105,7 +15,7 @@ function onSubmitOrder()
             <h3 class="text-center">Checkout</h3>
         </div>
 
-        <form id="form-place-order">
+        <form id="form-pay-online">
             <div class="row">
                 <div class="col-lg-5 order-lg-2 mb-7 mb-lg-0">
                     <div class="pl-lg-3 ">
@@ -144,33 +54,55 @@ function onSubmitOrder()
                                             <td>{{cart.subtotal_label}}</td>
                                         </tr>
                                         <tr>
-                                            <th>Total Discount</th>
-                                            <td>{{cart.total_discount_label}}</td>
-                                        </tr>
-                                        <tr>
                                             <th>Coupon Discount</th>
                                             <td>{{cart.coupon_discount}}</td>
                                         </tr>
-                                        <tr class="text-danger">
-                                            <th>{{'Net Payable Amount'|_}}</th>
-                                            <td><strong>{{cart.total_label}}</strong></td>
-                                        </tr>
-                                        <!-- <tr>
-                                            <th>Subtotal</th>
-                                            <td>$1,785.00</td>
-                                        </tr> -->
-                                        <!-- <tr>
-                                            <th>{{'Shipping + Tax'|_}}</th>
-                                            <td>৳{{total_cost|number_format(2, '.', ',')}}</td>
-                                        </tr>
                                         <tr>
-                                            <th>{{'Total'|_}}</th>
-                                            <td><strong>৳{{grand_total|number_format(2, '.', ',')}}</strong></td>
+                                            <th>Total Discount</th>
+                                            <td>{{cart.total_discount_label}}</td>
                                         </tr>
-                                        <tr class="text-danger">
-                                            <th>{{'Net Payable Amount'|_}}</th>
-                                            <td><strong>৳{{ (grand_total - total_cost) |number_format(2, '.', ',') }}</strong></td>
-                                        </tr> -->
+
+                                        {% if cart.shipping %}
+                                        <tr>
+                                            <th>Shipping Cost</th>
+                                            <td>{{cart.shipping_cost_label}}</td>
+                                        </tr>
+                                        {% endif %}
+
+                                        {% if cart.tax_deduction %}
+                                        <tr>
+                                            <th>Tax ({{cart.tax_percentage}}%)</th>
+                                            <td>{{cart.tax_amount_label}}</td>
+                                        </tr>
+                                        {% endif %}
+                                        
+                                        <tr class="order-total">
+                                            <th>Order Total</th>
+                                            <td><strong><span class="amount">{{cart.total_label}}</span></strong>
+                                            </td>
+                                        </tr>
+
+                                        {% if not cart.shipping %}
+                                        <tr class="shipping">
+                                            <th>Shipping Method:</th>
+                                            <td>
+                                                <ul>
+                                                    {% for item in shipping_methods %}
+                                                    <li>
+                                                        <input type="radio" name="shipping_method_id" value="{{item.id}}"/>
+                                                        <label>
+                                                            {{item.name}}
+                                        
+                                                            {% if item.price %}
+                                                            : <span class="amount">{{ item.price_label }}</span>
+                                                            {% endif %}
+                                                        </label>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
                                     </tfoot>
                                 </table>
                                 <!-- End Product Content -->
@@ -255,23 +187,28 @@ function onSubmitOrder()
                                             </div>
                                         </div> -->
                                         <!-- End Card -->
+
+                                        {% for item in payment_methods %}
                                         <!-- Card -->
                                         <div class="border-bottom border-color-1 border-dotted-bottom">
-                                            <div class="p-3" id="basicsHeadingFour">
+                                            <div class="p-3" id="basicsHeading{{ item.id }}">
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" id="FourstylishRadio1" name="payment_term" value="COD">
-                                                    <label class="custom-control-label form-label" for="FourstylishRadio1" data-toggle="collapse" data-target="#basicsCollapseFour" aria-expanded="false" aria-controls="basicsCollapseFour">
-                                                        {{'Cash on delivery'|_}}
+                                                    <input id="FourstylishRadio{{ item.id }}" class="custom-control-input" type="radio" name="payment_method" value="{{ item.id }}"/>
+                                                    <label class="custom-control-label form-label" for="FourstylishRadio{{ item.id }}" data-toggle="collapse" data-target="#basicsCollapse{{ item.id }}" aria-expanded="false" aria-controls="basicsCollapse{{ item.id }}">
+                                                        {{item.name}}
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div id="basicsCollapseFour" class="collapse border-top border-color-1 border-dotted-top bg-dark-lighter" aria-labelledby="basicsHeadingFour" data-parent="#basicsAccordion1">
+                                            <div id="basicsCollapse{{ item.id }}" class="collapse border-top border-color-1 border-dotted-top bg-dark-lighter" aria-labelledby="basicsHeading{{ item.id }}" data-parent="#basicsAccordion1">
                                                 <div class="p-4">
-                                                    {{'Pay when you received the product.'|_}}
+                                                    {{item.description | raw}}
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- End Card -->
+                                        {% endfor %}
+
+                                        
                                     </div>
                                     <!-- End Basics Accordion -->
                                 </div>
@@ -284,13 +221,13 @@ function onSubmitOrder()
                                         </label>
                                     </div>
                                 </div>
-
+                                
                                 
                                 <button type="button" 
                                     class="btn btn-primary-dark btn-block btn-pill font-size-20 mb-3 py-3"
                                     onclick="this.style.display='none'; this.innerText='Processing…';" 
                                     data-request-form="#form-place-order" 
-                                    data-request="onSubmitOrder" 
+                                    data-request="onPlaceOrder" 
                                     data-request-success="if(data.status){$('#form-pay-online').submit()}"
                                     data-request-complete="if(data.statusText == 'Not Acceptable'){this.style.display='block'; this.innerText='{{'Place order'|_}}';}"
                                     data-request-flash>
@@ -314,14 +251,14 @@ function onSubmitOrder()
 
                         <!-- Billing Form -->
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <!-- Input -->
                                 <div class="js-form-message mb-6">
                                     <label class="form-label">
                                         {{'Full name'|_}}
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" class="form-control" name="name" placeholder="{{ user.name }}" value="{{ user.name }}">
+                                    <input type="text" class="form-control" name="delivery_address[name]" placeholder="{{ user.name }}" value="{{ user.name }}">
                                 </div>
                                 <!-- End Input -->
                             </div>
@@ -333,7 +270,19 @@ function onSubmitOrder()
                                         {{'Phone'|_}}
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" class="form-control" name="phone" placeholder="{{ user.phone }}" value="{{ user.phone }}">
+                                    <input type="text" class="form-control" name="delivery_address[phone]" placeholder="{{ user.phone }}" value="{{ user.phone }}">
+                                </div>
+                                <!-- End Input -->
+                            </div>
+
+                            <div class="col-md-6">
+                                <!-- Input -->
+                                <div class="js-form-message mb-6">
+                                    <label class="form-label">
+                                        {{'Email'|_}}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" name="delivery_address[email]" placeholder="{{ user.email }}" value="{{ user.email }}">
                                 </div>
                                 <!-- End Input -->
                             </div>
@@ -345,7 +294,7 @@ function onSubmitOrder()
                                         {{'District'|_}}
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <select class="form-control custom-select" name="district" id="">
+                                    <select class="form-control custom-select" name="delivery_address[district]" id="">
                                         <option value="">Select District</option>
                                         {% for data in districts %}
                                         <option value="{{ data.name }}">{{ data.name }}</option>
@@ -362,7 +311,7 @@ function onSubmitOrder()
                                         {{'Area'|_}}
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <select class="form-control custom-select" name="area" id="">
+                                    <select class="form-control custom-select" name="delivery_address[area]" id="">
                                         <option value="">Select Area</option>
                                         {% for data in districts %}
                                         <option value="{{ data.name }}">{{ data.name }}</option>
@@ -380,7 +329,7 @@ function onSubmitOrder()
                                     <label class="form-label">
                                         {{'Address'|_}}
                                     </label>
-                                    <input type="text" class="form-control" name="address" placeholder="{{ user.address }}" value="{{ user.address }}">
+                                    <input type="text" class="form-control" name="delivery_address[address]" placeholder="{{ user.address }}" value="{{ user.address }}">
                                 </div>
                                 <!-- End Input -->
                             </div>
@@ -400,29 +349,6 @@ function onSubmitOrder()
                             </div>
                         </div>
                         <!-- End Input -->
-
-                        <!-- Accordion -->
-                        <!-- <div id="shopCartAccordion1" class="accordion rounded mb-6">
-                            <div class="card border-0">
-                                <div id="shopCartHeadingTwo" class="alert alert-primary mb-0" role="alert">
-                                    {{'Have a coupon?'|_}} <a href="#" class="alert-link" data-toggle="collapse" data-target="#shopCartTwo" aria-expanded="false" aria-controls="shopCartTwo">{{'Click here to enter your code'|_}}</a>
-                                </div>
-                                <div id="shopCartTwo" class="collapse border border-top-0 p-3" aria-labelledby="shopCartHeadingTwo" data-parent="#shopCartAccordion1" style="">
-                                    <form class="js-validate p-5" novalidate="novalidate">
-                                        <div class="input-group input-group-pill max-width-660-xl">
-                                            <input type="text" class="form-control" name="coupon_code" placeholder="Coupon code" aria-label="Promo code">
-                                            <div class="input-group-append">
-                                                <button type="submit" class="btn btn-block btn-dark font-weight-normal btn-pill px-4">
-                                                    <i class="fas fa-tags d-md-none"></i>
-                                                    <span class="d-none d-md-inline">{{'Apply'|_}}</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div> -->
-                        <!-- End Accordion -->
                     </div>
                 </div>
             </div>
@@ -433,13 +359,3 @@ function onSubmitOrder()
         
     </div>
 </main>
-
-{% component 'account' template='fixed' %}
-
-{% put scripts %}
-<script>
-    $(document).on('ready', function () {
-        setTimeout(function(){$('#sidebarNavToggler').click();}, 100);
-    });
-</script>
-{% endput %}

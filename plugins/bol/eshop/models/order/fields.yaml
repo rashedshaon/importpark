@@ -1,6 +1,142 @@
 fields:
-    status:
-        label: status
-        showSearch: true
+    order_number:
+        label: 'Order Number'
         span: auto
-        type: dropdown
+        context:
+            - preview
+        type: text
+    price_block:
+        span: left
+        type: partial
+        context:
+            - preview
+tabs:
+    fields:
+        status_id:
+            label: Status
+            showSearch: true
+            span: auto
+            type: dropdown
+            tab: 'bol.eshop::lang.order.tab_info'
+        payment_status:
+            label: 'Payment status'
+            span: auto
+            type: switch
+            tab: 'bol.eshop::lang.order.tab_info'
+        payment_method_id:
+            label: 'Payment method'
+            showSearch: true
+            span: auto
+            type: dropdown
+            tab: 'bol.eshop::lang.order.tab_info'
+        shipping_method_id:
+            label: 'Shipping method'
+            showSearch: true
+            span: auto
+            type: dropdown
+            tab: 'bol.eshop::lang.order.tab_info'
+        user_id:
+            label: 'bol.eshop::lang.order.user_id'
+            showSearch: true
+            span: auto
+            type: dropdown
+            tab: 'bol.eshop::lang.order.tab_info'
+        customer_name:
+            label: 'Customer name'
+            span: auto
+            type: text
+            tab: 'bol.eshop::lang.order.tab_info'
+        phone:
+            label: 'Phone'
+            span: auto
+            type: text
+            tab: 'bol.eshop::lang.order.tab_info'
+        
+        tax_percent:
+            label: 'Tax percent'
+            span: auto
+            type: number
+            tab: 'bol.eshop::lang.order.tab_info'
+        coupon_id:
+            label: 'Coupon'
+            span: auto
+            type: dropdown
+            context:
+                - create
+                - update
+                - preview
+            tab: 'bol.eshop::lang.order.tab_info'
+        other_deduction:
+            label: 'Other deduction'
+            span: auto
+            type: number
+            tab: 'bol.eshop::lang.order.tab_info'
+        coupon_discount:
+            label: 'Coupon discount'
+            span: auto
+            type: number
+            context:
+                - preview
+            tab: 'bol.eshop::lang.order.tab_info'
+        remarks:
+            label: Remarks
+            size: large
+            span: auto
+            type: textarea
+            tab: 'bol.eshop::lang.order.tab_info'
+        order_items:
+            span: full
+            path: $/bol/eshop/controllers/orders/_order_items.htm
+            context:
+                - update
+                - preview
+            type: partial
+            tab: 'bol.eshop::lang.order.tab_order_items'
+        delivery_address:
+            label: 'Delivery Address'
+            type: nestedform
+            showPanel: false
+            form:
+                fields:
+                    name:
+                        label: Name
+                        span: auto
+                        type: text
+                    phone:
+                        label: Phone
+                        span: auto
+                        type: text
+                    email:
+                        label: Email
+                        span: auto
+                        type: text
+                    address:
+                        label: Address
+                        span: auto
+                        type: text
+            span: auto
+            tab: 'bol.eshop::lang.order.tab_shipping_address'
+        billing_address:
+            label: 'Billing Address'
+            type: nestedform
+            showPanel: false
+            form:
+                fields:
+                    name:
+                        label: Name
+                        span: auto
+                        type: text
+                    phone:
+                        label: Phone
+                        span: auto
+                        type: text
+                    email:
+                        label: Email
+                        span: auto
+                        type: text
+                    address:
+                        label: Address
+                        span: auto
+                        type: text
+            span: auto
+            tab: 'bol.eshop::lang.order.tab_billing_address'

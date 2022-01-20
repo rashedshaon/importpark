@@ -6,8 +6,9 @@ use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
 use Bol\Eshop\Models\Product as EshopProduct;
 use Bol\Eshop\Models\Cart;
+use Bol\Eshop\Models\ShippingMethod;
 use Lang;
-use Flash;
+use Flash, ValidationException;
 use Redirect;
 
 class ShoppingCart extends ComponentBase
@@ -91,8 +92,6 @@ class ShoppingCart extends ComponentBase
     {
         $post = post();
 
-        // dd($post);
-
         Cart::updateCartItem($post['item_id'], $post['quantity']);
 
         $this->refresh();
@@ -125,8 +124,26 @@ class ShoppingCart extends ComponentBase
                 ];
     }
 
+    public function onCheckout()
+    {
+        $post = post();
+
+        // dd($post);
+        if(!isset($post['shipping_method_id']))
+        {
+            throw new ValidationException(['error' => 'Please select shipping method.']);
+        }
+
+        $cart = Cart::data();
+        $cart->shipping_method_id = $post['shipping_method_id'];
+        $cart->save();
+
+        return Redirect::to('checkout');
+    }
+
     public function refresh()
     {
+        $this->page['shipping_methods'] = ShippingMethod::where('is_active', 1)->get();
         $this->cart = $this->page['cart'] = Cart::data();
         $this->cart_count = $this->page['cart_count'] = Cart::count();
     }

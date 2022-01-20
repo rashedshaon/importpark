@@ -1,0 +1,58 @@
+{% if __SELF__.products.lastPage >= __SELF__.products.currentPage %}
+
+{% for product in __SELF__.products %}
+<div class="col-2">
+    <div class="product-box mb-40">
+        <div class="product-box-wrapper">
+            <div class="product-img">
+                <img src="{{ product.featuredPhoto(800, 948) }}" class="w-100" alt="">
+                <a href="{{ product.url }}" class="d-block">
+                    <div class="second-img">
+                        <img src="{{ product.hoverPhoto(800, 948) }}" alt="" class="w-100">
+                    </div>
+                </a>
+                {% if product.is_new %}
+                <span class="sale bg-red text-white">New!</span>
+                {% endif %}
+
+                {% if product.is_featured %}
+                <span class="sale bg-red text-white">Featured!</span>
+                {% endif %}
+                <!-- <a href="javascript:void(0)"
+                    class="product-img-link quick-view-1 text-capitalize">Quick view</a> -->
+            </div>
+
+            <div class="product-desc pb-20">
+                <div class="product-desc-top">
+                    <div class="categories">
+                        {% for category in product.categories %}
+                            <a href="{{ category.url }}" class="product-category"><span>{{ category.name }}</span></a>{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- need to add login modal partial in bottom -->
+                    {% component 'shopWishList' partial='wish-button' data=product %}
+
+                </div>
+
+                <a href="{{ product.url }}" class="product-title">{{ product.title }}</a>
+                <div class="price-switcher">
+                    {% if product.discount > 0 %}
+                        <span class="price switcher-item">{{ product.price_label }} <del class="text-danger">{{ product.original_price_label }}</del></span>
+                    {% else %}
+                        <span class="price switcher-item">{{ product.price_label }}</span>
+                    {% endif %}
+                    <a class="add-cart text-capitalize switcher-item"
+                        data-request="onAddToCart"
+                        data-request-data="product_id: {{ product.id }}, quantity: 1, color: '{{ product.default_color }}', size: '{{ product.default_size }}'"
+                        data-request-flash>+add to cart</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="no-data">{{ __SELF__.noProductsMessage }}</div>
+{% endfor %}
+
+{% endif %}

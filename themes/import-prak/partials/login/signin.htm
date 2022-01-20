@@ -1,0 +1,91 @@
+<div id="login" data-target-group="idForm">
+    <!-- Title -->
+    <header class="text-center mb-5">
+    <!-- <h2 class="h4 mb-0">Welcome Back!</h2> -->
+    {% partial 'logo' %}   
+    <p class="mb-0">{{'Please login to get all facilities.'|_}}</p>
+    <div class="small text-muted">{{'CALL IF NEED ANY HELP'|_}}</div>
+    <div>
+        <a href="tel:+8801816600042" class="text-gray-90">{{'01816 600042'|_}}</a>
+    </div>
+    </header>
+    <!-- End Title -->
+
+    <form data-request="onSignin" data-request-flash>
+    <!-- Form Group -->
+    <div class="form-group">
+        <div class="js-form-message js-focus-state">
+            <label class="sr-only" for="signinPhone">{{'Phone'|_}}</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="signinPhoneLabel">
+                        <span class="fas fa-user"></span>
+                    </span>
+                </div>
+                <input type="tel" class="form-control" name="phone" id="signinPhone" placeholder="Phone" aria-label="Phone" aria-describedby="signinPhoneLabel" required
+                data-msg="Please enter a valid phone number."
+                data-error-class="u-has-error"
+                data-success-class="u-has-success">
+            </div>
+        </div>
+    </div>
+    <!-- End Form Group -->
+
+    <!-- Form Group -->
+    <div class="form-group">
+        <div class="js-form-message js-focus-state">
+          <label class="sr-only" for="signinPassword">{{'Password'|_}}</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="signinPasswordLabel">
+                    <span class="fas fa-lock"></span>
+                </span>
+            </div>
+            <input type="password" class="form-control" name="password" id="signinPassword" placeholder="Password" aria-label="Password" aria-describedby="signinPasswordLabel" required
+               data-msg="Your password is invalid. Please try again."
+               data-error-class="u-has-error"
+               data-success-class="u-has-success">
+          </div>
+        </div>
+    </div>
+    <!-- End Form Group -->
+
+    <div class="d-flex justify-content-end mb-4">
+        <a class="js-animation-link small link-muted" href="javascript:;"
+           data-target="#forgotPassword"
+           data-link-group="idForm"
+           data-animation-in="slideInUp">{{'Forgot Password?'|_}}</a>
+    </div>
+
+    <div class="mb-2">
+        <button type="submit" class="btn btn-block btn-sm btn-primary transition-3d-hover">{{'Login'|_}}</button>
+    </div>
+    
+    </form>
+
+    <div class="text-center mb-4">
+        <span class="small text-muted">{{'Do not have an account?'|_}}</span>
+        <a class="js-animation-link small text-dark" href="javascript:;"
+           data-target="#signup"
+           data-link-group="idForm"
+           data-animation-in="slideInUp">{{'Registration'|_}}
+        </a>
+    </div>
+
+    <!-- <div class="text-center">
+        <span class="u-divider u-divider--xs u-divider--text mb-4">{{'OR'|_}}</span>
+    </div>
+
+ 
+    <div class="d-flex">
+        <a class="btn btn-block btn-sm btn-soft-facebook transition-3d-hover mr-1" href="#">
+          <span class="fab fa-facebook-square mr-1"></span>
+          {{'Facebook'|_}}
+        </a>
+        <a class="btn btn-block btn-sm btn-soft-google transition-3d-hover ml-1 mt-0" href="#">
+          <span class="fab fa-google mr-1"></span>
+          {{'Google'|_}}
+        </a>
+    </div> -->
+
+</div>

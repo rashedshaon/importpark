@@ -1,0 +1,106 @@
+<div class="product-content">
+    <div class="table-responsive">
+        <table class="table table-2">
+            <thead>
+                <tr>
+                    <th colspan="4"><h4>Order #{{order.order_number}} <span class="badge badge-success" style="background-color: {{order.status.color}}">{{order.status.name}}</span> 
+                        <a href="{{ url('invoice') }}/{{order.id}}" target="_blank" class="badge badge-primary float-right"><i class="fal fa-print"></i></a></h4> 
+                    </th>
+                </tr>
+                <tr>
+                    <th class="remove-porduct">Delivery Address</th>
+                    <th class="product-title">Delivery Method</th>
+                    <th class="total">Billing Address</th>
+                    <th class="product-title">Payment Method</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td>
+                        <span> {{ order.delivery_address['name'] }} </span><br/>
+                        <span> {{ order.delivery_address['address'] }} </span><br/>
+                        <span> Phone: {{ order.delivery_address['phone'] }} </span><br/>     
+                        <span> Email: {{ order.delivery_address['email'] }} </span>      
+                    </td>
+                    <td>
+                       {{ order.shipping_method.name }}
+                    </td>
+                    <td>
+                        <span> {{ order.delivery_address['name'] }} </span><br/>
+                        <span> {{ order.delivery_address['address'] }} </span><br/>
+                        <span> Phone: {{ order.delivery_address['phone'] }} </span><br/>      
+                        <span> Email: {{ order.delivery_address['email'] }} </span>       
+                    </td>
+                    <td>
+                        {{ order.payment_method.name }}
+
+                        <div class="payment-status">
+                            <span class="badge badge-{{order.payment_status ? 'success' : 'danger'}}">{{order.payment_status ? 'Paid' : 'Unpaid'}}</span>
+                        </div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</div><br/><br/>
+
+<div class="product-content">
+    <div class="table-responsive">
+        <table class="table table-2">
+            <thead>
+                <tr><th colspan="5"><h5>Order Details</h5></th></tr>
+                <tr>
+                    <th class="">Sl.</th>
+                    <th class="remove-porduct">Photo</th>
+                    <th class="remove-porduct">Product</th>
+                    <th class="product-title">Quantity</th>
+                    <th class="total">Unit</th>
+                    <th class="product-title">Price</th>
+                    <th class="quantity">Subtotal</th>
+                </tr>
+                {% for item in order.items %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>
+                        <img src="{{ item.product.featuredPhoto(80, 80) }}" alt="{{ item.product.title }}">
+                    </td>
+                    <td>
+                        {{ item.title }}
+                        {% if item.color %}
+                        <br>Color: {{ item.color }}
+                        {% endif %}
+                        {% if item.size %}
+                        <br>Size: {{ item.size }}
+                        {% endif %}
+                    </td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td>{{ item.price_label }}</td>
+                    <td>{{ item.subtotal_label }}</td>
+                </tr>
+                {% endfor %}
+
+                {% if order.remarks %}
+                <tr>
+                    <th colspan="7">
+                        *Note: {{ order.remarks }}
+                    </th>
+                </tr>
+                {% endif %}
+                
+
+                <tr><th colspan="5"></th><th class="product-title">Subtotal</th><th class="quantity">{{ order.subtotal_label }}</th></tr>
+                <tr><th colspan="5"></th><th class="product-title">Discount</th><th class="quantity">{{ order.total_discount_label }}</th></tr>
+                <tr><th colspan="5"></th><th class="product-title">Shipping</th><th class="quantity">{{ order.shipping_method.price_label }}</th></tr>
+                {% if order.tax_percent %}
+                <tr><th colspan="5"></th><th class="product-title">Tax ({{order.tax_percent}}%)</th><th class="quantity">{{order.tax_amount_label}}</th></tr>
+                {% endif %}
+                <tr><th colspan="5"></th><th class="product-title">Grand Total</th><th class="quantity">{{ order.total_label }}</th></tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>

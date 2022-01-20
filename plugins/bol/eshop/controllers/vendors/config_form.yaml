@@ -1,0 +1,10 @@
+name: Vendors
+form: $/bol/eshop/models/vendor/fields.yaml
+modelClass: Bol\Eshop\Models\Vendor
+defaultRedirect: bol/eshop/vendors
+create:
+    redirect: 'bol/eshop/vendors/update/:id'
+    redirectClose: bol/eshop/vendors
+update:
+    redirect: bol/eshop/vendors
+    redirectClose: bol/eshop/vendors

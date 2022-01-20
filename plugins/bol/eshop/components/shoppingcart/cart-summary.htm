@@ -14,3 +14,22 @@
     <th>Total</th>
     <td><strong>{{cart.total_label}}</strong></td>
 </tr>
+<tr class="shipping">
+    <th>Shipping Method:</th>
+    <td>
+        <ul>
+            {% for item in shipping_methods %}
+            <li>
+                <input type="radio" name="shipping_method_id" value="{{item.id}}"/>
+                <label>
+                    {{item.name}}
+
+                    {% if item.price %}
+                    : <span class="amount">{{ item.price_label }}</span>
+                    {% endif %}
+                </label>
+            </li>
+            {% endfor %}
+        </ul>
+    </td>
+</tr>

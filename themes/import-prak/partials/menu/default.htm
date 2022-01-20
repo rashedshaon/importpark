@@ -1,0 +1,6 @@
+[staticMenu]
+code={{code}}
+==
+{% if staticMenu.menuItems %}
+        {% partial 'menu/' ~ template items=staticMenu.menuItems %}
+{% endif %}

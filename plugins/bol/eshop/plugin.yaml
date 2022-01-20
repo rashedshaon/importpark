@@ -41,6 +41,12 @@ permissions:
     bol.eshop.manage_payment_methods:
         tab: 'bol.eshop::lang.plugin.name'
         label: 'bol.eshop::lang.permission.manage_payment_methods'
+    bol.eshop.manage_stocks:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_stocks'
+    bol.eshop.manage_vendors:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_vendors'
 navigation:
     main-menu-item:
         label: 'bol.eshop::lang.plugin.name'
@@ -49,12 +55,30 @@ navigation:
         permissions:
             - bol.eshop.manage_products
         sideMenu:
+            side-menu-item4:
+                label: 'bol.eshop::lang.menu.orders'
+                url: bol/eshop/orders
+                icon: icon-list-alt
+                permissions:
+                    - bol.eshop.manage_orders
             side-menu-item:
                 label: 'bol.eshop::lang.menu.products'
                 url: bol/eshop/products
                 icon: icon-book
                 permissions:
                     - bol.eshop.manage_products
+            side-menu-item5:
+                label: 'bol.eshop::lang.menu.stocks'
+                url: bol/eshop/stocks
+                icon: icon-server
+                permissions:
+                    - bol.eshop.manage_stocks
+            side-menu-item6:
+                label: 'bol.eshop::lang.menu.vendors'
+                url: bol/eshop/vendors
+                icon: icon-cubes
+                permissions:
+                    - bol.eshop.manage_vendors
             side-menu-item2:
                 label: 'bol.eshop::lang.menu.categories'
                 url: bol/eshop/categories

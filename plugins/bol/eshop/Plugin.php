@@ -3,21 +3,28 @@
 use System\Classes\PluginBase;
 
 use Backend;
+use App, Event;
 use Controller;
 use Bol\Eshop\Classes\TagProcessor;
 use Bol\Eshop\Models\Product;
 use Bol\Eshop\Models\Category;
-use Event;
+use Bol\Eshop\Models\Order;
 
 class Plugin extends PluginBase
 {
+
     public function registerComponents()
     {
         return [
-            'Bol\Eshop\Components\Product'       => 'shopProduct',
-            'Bol\Eshop\Components\Products'      => 'shopProducts',
-            'Bol\Eshop\Components\Categories'    => 'shopCategories',
-            'Bol\Eshop\Components\ShoppingCart'  => 'shoppingCart',
+            'Bol\Eshop\Components\Product'           => 'shopProduct',
+            'Bol\Eshop\Components\Products'          => 'shopProducts',
+            'Bol\Eshop\Components\Categories'        => 'shopCategories',
+            'Bol\Eshop\Components\ShoppingCart'      => 'shoppingCart',
+            'Bol\Eshop\Components\ShopWishList'      => 'shopWishList',
+            'Bol\Eshop\Components\ShopOrders'        => 'shopOrders',
+            'Bol\Eshop\Components\ShopCheckout'      => 'shopCheckout',
+            'Bol\Eshop\Components\ShopUser'          => 'shopUser',
+            'Bol\Eshop\Components\ShopProductSearch' => 'shopProductSearch',
         ];
     }
 
@@ -110,13 +117,26 @@ class Plugin extends PluginBase
 
     public function boot()
     {
+        if (App::runningInBackend())
+        {
+            // Extend the navigation
+            Event::listen('backend.menu.extendItems', function($manager) {
+            
+            $manager->addSideMenuItems('Bol.Eshop', 'main-menu-item', [
+                    'side-menu-item4' => [
+                        'counter' => Order::submissionCount(),
+                    ],
+                ]);
+            });
+        }
+        
         /*
          * Register menu items for the RainLab.Pages plugin
          */
         Event::listen('pages.menuitem.listTypes', function() {
             return [
-                'shop-category'       => 'bol.eshop::lang.menuitem.shop_category',
-                'all-shop-categories' => 'bol.eshop::lang.menuitem.all_shop_categories',
+                'shop-category'          => 'bol.eshop::lang.menuitem.shop_category',
+                'all-shop-categories'    => 'bol.eshop::lang.menuitem.all_shop_categories',
                 'shop-product'           => 'bol.eshop::lang.menuitem.shop_product',
                 'all-shop-products'      => 'bol.eshop::lang.menuitem.all_shop_products',
                 'category-shop-products' => 'bol.eshop::lang.menuitem.category_shop_products',

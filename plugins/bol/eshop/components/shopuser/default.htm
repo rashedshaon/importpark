@@ -1,0 +1,30 @@
+{% if not user %}
+
+    {% if __SELF__.property('partial') == 'signin' %}
+
+        {% partial __SELF__ ~ '::signin' %}
+
+    {% elseif __SELF__.property('partial') == 'register' %}
+
+        {% partial __SELF__ ~ '::register' %}
+
+    {% elseif __SELF__.property('partial') == 'forgot-password' %}
+
+        {% partial __SELF__ ~ '::forgot-password' %}
+
+    {% endif %}
+
+
+{% else %}
+
+    {% if __SELF__.property('partial') == 'profile' %}
+
+        {% partial __SELF__ ~ '::activation_check' %}
+
+        {% partial __SELF__ ~ '::update' %}
+
+        {% partial __SELF__ ~ '::deactivate_link' %}
+
+    {% endif %}
+
+{% endif %}

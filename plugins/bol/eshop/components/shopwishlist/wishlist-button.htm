@@ -1,0 +1,12 @@
+{% set product = __SELF__.property('data') %}
+{% set label = __SELF__.property('label') %}
+
+{% if user %}
+    {% if product.is_wish_list %}
+        <a data-request="onAddOrRemoveWishlist" data-request-data="product_id: {{ product.id }}" data-request-flash><span id="icon{{ product.id }}"><i class="fad fa-heart"></i></span> {{label}}</a>
+    {% else %}
+        <a data-request="onAddOrRemoveWishlist" data-request-data="product_id: {{ product.id }}" data-request-flash><span id="icon{{ product.id }}"><i class="fal fa-heart"></i></span> {{label}}</a>
+    {% endif %}
+{% else %}
+        <a href="#" data-toggle="modal" data-target="#login-modal" onclick="$('input[name=product_id]').val({{ product.id }})"><span><i class="fal fa-heart"></i></span> {{label}}</a> 
+{% endif %}

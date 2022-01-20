@@ -1,0 +1,47 @@
+{% if __SELF__.property('partial') == 'wishlist-items' %}
+<tbody class="wishlist-items">
+    {% partial __SELF__ ~ "::wishlist-items" %}
+</tbody>
+
+
+{% put scripts %}
+<script>
+    var page_number = 1;
+    $(function(){ 
+        $(window).scroll(function(){
+            //console.log($(window).scrollTop() + " => " + $(document).height() - $(window).height());
+            // alert();
+            // console.log($(window).scrollTop(), $(document).height() - $(window).height());
+            if (($(window).scrollTop() + 1) > $(document).height() - $(window).height())
+            {
+                $('#loader').show();
+                page_number = page_number + 1;
+                $.request('onScrollList', {
+                    success: function(data) {
+                        this.success(data).done(function() {
+                            //... do something after parent success() is finished ...
+                            $('#loader').hide();
+                        });
+                    },
+                    data: {page: page_number}
+                });
+            }
+        });	
+    });
+</script>  
+{% endput %}
+
+
+{% elseif __SELF__.property('partial') == 'wish-button' %}
+
+    {% partial __SELF__ ~ "::wishlist-button" %}
+
+{% elseif __SELF__.property('partial') == 'login-modal' %}
+
+    {% partial __SELF__ ~ "::login-modal" %}
+
+{% elseif __SELF__.property('partial') == 'count' %}
+<a href="{{ url('wish-list') }}">
+    <i class="fal fa-heart"><span class="wishlist-count">{% partial __SELF__ ~ "::wishlist-count" %}</span></i>
+</a>
+{% endif %}

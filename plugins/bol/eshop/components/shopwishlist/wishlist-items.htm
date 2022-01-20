@@ -1,0 +1,36 @@
+{% if items.lastPage >= items.currentPage %}
+{% for item in items %}
+
+<tr>
+    <td class="product-thumbnail">
+        <a href="{{ item.product.slug }}">
+            <img src="{{ item.product.featuredPhoto(80, 80) }}" alt="{{ item.product.title }}">
+        </a>
+    </td>
+    <td class="product-name"><a href="{{ item.product.slug }}">{{ item.product.title }}</a></td>
+    <td class="product-price">
+        
+        {% if item.product.discount > 0 %}
+            <span class="amount">{{ item.product.price_label }}</span>
+            <del class="font-size-20 ml-2 text-danger">{{ item.product.original_price_label }}</del>
+        {% else %}
+            <span class="amount">{{ item.product.price_label }}</span>
+        {% endif %}
+    </td>
+    <td class="product-quantity">
+        <button class="btn theme-btn-2" type="submit" data-request="onAddToCart"
+            data-request-data="product_id: {{ item.product_id }}, quantity: 1, color: '{{ item.product.default_color }}', size: '{{ item.product.default_size }}'"
+            data-request-flash>Add TO Cart</button>
+        <a class="btn theme-btn"
+            data-request="onWishlistRemove"
+            data-request-data="id: {{ item.id }}" 
+            data-request-flash> <i class="fa fa-times"></i></a>
+    </td>
+</tr>
+
+{% else %}
+<tr>
+    <td colspan="4" class="no-data">No items available</td>
+</tr>
+{% endfor %}
+{% endif %}

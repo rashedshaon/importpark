@@ -69,7 +69,12 @@ function onStart()
                                     </div>
                                     <div class="d-md-flex">
                                         <!-- <button type="button" class="btn btn-soft-secondary mb-3 mb-md-0 font-weight-normal px-5 px-md-4 px-lg-5 w-100 w-md-auto">Update cart</button> -->
-                                        <a href="{{ url('checkout') }}" class="btn btn-primary-dark ml-md-2 px-5 px-md-4 px-lg-5 w-100 w-md-auto d-none d-md-inline-block">Proceed to checkout</a>
+                                        <a class="btn btn-primary-dark ml-md-2 px-5 px-md-4 px-lg-5 w-100 w-md-auto d-none d-md-inline-block"
+                                            onclick="this.style.display='none'; this.innerText='Processing…';" 
+                                            data-request-form="#form-checkout" 
+                                            data-request="onCheckout" 
+                                            data-request-complete="if(data.statusText == 'Not Acceptable'){this.style.display='block'; this.innerText='Proceed to checkout';}"
+                                            data-request-flash>Proceed to checkout</a>
                                     </div>
                                 </div>
                             </div>
@@ -85,11 +90,18 @@ function onStart()
                         <h3 class="d-inline-block section-title mb-0 pb-2 font-size-26">Cart totals</h3>
                     </div>
                     <table class="table mb-3 mb-md-0">
-                        <tbody class="cart_summary">
-                            {% component 'shoppingCart' partial='cart-summary' %}
-                        </tbody>
+                        <form id="form-checkout">
+                            <tbody class="cart_summary">
+                                {% component 'shoppingCart' partial='cart-summary' %}
+                            </tbody>
+                        </form>
                     </table>
-                    <a href="{{ url('checkout') }}" class="btn btn-primary-dark ml-md-2 px-5 px-md-4 px-lg-5 w-100 w-md-auto d-md-none">Proceed to checkout</a>
+                    <a  class="btn btn-primary-dark ml-md-2 px-5 px-md-4 px-lg-5 w-100 w-md-auto d-md-none"
+                        onclick="this.style.display='none'; this.innerText='Processing…';" 
+                        data-request-form="#form-checkout" 
+                        data-request="onCheckout" 
+                        data-request-complete="if(data.statusText == 'Not Acceptable'){this.style.display='block'; this.innerText='Proceed to checkout';}"
+                        data-request-flash>Proceed to checkout</a>
                 </div>
             </div>
         </div>

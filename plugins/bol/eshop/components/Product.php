@@ -70,6 +70,8 @@ class Product extends ComponentBase
     {
         $this->categoryPage = $this->page['categoryPage'] = $this->property('categoryPage');
         $this->product = $this->page['product'] = $this->loadProduct();
+        $this->page->title = $this->product->title;
+
         if (!$this->product) {
             $this->setStatusCode(404);
             return $this->controller->run('404');

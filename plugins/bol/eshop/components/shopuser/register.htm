@@ -1,0 +1,28 @@
+{% if canRegister %}
+    <h3>Register</h3>
+
+    <form data-request="onRegister" data-request-flash>
+
+        <div class="row px-3"> <label class="mb-1">
+            <h6 class="mb-0 text-sm">Full Name</h6>
+        </label> <input class="mb-4" type="text" name="name"
+            placeholder="Enter a your full name"> </div>
+        <!-- <div class="row px-3"> <label class="mb-1">
+            <h6 class="mb-0 text-sm">Phone</h6>
+        </label> <input class="mb-4" type="text" name="phone"
+            placeholder="Enter a valid phone number"> </div> -->
+        <div class="row px-3"> <label class="mb-1">
+            <h6 class="mb-0 text-sm">Email</h6>
+        </label> <input class="mb-4" type="text" name="email"
+            placeholder="Enter a valid email address"> </div>
+        <div class="row px-3"> <label class="mb-1">
+            <h6 class="mb-0 text-sm">Password</h6>
+        </label> <input type="password" name="password" placeholder="Enter password"> </div>
+        
+        <div class="row mb-3 px-3"> <button type="submit"
+            class="btn btn-blue text-center">Register</button> </div>
+
+    </form>
+{% else %}
+    <!-- Registration is disabled. -->
+{% endif %}

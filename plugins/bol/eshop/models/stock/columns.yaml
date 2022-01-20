@@ -1,0 +1,37 @@
+columns:
+    id:
+        label: id
+        type: number
+        invisible: true
+    product_id:
+        label: product_id
+        type: text
+        select: title
+        relation: product
+    quantity:
+        label: quantity
+        type: text
+    purchase_price:
+        label: purchase_price
+        type: text
+    purchase_date:
+        label: purchase_date
+        type: text
+    vendor_id:
+        label: vendor_id
+        type: number
+        select: name
+        relation: vendor
+    created_by:
+        label: created_by
+        type: text
+        select: first_name
+        relation: created_by_user
+    created_at:
+        label: created_at
+        type: datetime
+        invisible: true
+    updated_at:
+        label: updated_at
+        type: datetime
+        invisible: true

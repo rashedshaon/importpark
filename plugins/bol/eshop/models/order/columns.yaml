@@ -1,44 +1,44 @@
 columns:
     id:
-        label: id
+        label: bol.eshop::lang.order.id
         type: number
         invisible: true
-    customer_name:
-        label: customer_name
+    order_number:
+        label: bol.eshop::lang.order.order_number
         type: text
         searchable: true
-    payment_mothod:
-        label: payment_mothod
+    customer_name:
+        label: bol.eshop::lang.order.customer_name
         type: text
-    delivery_mothod:
-        label: delivery_mothod
+        searchable: true
+    phone:
+        label: bol.eshop::lang.order.phone
         type: text
-    tax_percent:
-        label: tax_percent
+        searchable: true
+    payment_method:
+        label: bol.eshop::lang.order.payment_method
         type: text
-    other_deduction:
-        label: other_deduction
+        select: name
+        relation: payment_method
+    delivery_method:
+        label: bol.eshop::lang.order.delivery_method
         type: text
-    coupon_name:
-        label: coupon_name
-        type: text
-    coupon_discount:
-        label: coupon_discount
-        type: text
+        select: name
+        relation: shipping_method
     payment_status:
-        label: payment_status
-        type: text
-    status:
-        label: status
-        type: text
+        label: bol.eshop::lang.order.payment_status
+        type: switch
     remarks:
-        label: remarks
+        label: bol.eshop::lang.order.remarks
         type: text
+    status_name:
+        label: bol.eshop::lang.order.status
+        type: partial
     created_at:
-        label: created_at
+        label: bol.eshop::lang.order.created_at
         type: datetime
         invisible: true
     updated_at:
-        label: updated_at
+        label: bol.eshop::lang.order.updated_at
         type: datetime
         invisible: true

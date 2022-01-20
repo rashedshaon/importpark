@@ -1,0 +1,40 @@
+<div id="login-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Login</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="login-form">
+                    <input type="hidden" name="product_id" value="">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">Password:</label>
+                        <input type="password" class="form-control" id="pwd" placeholder="Enter password"
+                            name="password">
+                    </div>
+                    <div>
+                        <label>Don't have an account?<a href="{{ url('registration') }}"> Register</a></label>
+                        <button type="button" 
+                            class="generic-btn border-0 red-hover-btn text-uppercase float-right"
+                            onclick="this.innerText='Processing…';" 
+                            data-request-complete="if(data.statusText == 'Not Acceptable'){this.innerText='Login';}"
+                            data-request-form="#login-form" 
+                            data-request="onSignin" 
+                            data-request-data="redirect: '0'" 
+                            data-request-success="$('#login-form').request('onAddOrRemoveWishlist', {success: function(){location.reload()}})" 
+                            data-request-flash>Login</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

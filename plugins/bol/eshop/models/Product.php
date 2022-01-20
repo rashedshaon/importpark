@@ -1,10 +1,21 @@
 <?php namespace Bol\Eshop\Models;
 
+use Url;
+use Auth;
 use Model;
 use Lang;
 use BackendAuth;
 use ValidationException;
 use Carbon\Carbon;
+use Cms\Classes\Theme;
+use Cms\Classes\Page as CmsPage;
+
+use Html;
+use Markdown;
+use Backend\Models\User as BackendUser;
+use Cms\Classes\Controller;
+use October\Rain\Database\NestedTreeScope;
+use RainLab\Blog\Classes\TagProcessor;
 
 /**
  * Model
@@ -29,7 +40,8 @@ class Product extends Model
         'slug'    => ['required', 'regex:/^[a-z0-9\/\:_\-\*\[\]\+\?\|]*$/i', 'unique:bol_eshop_products'],
         'short_description' => 'required',
         'description' => 'required',
-        // 'brand_id' => 'required',
+        'brand_id' => 'required',
+        'unit_id' => 'required',
     ];
 
     /**
@@ -42,6 +54,10 @@ class Product extends Model
         'meta_title',
         'meta_description',
         ['slug', 'index' => true]
+    ];
+
+    public $hasMany = [
+        'wish_items' => ['Bol\Eshop\Models\WishList', 'key'    => 'product_id', 'otherKey' => 'id'],
     ];
 
     public $belongsToMany = [
@@ -86,6 +102,10 @@ class Product extends Model
         'published_at asc'  => 'bol.eshop::lang.sorting.published_asc',
         'published_at desc' => 'bol.eshop::lang.sorting.published_desc',
         'random'            => 'bol.eshop::lang.sorting.random'
+    ];
+
+    public $hasOne = [
+        'unit' => ['Bol\Eshop\Models\Unit', 'key' => 'id', 'otherKey' => 'unit_id'],
     ];
 
     /*
@@ -246,6 +266,7 @@ class Product extends Model
             'exceptCategories' => null,
             'category'         => null,
             'search'           => '',
+            'featured'         => false,
             'published'        => true,
             'exceptPost'       => null
         ], $options));
@@ -254,6 +275,11 @@ class Product extends Model
 
         if ($published) {
             $query->isPublished();
+        }
+
+        if ($featured) 
+        {
+            $query->where('is_featured', 1);
         }
 
         /*
@@ -487,7 +513,7 @@ class Product extends Model
             $cmsPages = [];
 
             foreach ($pages as $page) {
-                if (!$page->hasComponent('blogPost')) {
+                if (!$page->hasComponent('shopProduct')) {
                     continue;
                 }
 
@@ -495,7 +521,7 @@ class Product extends Model
                  * Component must use a categoryPage filter with a routing parameter and post slug
                  * eg: categoryPage = "{{ :somevalue }}", slug = "{{ :somevalue }}"
                  */
-                $properties = $page->getComponentProperties('blogPost');
+                $properties = $page->getComponentProperties('shopProduct');
                 if (!isset($properties['categoryPage']) || !preg_match('/{{\s*:/', $properties['slug'])) {
                     continue;
                 }
@@ -683,7 +709,7 @@ class Product extends Model
 
             if(Settings::get('currency_label') == 'symbol')
             {
-                return $currency->symbol." ".$this->price;
+                return $currency->symbol."".$this->price;
             }
             else
             {
@@ -702,7 +728,7 @@ class Product extends Model
 
             if(Settings::get('currency_label') == 'symbol')
             {
-                return $currency->symbol." ".$this->main_price;
+                return $currency->symbol."".$this->main_price;
             }
             else
             {
@@ -711,6 +737,23 @@ class Product extends Model
         }
 
         return $this->main_price;
+    }
+
+    public function getIsWishListAttribute()
+    {
+        $user = Auth::getUser();
+
+        if($user)
+        {
+            $item = $this->wish_items()->where('user_id', $user->id)->get()->first();
+            
+            if($item)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getMainPriceAttribute()
@@ -773,11 +816,6 @@ class Product extends Model
         }
 
         return $options;
-    }
-
-    public function getPhoto($imageWidth = null, $imageHeight = null)
-    {
-        return isset($this->photo) ? (($imageHeight && $imageWidth) ? $this->photo->getThumb($imageWidth, $imageHeight, ['mode' => 'crop']) : $this->photo->getPath()) :  (($imageHeight && $imageWidth) ? "https://dummyimage.com/$imageWidth"."x"."$imageHeight/e3e3e3/d5aa6d.jpg&text=++Product++" : "https://dummyimage.com/200x200/e3e3e3/d5aa6d.jpg&text=++Product++");
     }
 
     public function featuredPhoto($imageWidth = null, $imageHeight = null)

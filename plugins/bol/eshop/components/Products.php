@@ -85,6 +85,12 @@ class Products extends ComponentBase
                 'type'        => 'string',
                 'default'     => '',
             ],
+            'isFeatured' => [
+                'title'       => 'bol.eshop::lang.settings.is_featured',
+                'description' => 'bol.eshop::lang.settings.is_featured_description',
+                'type'        => 'checkbox',
+                'default'     => '',
+            ],
             'productsPerPage' => [
                 'title'             => 'bol.eshop::lang.settings.products_per_page',
                 'type'              => 'string',
@@ -116,7 +122,7 @@ class Products extends ComponentBase
                 'title'       => 'bol.eshop::lang.settings.products_product',
                 'description' => 'bol.eshop::lang.settings.products_product_description',
                 'type'        => 'dropdown',
-                'default'     => 'eshop/product',
+                'default'     => '/',
                 'group'       => 'bol.eshop::lang.settings.group_links',
             ],
             'exceptProduct' => [
@@ -161,12 +167,22 @@ class Products extends ComponentBase
         return $options;
     }
 
+    public function onRender()
+    {
+        //$this->prepareVars();
+    }
+
     public function onRun()
     {
         $this->prepareVars();
 
         $this->category = $this->page['category'] = $this->loadCategory();
         $this->products = $this->page['products'] = $this->listProducts();
+
+        if($this->category)
+        {
+            $this->page->title =  $this->category->name;
+        }
 
         /*
          * If the page number is not valid, redirect
@@ -178,6 +194,17 @@ class Products extends ComponentBase
                 return Redirect::to($this->currentPageUrl([$pageNumberParam => $lastPage]));
             }
         }
+    }
+    
+    public function onScrollList()
+    {
+        $page = post('page') ?? 1;
+
+        $this->products = $this->page['products'] = $this->listProducts();
+
+        return [
+            '@#list-items' => $this->renderPartial('@list-items')
+        ];
     }
 
     protected function prepareVars()
@@ -209,6 +236,7 @@ class Products extends ComponentBase
             'search'           => trim(input('search')),
             'category'         => $category,
             'published'        => $isPublished,
+            'featured'        => $this->property('isFeatured'),
             'exceptProduct'       => is_array($this->property('exceptProduct'))
                 ? $this->property('exceptProduct')
                 : preg_split('/,\s*/', $this->property('exceptProduct'), -1, PREG_SPLIT_NO_EMPTY),

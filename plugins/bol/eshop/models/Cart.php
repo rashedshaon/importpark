@@ -25,6 +25,7 @@ class Cart extends Model
 
     public $hasOne = [
         'user' => ['RainLab\User\Models\User', 'key' => 'id', 'otherKey' => 'user_id'],
+        'shipping' => ['Bol\Eshop\Models\ShippingMethod', 'key' => 'id', 'otherKey' => 'shipping_method_id'],
     ];
 
     public $hasMany = [
@@ -44,6 +45,84 @@ class Cart extends Model
         return $total;
     }
 
+    public function getShippingCostAttribute()
+    {
+        return $this->shipping ? $this->shipping->price : 0;
+    }
+
+    public function getShippingCostLabelAttribute()
+    {
+        if(Settings::get('show_currency'))
+        {
+            $currency = Currency::where('is_default', 1)->where('is_active', 1)->get()->first();
+
+            if(Settings::get('currency_label') == 'symbol')
+            {
+                return $currency->symbol."".$this->shipping_cost;
+            }
+            else
+            {
+                return $this->shipping_cost." ".$currency->name;
+            }
+        }
+
+        return $this->shipping_cost;
+    }
+
+    public function getTaxDeductionAttribute()
+    {
+        return Settings::get('tax_deduction');
+    }
+
+    public function getTaxPercentageAttribute()
+    {
+        return Settings::get('tax_percentage');
+    }
+
+    public function getTaxAmountAttribute()
+    {
+        if($this->tax_deduction && $this->tax_percentage)
+        {
+            $total = 0;
+
+            foreach($this->items()->get() as $item)
+            {
+                $total = $total + $item->subtotal;
+            }
+
+            if(Settings::get('tax_apply_on') == 'only_products')
+            {
+                return ($total * $this->tax_percentage) / 100;
+            }
+            else
+            {
+                return (($total + $this->shipping_cost) * $this->tax_percentage) / 100;
+            }
+        }
+
+        return 0;
+    }
+
+
+    public function getTaxAmountLabelAttribute()
+    {
+        if(Settings::get('show_currency'))
+        {
+            $currency = Currency::where('is_default', 1)->where('is_active', 1)->get()->first();
+
+            if(Settings::get('currency_label') == 'symbol')
+            {
+                return $currency->symbol."".number_format($this->tax_amount);
+            }
+            else
+            {
+                return number_format($this->tax_amount)." ".$currency->name;
+            }
+        }
+
+        return $this->tax_amount;
+    }
+
     public function getSubtotalLabelAttribute()
     {
         if(Settings::get('show_currency'))
@@ -52,15 +131,15 @@ class Cart extends Model
 
             if(Settings::get('currency_label') == 'symbol')
             {
-                return $currency->symbol." ".$this->total;
+                return $currency->symbol."".$this->subtotal;
             }
             else
             {
-                return $this->total." ".$currency->name;
+                return $this->subtotal." ".$currency->name;
             }
         }
-
-        return $this->total;
+        
+        return $this->subtotal;
     }
 
 
@@ -73,6 +152,12 @@ class Cart extends Model
             $total = $total + $item->subtotal;
         }
 
+        //add shipping cost
+        $total = $total + $this->shipping_cost;
+
+        //add tax amount
+        $total = $total + $this->tax_amount;
+
         return $total;
     }
 
@@ -84,11 +169,11 @@ class Cart extends Model
 
             if(Settings::get('currency_label') == 'symbol')
             {
-                return $currency->symbol." ".$this->total;
+                return $currency->symbol."".number_format($this->total);
             }
             else
             {
-                return $this->total." ".$currency->name;
+                return number_format($this->total)." ".$currency->name;
             }
         }
 
@@ -115,7 +200,7 @@ class Cart extends Model
 
             if(Settings::get('currency_label') == 'symbol')
             {
-                return $currency->symbol." ".$this->total_discount;
+                return $currency->symbol."".$this->total_discount;
             }
             else
             {

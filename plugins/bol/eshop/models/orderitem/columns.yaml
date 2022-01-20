@@ -1,0 +1,41 @@
+columns:
+    id:
+        label: id
+        type: number
+        invisible: true
+    title:
+        label: title
+        type: text
+        searchable: true
+    photo:
+        label: photo
+        type: partial
+    color:
+        label: color
+        type: text
+    size:
+        label: size
+        type: text
+    price:
+        label: price
+        type: text
+    actual_price:
+        label: actual_price
+        type: text
+    unit:
+        label: unit
+        type: text
+    quantity:
+        label: quantity
+        type: number
+    subtotal_label:
+        label: subtotal
+        type: number
+    created_at:
+        label: created_at
+        type: datetime
+        invisible: true
+    updated_at:
+        label: updated_at
+        type: datetime
+        invisible: true

@@ -1,0 +1,21 @@
+fields:
+    product_id:
+        label: 'Product id'
+        span: auto
+        type: dropdown
+    quantity:
+        label: Quantity
+        span: auto
+        type: number
+    purchase_price:
+        label: 'Purchase price'
+        span: auto
+        type: number
+    purchase_date:
+        label: 'Purchase date'
+        span: auto
+        type: datepicker
+    vendor_id:
+        label: 'Vendor id'
+        span: auto
+        type: dropdown

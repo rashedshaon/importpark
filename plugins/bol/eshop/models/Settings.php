@@ -21,7 +21,11 @@ class Settings extends Model
     public $translatable = [];
     public $settingsFields = 'fields.yaml';
 
-    public $attachOne = [];
+    
+    public $attachOne = [
+        'site_logo'  => \System\Models\File::class
+    ];
+
     public $attachMany = [];
 
     public function initSettingsData()
@@ -98,6 +102,13 @@ class Settings extends Model
         });
 
         return $options;
+    }
+
+    public static function siteLogo($imageWidth = null, $imageHeight = null)
+    {
+        $settings = self::instance();
+
+        return isset($settings->site_logo) ? (($imageHeight && $imageWidth) ? $settings->site_logo->getThumb($imageWidth, $imageHeight, ['mode' => 'crop']) : $settings->site_logo->getPath()) :  (($imageHeight && $imageWidth) ? "https://dummyimage.com/$imageWidth"."x"."$imageHeight/e3e3e3/d5aa6d.jpg&text=++logo++" : "https://dummyimage.com/174x80/e3e3e3/d5aa6d.jpg&text=++logo++");
     }
 
     // /**

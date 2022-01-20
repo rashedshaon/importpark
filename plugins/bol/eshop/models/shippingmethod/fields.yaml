@@ -18,3 +18,8 @@ fields:
         label: bol.eshop::lang.shipping_method.price
         span: auto
         type: number
+    description:
+        label: 'bol.eshop::lang.shipping_method.description'
+        size: small
+        span: auto
+        type: richeditor

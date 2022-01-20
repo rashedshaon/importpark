@@ -30,6 +30,25 @@ class CartItem extends Model
         return $this->product->main_price * $this->quantity;
     }
 
+    public function getSubtotalLabelAttribute()
+    {
+        if(Settings::get('show_currency'))
+        {
+            $currency = Currency::where('is_default', 1)->where('is_active', 1)->get()->first();
+
+            if(Settings::get('currency_label') == 'symbol')
+            {
+                return $currency->symbol."".$this->subtotal;
+            }
+            else
+            {
+                return $this->subtotal." ".$currency->name;
+            }
+        }
+
+        return $this->subtotal;
+    }
+
     public function getDiscountSubtotalAttribute()
     {
         return $this->product->discount_amount * $this->quantity;

@@ -29,4 +29,23 @@ class ShippingMethod extends Model
      */
     public $rules = [
     ];
+
+    public function getPriceLabelAttribute()
+    {
+        if(Settings::get('show_currency'))
+        {
+            $currency = Currency::where('is_default', 1)->where('is_active', 1)->get()->first();
+
+            if(Settings::get('currency_label') == 'symbol')
+            {
+                return $currency->symbol." ".$this->price;
+            }
+            else
+            {
+                return $this->price." ".$currency->name;
+            }
+        }
+
+        return $this->price;
+    }
 }

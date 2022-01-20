@@ -1,0 +1,10 @@
+name: Stocks
+form: $/bol/eshop/models/stock/fields.yaml
+modelClass: Bol\Eshop\Models\Stock
+defaultRedirect: bol/eshop/stocks
+create:
+    redirect: 'bol/eshop/stocks/update/:id'
+    redirectClose: bol/eshop/stocks
+update:
+    redirect: bol/eshop/stocks
+    redirectClose: bol/eshop/stocks

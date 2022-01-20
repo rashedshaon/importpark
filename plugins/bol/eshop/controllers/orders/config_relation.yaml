@@ -1,0 +1,16 @@
+# ===================================
+#  Relation Behavior Config
+# ===================================
+
+items:
+    label: 'bol.eshop::lang.order.order_items'
+    view:
+        list: $/bol/eshop/models/orderitem/columns.yaml
+        showSearch: true
+        showSorting: true
+        showCheckboxes: true
+        recordsPerPage: 10
+        # recordUrl: bol/eshop/orderitems/update/:id
+        toolbarButtons: create|delete
+    manage:
+        form: $/bol/eshop/models/orderitem/fields.yaml

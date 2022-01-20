@@ -76,14 +76,41 @@
     - 'Updated table bol_eshop_carts'
     - builder_table_update_bol_eshop_carts_2.php
 1.0.27:
-    - 'Updated table bol_eshop_products'
-    - builder_table_update_bol_eshop_products_2.php
-1.0.28:
-    - 'Created table bol_eshop_districts'
-    - builder_table_create_bol_eshop_districts.php
-1.0.29:
-    - 'Created table bol_eshop_areas'
-    - builder_table_create_bol_eshop_areas.php
-1.0.30:
     - 'Updated table bol_eshop_orders'
     - builder_table_update_bol_eshop_orders_2.php
+1.0.28:
+    - 'Updated table bol_eshop_payment_methods'
+    - builder_table_update_bol_eshop_payment_methods_2.php
+1.0.29:
+    - 'Updated table bol_eshop_shipping_methods'
+    - builder_table_update_bol_eshop_shipping_methods_2.php
+1.0.30:
+    - 'Updated table bol_eshop_orders'
+    - builder_table_update_bol_eshop_orders_3.php
+1.0.31:
+    - 'Updated table bol_eshop_carts'
+    - builder_table_update_bol_eshop_carts_3.php
+1.0.32:
+    - 'Updated table bol_eshop_orders'
+    - builder_table_update_bol_eshop_orders_4.php
+1.0.33:
+    - 'Updated table bol_eshop_orders'
+    - builder_table_update_bol_eshop_orders_5.php
+1.0.34:
+    - 'Updated table bol_eshop_order_items'
+    - builder_table_update_bol_eshop_order_items.php
+1.0.35:
+    - 'Updated table bol_eshop_orders'
+    - builder_table_update_bol_eshop_orders_6.php
+1.0.36:
+    - 'Created table bol_eshop_stocks'
+    - builder_table_create_bol_eshop_stocks.php
+1.0.37:
+    - 'Created table bol_eshop_stock_deductions'
+    - builder_table_create_bol_eshop_stock_deductions.php
+1.0.38:
+    - 'Created table bol_eshop_vendor'
+    - builder_table_create_bol_eshop_vendor.php
+1.0.39:
+    - 'Created table bol_eshop_vendor_products'
+    - builder_table_create_bol_eshop_vendor_products.php

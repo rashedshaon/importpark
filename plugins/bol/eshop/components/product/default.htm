@@ -10,7 +10,7 @@
                             <div class="nav nav-pills" id="v-pills-tab" role="tablist"
                                 aria-orientation="vertical">
                                 {% for photo in product.photos %}
-                                <a class="active" data-toggle="pill" href="#tab-{{loop.index}}">
+                                <a class="{{loop.index == 1 ? 'active' : ''}}" data-toggle="pill" href="#tab-{{loop.index}}">
                                     <img src="{{ photo.thumb(120,142) }}" class="w-100" alt="">
                                 </a>
                                 {% else %}
@@ -24,7 +24,7 @@
                         <div class="col-10">
                             <div class="tab-content" id="v-pills-tabContent">
                                 {% for photo in product.photos %}
-                                <div class="tab-pane fade show active" id="tab-{{loop.index}}">
+                                <div class="tab-pane fade {{loop.index == 1 ? 'show active' : ''}}" id="tab-{{loop.index}}">
                                     <div class="product-img">
                                         <a class="popup-image" href="{{ photo.thumb(718,850) }}"><img
                                                 src="{{ photo.thumb(718,850) }}" class="w-100" alt=""></a>
@@ -50,7 +50,14 @@
                         <div class="single-product-title">
                             <h2>{{ product.title }}</h2>
                         </div>
-                        <div class="single-product-price"><span>{{ product.price_label }}</span></div>
+                        
+
+                        {% if product.discount > 0 %}
+                            <div class="single-product-price">{{ product.price_label }}</div>
+                            <del class="font-size-20 ml-2 text-danger">{{ product.original_price_label }}</del>
+                        {% else %}
+                            <div class="single-product-price"><span>{{ product.price_label }}</span></div>
+                        {% endif %}
                         <div class="single-product-desc mb-25">
                             <p>
                                 {{ product.short_description  }}
@@ -117,8 +124,12 @@
                         </div>
                         <div class="single-product-action mt-35">
                             <ul>
-                                <li><a href="wishlist.html"><i class="fal fa-heart"></i> add to wishlist</a></li>
+                                <!-- <li><a href="wishlist.html"><i class="fal fa-heart"></i> add to wishlist</a></li> -->
                                 <!-- <li><a href="cart.html"><i class="fal fa-abacus"></i> add to compare</a></li> -->
+                                <li>
+                                    <!-- need to add login modal partial in bottom -->
+                                    {% component 'shopWishList' partial='wish-button' data=product label='Add to Wishlist' %}
+                                </li>
                             </ul>
                         </div>
                         <!-- <div class="sku"><span>Sku: </span> <strong>M-Hat-8</strong></div> -->
@@ -293,3 +304,44 @@
         </div>
     </div>
 </div>
+
+
+
+
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Login</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+
+        <form data-request="onSignin" data-request-flash="">
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+            </div>
+            <div class="form-group">
+              <label for="pwd">Password:</label>
+              <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password">
+            </div>
+            <div>
+                <label>Don't have an account?<a href="/registration"> Register</a></label>
+                <button type="submit" class="generic-btn border-0 red-hover-btn text-uppercase float-right">Submit</button>
+            </div>
+
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% component 'shopWishList' partial='login-modal' %}

@@ -10,3 +10,8 @@
     color: #fff;
     background-color: #ccc;
 }
+
+.paglist .pagination li {
+    padding-right: 10px !important;
+    font-weight: bold !important;
+}
