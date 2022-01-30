@@ -9,7 +9,7 @@ class BuilderTableUpdateBolEshopCarts2 extends Migration
     {
         Schema::table('bol_eshop_carts', function($table)
         {
-            $table->string('session_id')->nullable(false)->unsigned(false)->default(null)->change();
+            //$table->string('session_id')->nullable(false)->unsigned(false)->default(null)->change();
         });
     }
     
@@ -17,7 +17,7 @@ class BuilderTableUpdateBolEshopCarts2 extends Migration
     {
         Schema::table('bol_eshop_carts', function($table)
         {
-            $table->integer('session_id')->nullable(false)->unsigned(false)->default(null)->change();
+            //$table->integer('session_id')->nullable(false)->unsigned(false)->default(null)->change();
         });
     }
 }

@@ -57,7 +57,9 @@ class Product extends Model
     ];
 
     public $hasMany = [
-        'wish_items' => ['Bol\Eshop\Models\WishList', 'key'    => 'product_id', 'otherKey' => 'id'],
+        'wish_items' => ['Bol\Eshop\Models\WishList', 'key' => 'product_id', 'otherKey' => 'id'],
+        'stocks' => ['Bol\Eshop\Models\Stock', 'key' => 'product_id', 'otherKey' => 'id'],
+        'stock_deductions' => ['Bol\Eshop\Models\StockDeduction', 'key' => 'product_id', 'otherKey' => 'id'],
     ];
 
     public $belongsToMany = [
@@ -680,6 +682,20 @@ class Product extends Model
         return $url;
     }
 
+    public function getStockCountAttribute()
+    {
+        return $this->stocks()->sum('quantity') - $this->stock_deductions()->sum('quantity');
+    }
+
+    public function getShowStockAttribute()
+    {
+        return Settings::get('show_stock');
+    }
+
+    public function getEnablePurchaseRestrictionAttribute()
+    {
+        return Settings::get('enable_purchase_restriction') && $this->stock_count == 0;
+    }
 
     public function getDefaultColorAttribute()
     {

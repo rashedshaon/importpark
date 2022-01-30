@@ -11,9 +11,9 @@ class BuilderTableCreateBolEshopCarts extends Migration
         {
             $table->engine = 'InnoDB';
             $table->increments('id')->unsigned();
-            $table->integer('session_id');
+            $table->string('session_id');
             $table->integer('user_id')->nullable();
-            $table->integer('coupon_id');
+            $table->integer('coupon_id')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
         });

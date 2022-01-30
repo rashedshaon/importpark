@@ -1,5 +1,6 @@
 <?php namespace Bol\Eshop\Components;
 
+use DB;
 use Event;
 use Auth;
 use BackendAuth;
@@ -131,22 +132,28 @@ class ShopCheckout extends ComponentBase
         $order->remarks = $data['remarks'];
         $order->save();
     
-        foreach($cart->items()->get() as $item)
-        {
-            $order_item               = new OrderItem();
-            $order_item->order_id     = $order->id;
-            $order_item->product_id   = $item->product_id;
-            $order_item->title        = $item->product->title;
-            $order_item->quantity     = $item->quantity;
-            $order_item->unit         = $item->product->unit->name;
-            $order_item->color        = $item->color;
-            $order_item->size         = $item->size;
-            $order_item->price        = $item->product->main_price;
-            $order_item->actual_price = $item->product->price;
-            $order_item->save();
-        }
-    
-        Cart::clearCart();
+        DB::transaction(function() use ($order, $cart) {
+
+            $order->save();
+
+            foreach($cart->items()->get() as $item)
+            {
+                $order_item               = new OrderItem();
+                $order_item->order_id     = $order->id;
+                $order_item->product_id   = $item->product_id;
+                $order_item->title        = $item->product->title;
+                $order_item->quantity     = $item->quantity;
+                $order_item->unit         = $item->product->unit->name;
+                $order_item->color        = $item->color;
+                $order_item->size         = $item->size;
+                $order_item->price        = $item->product->main_price;
+                $order_item->actual_price = $item->product->price;
+                $order_item->save();
+            }
+        
+            Cart::clearCart();
+        });
+        
             
         return Redirect::to('order-success');
 

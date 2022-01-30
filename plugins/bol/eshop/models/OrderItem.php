@@ -24,6 +24,7 @@ class OrderItem extends Model
 
     public $hasOne = [
         'product' => ['Bol\Eshop\Models\Product', 'key' => 'id', 'otherKey' => 'product_id'],
+        'order' => ['Bol\Eshop\Models\Order', 'key' => 'id', 'otherKey' => 'order_id'],
     ];
 
     public function getSubtotalAttribute()
@@ -86,5 +87,33 @@ class OrderItem extends Model
         });
 
         return $options;
+    }
+
+    public function afterCreate()
+    {
+        /**
+         * When product stock quantity will deduct
+         */
+        if(Settings::get('enable_purchase_restriction'))
+        {
+            if($this->order->status_id == Settings::get('inventory_deduction'))
+            {
+                $stock_deduction = new StockDeduction();
+                $stock_deduction->order_id = $this->order_id;
+                $stock_deduction->product_id = $this->product_id;
+                $stock_deduction->sale_price = $this->price;
+                $stock_deduction->quantity = $this->quantity;
+                $stock_deduction->save();
+            }
+        }
+    }
+
+    public function afterDelete()
+    {
+        /**
+         * When order item will be delete remove stock deduction
+         */
+
+        StockDeduction::where('order_id', $this->order_id)->where('product_id', $this->product_id)->delete();
     }
 }

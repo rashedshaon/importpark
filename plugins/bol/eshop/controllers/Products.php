@@ -6,6 +6,7 @@ use BackendMenu;
 use Flash;
 use Lang;
 use Bol\Eshop\Models\Product;
+use Bol\Eshop\Models\Settings;
 
 class Products extends Controller
 {
@@ -49,6 +50,14 @@ class Products extends Controller
             return;
         }
 
+    }
+
+    public function listExtendColumns($list)
+    {
+        if(!Settings::get('show_stock'))
+        {
+            $list->removeColumn('stock_count');
+        }
     }
 
     public function index_onDelete()

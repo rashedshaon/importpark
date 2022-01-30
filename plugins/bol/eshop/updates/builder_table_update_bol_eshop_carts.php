@@ -17,7 +17,7 @@ class BuilderTableUpdateBolEshopCarts extends Migration
     {
         Schema::table('bol_eshop_carts', function($table)
         {
-            $table->integer('coupon_id')->nullable(false)->change();
+            //$table->integer('coupon_id')->nullable(false)->change();
         });
     }
 }

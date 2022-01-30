@@ -1,13 +1,19 @@
 fields:
     name:
-        label: Name
+        label: bol.eshop::lang.stock.name
         span: auto
         type: text
+    products:
+        label: bol.eshop::lang.stock.select_products
+        nameFrom: title
+        descriptionFrom: short_description
+        span: auto
+        type: relation
     contact:
-        label: Contact
+        label: bol.eshop::lang.stock.contact
         span: auto
         type: text
     details:
-        label: Details
+        label: bol.eshop::lang.stock.details
         span: auto
         type: textarea

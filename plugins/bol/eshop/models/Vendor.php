@@ -20,4 +20,12 @@ class Vendor extends Model
      */
     public $rules = [
     ];
+
+    public $belongsToMany = [
+        'products' => [
+            Product::class,
+            'table' => 'bol_eshop_vendor_products',
+            'order' => 'title'
+        ]
+    ];
 }

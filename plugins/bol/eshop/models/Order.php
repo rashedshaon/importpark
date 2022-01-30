@@ -307,6 +307,48 @@ class Order extends Model
         }
     }
 
+ 
+
+    public function afterUpdate()
+    {
+        /**
+         * Which order status revert the stock again
+         */
+        if($this->status_id == Settings::get('inventory_revert_deduction'))
+        {
+            StockDeduction::where('order_id', $this->id)->delete();
+        }
+
+        
+        if(Settings::get('enable_purchase_restriction'))
+        {
+            if($this->status_id == Settings::get('inventory_deduction'))
+            {
+                foreach($this->items()->get() as $item)
+                {
+                    $stock_deduction = StockDeduction::where('order_id', $item->order_id)
+                                                        ->where('product_id', $item->product_id)->get()->first();
+                                   
+                    if($stock_deduction)
+                    {
+                        $stock_deduction->sale_price = $item->price;
+                        $stock_deduction->quantity = $item->quantity;
+                        $stock_deduction->save();
+                    }
+                    else
+                    {
+                        $stock_deduction = new StockDeduction();
+                        $stock_deduction->order_id = $item->order_id;
+                        $stock_deduction->product_id = $item->product_id;
+                        $stock_deduction->sale_price = $item->price;
+                        $stock_deduction->quantity = $item->quantity;
+                        $stock_deduction->save();
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Generate new order number
      */

@@ -17,7 +17,7 @@ class BuilderTableUpdateBolEshopPaymentMethods extends Migration
     {
         Schema::table('bol_eshop_payment_methods', function($table)
         {
-            $table->integer('sort_order')->nullable(false)->change();
+            //$table->integer('sort_order')->nullable(false)->change();
         });
     }
 }

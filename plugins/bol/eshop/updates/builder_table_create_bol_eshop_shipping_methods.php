@@ -15,7 +15,7 @@ class BuilderTableCreateBolEshopShippingMethods extends Migration
             $table->string('code');
             $table->string('price');
             $table->boolean('is_active');
-            $table->integer('sort_order');
+            $table->integer('sort_order')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
         });

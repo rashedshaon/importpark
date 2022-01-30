@@ -16,7 +16,7 @@ class BuilderTableCreateBolEshopCurrencies extends Migration
             $table->string('symbol');
             $table->boolean('is_default');
             $table->boolean('is_active');
-            $table->integer('sort_order');
+            $table->integer('sort_order')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
         });

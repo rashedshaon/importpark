@@ -9,6 +9,10 @@ columns:
     short_description:
         label: bol.eshop::lang.product.short_description
         type: text
+    stock_count:
+        label: bol.eshop::lang.product.stock_count
+        type: number
+        sortable: false
     page_view:
         label: bol.eshop::lang.product.page_view
         type: number

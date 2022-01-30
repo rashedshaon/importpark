@@ -1,6 +1,6 @@
 fields:
     product_id:
-        label: 'Product id'
+        label: 'bol.eshop::lang.stock.product'
         span: auto
         type: dropdown
     quantity:
@@ -8,14 +8,15 @@ fields:
         span: auto
         type: number
     purchase_price:
-        label: 'Purchase price'
+        label: 'bol.eshop::lang.stock.purchase_price'
         span: auto
         type: number
     purchase_date:
-        label: 'Purchase date'
+        label: 'bol.eshop::lang.stock.purchase_date'
         span: auto
         type: datepicker
+        mode: date
     vendor_id:
-        label: 'Vendor id'
+        label: 'bol.eshop::lang.stock.vendor'
         span: auto
         type: dropdown

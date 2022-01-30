@@ -1,6 +1,13 @@
 title = "Order Success"
 layout = "default"
 url = "/order-success"
+
+[shopUser]
+
+[session]
+security='user'
+redirect='login'
+
 ==
 <?php
 
@@ -8,8 +15,7 @@ use Bol\Eshop\Models\Order;
 
 function onStart()
 {
-    $user = Auth::getUser();
-    $this['order'] = Order::where('user_id', $user->id)->orderBy('id', 'desc')->get()->first();
+    $this['order'] = Order::orderBy('id', 'desc')->get()->first();
 }
 ==
 <main id="content" role="main" class="cart-page">

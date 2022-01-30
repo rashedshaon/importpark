@@ -17,7 +17,7 @@ class BuilderTableUpdateBolEshopCurrencies extends Migration
     {
         Schema::table('bol_eshop_currencies', function($table)
         {
-            $table->integer('sort_order')->nullable(false)->change();
+            //$table->integer('sort_order')->nullable(false)->change();
         });
     }
 }
