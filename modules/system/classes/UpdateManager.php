@@ -226,9 +226,9 @@ class UpdateManager
     public function requestUpdateList()
     {
         $installed = PluginVersion::all();
-        $versions = $installed->lists('version', 'code');
-        $names = $installed->lists('name', 'code');
-        $icons = $installed->lists('icon', 'code');
+        $versions = $installed->pluck('version', 'code')->all();
+        $names = $installed->pluck('name', 'code')->all();
+        $icons = $installed->pluck('icon', 'code')->all();
         $build = Parameter::get('system::core.build');
         $themes = [];
 

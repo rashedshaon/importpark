@@ -231,9 +231,9 @@ class BelongsToManyModelTest extends PluginTestCase
         $author->roles()->add($role2, null, ['is_executive' => 1]);
         $author->roles()->add($role3, null, ['is_executive' => 0]);
 
-        $this->assertEquals([1, 2], $author->executive_authors->lists('id'));
-        $this->assertEquals([1, 2], $author->executive_authors()->lists('id'));
-        $this->assertEquals([1, 2], $author->executive_authors()->get()->lists('id'));
+        $this->assertEquals([1, 2], $author->executive_authors->pluck('id')->all());
+        $this->assertEquals([1, 2], $author->executive_authors()->pluck('id')->all());
+        $this->assertEquals([1, 2], $author->executive_authors()->get()->pluck('id')->all());
     }
 
     public function testCustomPivotKeys()
@@ -256,6 +256,6 @@ class BelongsToManyModelTest extends PluginTestCase
         $this->assertEquals($result[1]->product_code, 'SKU002');
         $this->assertEquals($result[2]->author_code, 'STEVIE');
         $this->assertEquals($result[2]->product_code, 'SKU003');
-        $this->assertEquals([1, 2, 3], $author->products->lists('id'));
+        $this->assertEquals([1, 2, 3], $author->products->pluck('id')->all());
     }
 }

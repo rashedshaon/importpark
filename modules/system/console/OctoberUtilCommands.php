@@ -249,7 +249,7 @@ trait OctoberUtilCommands
                     $filenames[] = $file->getFileName();
                 }
 
-                $foundModels = FileModel::whereIn('disk_name', $filenames)->lists('disk_name');
+                $foundModels = FileModel::whereIn('disk_name', $filenames)->pluck('disk_name')->all();
 
                 foreach ($chunk as $file) {
                     if (!in_array($file->getFileName(), $foundModels)) {

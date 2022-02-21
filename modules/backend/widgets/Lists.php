@@ -1063,7 +1063,7 @@ class Lists extends WidgetBase
                 $value = null;
             }
             elseif ($this->isColumnRelated($column, true)) {
-                $value = $record->{$columnName}->lists($column->valueFrom);
+                $value = $record->{$columnName}->pluck($column->valueFrom)->all();
             }
             elseif ($this->isColumnRelated($column) || $this->isColumnPivot($column)) {
                 $value = $record->{$columnName}
