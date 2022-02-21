@@ -1,5 +1,6 @@
 <?php namespace Bol\Eshop\Models;
 
+use Str;
 use BackendAuth;
 use Backend\Models\ImportModel;
 use System\Models\File;
@@ -23,14 +24,16 @@ class ProductImport extends ImportModel
             try {
                 
                 $product = Product::find($data['id']);
-               
+
                 if($product)
                 {
                     $product->id = $this->filter($data['id']);
                     $product->title = $this->filter($data['title']);
-                    $product->slug = $this->filter($data['slug']);
+                    $product->slug = $data['slug'];
                     $product->short_description = $this->filter($data['short_description']);
                     $product->description = $this->filter($data['description']);
+                    $product->brand_id = $this->getBrandId($data['brand']);
+                    $product->unit_id = $this->getUnitId($data['unit']);
                     $product->video_url = $this->filter($data['video_url']);
                     $product->page_view = $this->filter($data['page_view']);
                     $product->view = $this->filter($data['view']);
@@ -48,7 +51,7 @@ class ProductImport extends ImportModel
                     $product->is_featured = $this->filter($data['is_featured']);
                     $product->is_published = $this->filter($data['is_published']);
                     $product->published_at = $this->filter($data['published_at']);
-    
+
                     $product->save();
 
 
@@ -58,9 +61,11 @@ class ProductImport extends ImportModel
                     $product = new Product();
                     $product->id = $this->filter($data['id']);
                     $product->title = $this->filter($data['title']);
-                    $product->slug = $this->filter($data['slug']);
+                    $product->slug = $data['slug'];
                     $product->short_description = $this->filter($data['short_description']);
                     $product->description = $this->filter($data['description']);
+                    $product->brand_id = $this->getBrandId($data['brand']);
+                    $product->unit_id = $this->getUnitId($data['unit']);
                     $product->video_url = $this->filter($data['video_url']);
                     $product->page_view = $this->filter($data['page_view']);
                     $product->view = $this->filter($data['view']);
@@ -107,25 +112,46 @@ class ProductImport extends ImportModel
         return $string === false ? null : $string;
     }
 
-    // public function getBrandId($string)
-    // {
-    //    if($string)
-    //    {
-    //        $brand = Brand::where('name', $string)->get()->first();
-    //        if($brand)
-    //        {
-    //            return $brand->id;
-    //        }
-    //        else
-    //        {
-    //            $brand = new Brand();
-    //            $brand->name = $string;
-    //            $brand->save();
+    public function getBrandId($string)
+    {
+       if($string)
+       {
+           $brand = Brand::where('name', $string)->get()->first();
+           if($brand)
+           {
+               return $brand->id;
+           }
+           else
+           {
+               $brand = new Brand();
+               $brand->name = $string;
+               $brand->slug = Str::slug($string, '-');
+               $brand->save();
 
-    //            return $brand->id;
-    //        }
-    //    }
-    // }
+               return $brand->id;
+           }
+       }
+    }
+
+    public function getUnitId($string)
+    {
+       if($string)
+       {
+           $unit = Unit::where('name', $string)->get()->first();
+           if($unit)
+           {
+               return $unit->id;
+           }
+           else
+           {
+               $unit = new Unit();
+               $unit->name = $string;
+               $unit->save();
+
+               return $unit->id;
+           }
+       }
+    }
 
     // public function getDivisionId($string)
     // {
