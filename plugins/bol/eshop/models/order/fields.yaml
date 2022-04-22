@@ -110,9 +110,21 @@ tabs:
                         label: Email
                         span: auto
                         type: text
+                    region:
+                        label: Region
+                        span: auto
+                        type: text
+                    city:
+                        label: City
+                        span: auto
+                        type: text
+                    area:
+                        label: Area
+                        span: auto
+                        type: text
                     address:
                         label: Address
-                        span: auto
+                        span: full
                         type: text
             span: auto
             tab: 'bol.eshop::lang.order.tab_shipping_address'
@@ -134,9 +146,21 @@ tabs:
                         label: Email
                         span: auto
                         type: text
+                    region:
+                        label: Region
+                        span: auto
+                        type: text
+                    city:
+                        label: City
+                        span: auto
+                        type: text
+                    area:
+                        label: Area
+                        span: auto
+                        type: text
                     address:
                         label: Address
-                        span: auto
+                        span: full
                         type: text
             span: auto
             tab: 'bol.eshop::lang.order.tab_billing_address'

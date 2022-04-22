@@ -6,6 +6,8 @@ is_hidden = 0
 [shopUser]
 
 [shopCheckout]
+
+[shopLocations]
 ==
 
 <main id="content" role="main" class="checkout-page">
@@ -291,14 +293,31 @@ is_hidden = 0
                                 <!-- Input -->
                                 <div class="js-form-message mb-6">
                                     <label class="form-label">
-                                        {{'District'|_}}
+                                        {{'Region'|_}}
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <select class="form-control custom-select" name="delivery_address[district]" id="">
-                                        <option value="">Select District</option>
-                                        {% for data in districts %}
+                                    <select class="form-control custom-select" name="delivery_address[region]" 
+                                            onchange="$.request('onChangeRegion', {data: {name: this.value}})">
+
+                                        <option value="">Select Regions</option>
+                                        {% for data in regions %}
                                         <option value="{{ data.name }}">{{ data.name }}</option>
                                         {% endfor %}
+                                    </select>
+                                </div>
+                                <!-- End Input -->
+                            </div>
+
+                            <div class="col-md-6">
+                                <!-- Input -->
+                                <div class="js-form-message mb-6">
+                                    <label class="form-label">
+                                        {{'City'|_}}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-control custom-select" name="delivery_address[city]" id="cities"
+                                        onchange="$.request('onChangeCity', {data: {name: this.value}})">
+                                        <option value="">Select City</option>
                                     </select>
                                 </div>
                                 <!-- End Input -->
@@ -311,11 +330,8 @@ is_hidden = 0
                                         {{'Area'|_}}
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <select class="form-control custom-select" name="delivery_address[area]" id="">
+                                    <select class="form-control custom-select" name="delivery_address[area]" id="areas">
                                         <option value="">Select Area</option>
-                                        {% for data in districts %}
-                                        <option value="{{ data.name }}">{{ data.name }}</option>
-                                        {% endfor %}
                                     </select>
                                 </div>
                                 <!-- End Input -->

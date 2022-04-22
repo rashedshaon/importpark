@@ -13,40 +13,28 @@ items:
             cssClass: ''
             isExternal: '0'
     -
-        title: 'About Us'
-        nesting: null
+        title: 'Smart Door Locks'
         type: url
-        url: about-us
+        url: door-locks
         code: ''
-        reference: null
-        cmsPage: null
-        replace: null
         viewBag:
             isHidden: '0'
             cssClass: ''
             isExternal: '0'
     -
-        title: FAQs
-        nesting: null
+        title: 'Smart Switches'
         type: url
         url: faqs
         code: ''
-        reference: null
-        cmsPage: null
-        replace: null
         viewBag:
             isHidden: '0'
             cssClass: ''
             isExternal: '0'
     -
-        title: 'Contact Us'
-        nesting: null
+        title: 'Smart Lights'
         type: url
         url: contact-us
         code: ''
-        reference: null
-        cmsPage: null
-        replace: null
         viewBag:
             isHidden: '0'
             cssClass: ''

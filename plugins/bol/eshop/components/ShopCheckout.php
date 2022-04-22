@@ -65,7 +65,10 @@ class ShopCheckout extends ComponentBase
         $rules = [
             'delivery_address.name' => 'required',
             'delivery_address.phone' => 'required',
-            'delivery_address.email' => 'required',
+            // 'delivery_address.email' => 'required',
+            'delivery_address.region' => 'required',
+            'delivery_address.city' => 'required',
+            'delivery_address.area' => 'required',
             'delivery_address.address' => 'required',
             'payment_method' => 'required',
             // 'terms' => 'required',
@@ -77,7 +80,10 @@ class ShopCheckout extends ComponentBase
         {
             $rules['billing_address.name'] = 'required';
             $rules['billing_address.phone'] = 'required';
-            $rules['billing_address.email'] = 'required';
+            // $rules['billing_address.email'] = 'required';
+            $rules['billing_address.region'] = 'required';
+            $rules['billing_address.city'] = 'required';
+            $rules['billing_address.area'] = 'required';
             $rules['billing_address.address'] = 'required';
         }
     
@@ -85,6 +91,9 @@ class ShopCheckout extends ComponentBase
             'delivery_address.name.required' => 'Please give full name for delivery address',
             'delivery_address.phone.required' => 'Please give phone number for delivery address',
             'delivery_address.email.required' => 'Please give your email address',
+            'delivery_address.region.required' => 'Please select your region',
+            'delivery_address.city.required' => 'Please select your city',
+            'delivery_address.area.required' => 'Please select your area',
             'delivery_address.address.required' => 'Please give your details delivery address',
             'billing_address.name.required' => 'Please give full name for billing address',
             'billing_address.phone.required' => 'Please give phone number for billing address',

@@ -228,7 +228,7 @@ class Order extends Model
     public function getUserIdOptions()
     {
         $options = [
-            null => Lang::get('bol.eshop::lang.order.select_user'),
+            0 => Lang::get('bol.eshop::lang.order.select_user'),
         ];
 
         $items = User::get();

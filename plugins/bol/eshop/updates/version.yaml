@@ -114,3 +114,12 @@
 1.0.39:
     - 'Created table bol_eshop_vendor_products'
     - builder_table_create_bol_eshop_vendor_products.php
+1.0.40:
+    - 'Created table bol_eshop_regions'
+    - builder_table_create_bol_eshop_regions.php
+1.0.41:
+    - 'Created table bol_eshop_cities'
+    - builder_table_create_bol_eshop_cities.php
+1.0.42:
+    - 'Created table bol_eshop_areas'
+    - builder_table_create_bol_eshop_areas_2.php

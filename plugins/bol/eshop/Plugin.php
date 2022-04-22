@@ -24,6 +24,7 @@ class Plugin extends PluginBase
             'Bol\Eshop\Components\ShopOrders'        => 'shopOrders',
             'Bol\Eshop\Components\ShopCheckout'      => 'shopCheckout',
             'Bol\Eshop\Components\ShopUser'          => 'shopUser',
+            'Bol\Eshop\Components\ShopLocations'     => 'shopLocations',
             'Bol\Eshop\Components\ShopProductSearch' => 'shopProductSearch',
         ];
     }

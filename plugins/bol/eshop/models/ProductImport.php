@@ -37,8 +37,8 @@ class ProductImport extends ImportModel
                     $product->video_url = $this->filter($data['video_url']);
                     $product->page_view = $this->filter($data['page_view']);
                     $product->view = $this->filter($data['view']);
-                    $product->sizes = $this->filter($data['sizes']);
-                    $product->colors = $this->filter($data['colors']);
+                    $product->sizes = $this->filter($data['sizes']) ?: '[]';
+                    $product->colors = $this->filter($data['colors']) ?: '[]';
                     $product->weight = $this->filter($data['weight']);
                     $product->type = $this->filter($data['type']);
                     $product->price = $this->filter($data['price']);
@@ -69,8 +69,8 @@ class ProductImport extends ImportModel
                     $product->video_url = $this->filter($data['video_url']);
                     $product->page_view = $this->filter($data['page_view']);
                     $product->view = $this->filter($data['view']);
-                    $product->sizes = $this->filter($data['sizes']);
-                    $product->colors = $this->filter($data['colors']);
+                    $product->sizes = $this->filter($data['sizes']) ?: '[]';
+                    $product->colors = $this->filter($data['colors']) ?: '[]';
                     $product->weight = $this->filter($data['weight']);
                     $product->type = $this->filter($data['type']);
                     $product->price = $this->filter($data['price']);
