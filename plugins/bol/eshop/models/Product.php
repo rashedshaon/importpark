@@ -173,6 +173,14 @@ class Product extends Model
         if (!is_null($user)) {
             $this->updated_by = $user->id;
         }
+
+        if (!$this->colors) {
+            $this->colors = [];
+        }
+
+        if (!$this->sizes) {
+            $this->sizes = [];
+        }
     }
 
     /**
