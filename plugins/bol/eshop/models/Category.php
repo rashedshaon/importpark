@@ -14,7 +14,7 @@ class Category extends Model
 {
     use \October\Rain\Database\Traits\Validation;
     use \October\Rain\Database\Traits\NestedTree;
-    
+    use \October\Rain\Database\Traits\Sluggable;
 
     /**
      * @var string The database table used by the model.
@@ -29,6 +29,8 @@ class Category extends Model
         'name' => 'required',
         'slug' => 'required|between:3,64|unique:bol_eshop_categories',
     ];
+
+    protected $slugs = ['slug' => 'name'];
 
     /**
      * @var array Attributes that support translation, if available.

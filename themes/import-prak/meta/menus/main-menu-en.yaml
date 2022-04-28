@@ -14,27 +14,37 @@ items:
             isExternal: '0'
     -
         title: 'Smart Door Locks'
-        type: url
-        url: door-locks
+        nesting: 0
+        type: shop-category
         code: ''
+        reference: '9'
+        cmsPage: products
+        replace: 0
         viewBag:
             isHidden: '0'
             cssClass: ''
             isExternal: '0'
     -
         title: 'Smart Switches'
-        type: url
-        url: faqs
+        nesting: 0
+        type: shop-category
+        url: null
         code: ''
+        reference: '1'
+        cmsPage: products
+        replace: 0
         viewBag:
             isHidden: '0'
             cssClass: ''
             isExternal: '0'
     -
-        title: 'Smart Lights'
-        type: url
-        url: contact-us
+        title: 'Smart Sockets'
+        nesting: 0
+        type: shop-category
         code: ''
+        reference: '2'
+        cmsPage: products
+        replace: 0
         viewBag:
             isHidden: '0'
             cssClass: ''

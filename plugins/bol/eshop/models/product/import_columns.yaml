@@ -14,6 +14,9 @@ columns:
     description:
         label: 'Description'
         type: text
+    categories:
+        label: 'Categories'
+        type: text
     brand:
         label: 'Brand'
         type: text

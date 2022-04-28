@@ -32,13 +32,14 @@ class ProductImport extends ImportModel
                     $product->slug = $data['slug'];
                     $product->short_description = $this->filter($data['short_description']);
                     $product->description = $this->filter($data['description']);
+                    $product->categories = $this->getCategoryIds($data['categories']);
                     $product->brand_id = $this->getBrandId($data['brand']);
                     $product->unit_id = $this->getUnitId($data['unit']);
                     $product->video_url = $this->filter($data['video_url']);
                     $product->page_view = $this->filter($data['page_view']);
                     $product->view = $this->filter($data['view']);
-                    $product->sizes = $this->filter($data['sizes']) ?: '[]';
-                    $product->colors = $this->filter($data['colors']) ?: '[]';
+                    $product->sizes = $this->filter($data['sizes']);
+                    $product->colors = $this->filter($data['colors']);
                     $product->weight = $this->filter($data['weight']);
                     $product->type = $this->filter($data['type']);
                     $product->price = $this->filter($data['price']);
@@ -64,13 +65,14 @@ class ProductImport extends ImportModel
                     $product->slug = $data['slug'];
                     $product->short_description = $this->filter($data['short_description']);
                     $product->description = $this->filter($data['description']);
+                    $product->categories = $this->getCategoryIds($data['categories']);
                     $product->brand_id = $this->getBrandId($data['brand']);
                     $product->unit_id = $this->getUnitId($data['unit']);
                     $product->video_url = $this->filter($data['video_url']);
                     $product->page_view = $this->filter($data['page_view']);
                     $product->view = $this->filter($data['view']);
-                    $product->sizes = $this->filter($data['sizes']) ?: '[]';
-                    $product->colors = $this->filter($data['colors']) ?: '[]';
+                    $product->sizes = $this->filter($data['sizes']);
+                    $product->colors = $this->filter($data['colors']);
                     $product->weight = $this->filter($data['weight']);
                     $product->type = $this->filter($data['type']);
                     $product->price = $this->filter($data['price']);
@@ -151,6 +153,31 @@ class ProductImport extends ImportModel
                return $unit->id;
            }
        }
+    }
+
+    public function getCategoryIds($string)
+    {
+       $categories = [];
+       foreach(explode(',', $string) as $category_name)
+       {
+           $category = Category::where('name', $category_name)->get()->first();
+           if($category)
+           {
+                $categories[] = $category->id;
+           }
+           else
+           {
+               $category = new Category();
+               $category->name = $category_name;
+               $category->description = $category_name;
+            //    $category->slug = $category_name;
+               $category->save();
+
+               $categories[] = $category->id;
+           }
+       }
+
+       return $categories;
     }
 
     // public function getDivisionId($string)
