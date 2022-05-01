@@ -1,0 +1,289 @@
+url = "/products/:category?"
+layout = "default"
+title = "Products"
+is_hidden = 0
+
+[shopProducts]
+pageNumber = "{{ :page }}"
+categoryFilter = "{{ :category }}"
+productsPerPage = 30
+noProductsMessage = "No products found"
+sortOrder = "published_at desc"
+categoryPage = "amp-home"
+productPage = "amp-home"
+==
+<?php
+use Bol\Eshop\Models\Product;
+
+function onStart()
+{
+
+}
+
+public function onAjaxItemsLoad()
+{
+$data = post();
+return $this->{$data['target_id']}($data['target_id'], $data['partial_name']);
+}
+
+public function latestShoe($target_id, $partial_name)
+{
+
+$results = Product::where('is_published', 1)->inRandomOrder()->get();
+
+// dd($partial_name);
+
+return [
+"#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+];
+}
+
+public function latestBag($target_id, $partial_name)
+{
+
+$results = Product::where('is_published', 1)->inRandomOrder()->get();
+
+return [
+"#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+];
+}
+
+public function latestWatch($target_id, $partial_name)
+{
+
+$results = Product::where('is_published', 1)->inRandomOrder()->get();
+
+return [
+"#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+];
+}
+
+public function featured($target_id, $partial_name)
+{
+
+$results = Product::where('is_published', 1)->inRandomOrder()->get();
+
+return [
+"#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+];
+}
+?>
+==
+<!-- ========== MAIN CONTENT ========== -->
+<main id="content" role="main">
+
+
+
+    <!-- End Slider Section -->
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-xl-3 col-wd-auto d-none d-xl-block">
+                <div class="max-width-270 min-width-270">
+
+                    <aside class="mb-4">
+                        <div class="mb-2 position-relative">
+                            <dv
+                                class="d-flex justify-content-between border-bottom border-color-1 flex-md-nowrap flex-wrap border-sm-bottom-0">
+                                <h3 class="section-title section-title__sm mb-0 pb-3 font-size-18">
+                                    {{ 'Latest Products'|_ }}</h3>
+                            </dv>
+                            <div class="js-slick-carousel u-slick u-slick--gutters-2 overflow-hidden u-slick-overflow-visble pt-3 position-static"
+                                data-slides-show="1" data-slides-scroll="1"
+                                data-arrows-classes="position-absolute top-0 font-size-17 u-slick__arrow-normal top-10"
+                                data-arrow-left-classes="fa fa-angle-left right-1"
+                                data-arrow-right-classes="fa fa-angle-right right-0">
+                                <div class="js-slide">
+                                    <ul id="latestShoe" class="list-unstyled products-group mb-0 overflow-visible">
+                                        {% partial 'ajax/ajax-load' target_id='latestShoe' partial_name='product-list' %}
+                                    </ul>
+                                </div>
+                                <div class="js-slide">
+                                    <ul id="latestBag" class="list-unstyled products-group mb-0 overflow-visible">
+                                        {% partial 'ajax/ajax-load' target_id='latestBag' partial_name='product-list' %}
+                                    </ul>
+                                </div>
+                                <div class="js-slide">
+                                    <ul id="latestWatch" class="list-unstyled products-group mb-0 overflow-visible">
+                                        {% partial 'ajax/ajax-load' target_id='latestWatch' partial_name='product-list' %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                </div>
+            </div>
+            <div class="col-xl-9 max-width-1130">
+
+                <ul id="featured" class="row list-unstyled products-group no-gutters">
+                    {% for data in shopProducts.products %}
+                    <li class="col-6 col-md-4 col-xl-3 product-item">
+                        <div class="product-item__outer h-100">
+                            <div class="product-item__inner px-xl-4 p-3">
+                                <div class="product-item__body pb-xl-2">
+                                    <!-- <div class="mb-2"><a href="{{ url('product-details/' ~  data.slug) }}" class="font-size-12 text-gray-5">Speakers</a></div> -->
+                                    <h5 class="mb-1 product-item__title"><a
+                                            href="{{ url('product-details/' ~  data.slug) }}"
+                                            class="text-blue font-weight-bold">{{ data.title }}</a></h5>
+                                    <div class="mb-2">
+                                        <a href="{{ url('product-details/' ~  data.slug) }}"
+                                            class="d-block text-center"><img class="img-fluid"
+                                                src="{{ data.featuredPhoto()  }}"
+                                                alt="Image Description"></a>
+                                    </div>
+                                    <div class="flex-center-between mb-1">
+                                        {% if data.discount > 0 %}
+                                        <div
+                                            class="prodcut-price d-flex align-items-center flex-wrap position-relative">
+                                            <ins
+                                                class="font-size-20 text-red text-decoration-none mr-2">{{ data.price_label }}</ins>
+                                            <del
+                                                class="font-size-12 tex-gray-6 position-absolute bottom-100">{{ data.original_price_label }}</del>
+                                        </div>
+                                        {% else %}
+                                        <div class="prodcut-price">
+                                            <div class="text-gray-100">{{ data.price_label }}</div>
+                                        </div>
+                                        {% endif %}
+
+                                        <div class="d-none d-xl-block prodcut-add-cart">
+                                            <a class="btn-add-cart btn-primary transition-3d-hover"
+                                                data-request="onAddToCart"
+                                                data-request-data="product_id: {{ data.id }}, quantity: 1, color: '{{ data.default_color }}', size: '{{ data.default_size }}'"
+                                                data-request-flash><i class="ec ec-add-to-cart"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="product-item__footer">
+                                    <div class="border-top pt-2 flex-center-between flex-wrap">
+                                        <a href="https://transvelo.github.io/electro-html/2.0/html/shop/wishlist.html"
+                                            class="text-gray-6 font-size-13"><i
+                                                class="ec ec-favorites mr-1 font-size-15"></i> Wishlist</a>
+                                        <a href="https://transvelo.github.io/electro-html/2.0/html/shop/compare.html"
+                                            class="text-gray-6 font-size-13"><i
+                                                class="ec ec-shopping-bag mr-1 font-size-15"></i> Buy
+                                            Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+    </div>
+    <!-- Brand Carousel -->
+    <!-- <div class="container mb-8">
+        <div class="py-2 border-top border-bottom">
+            <div class="js-slick-carousel u-slick my-1"
+                data-slides-show="5"
+                data-slides-scroll="1"
+                data-arrows-classes="d-none d-lg-inline-block u-slick__arrow-normal u-slick__arrow-centered--y"
+                data-arrow-left-classes="fa fa-angle-left u-slick__arrow-classic-inner--left z-index-9"
+                data-arrow-right-classes="fa fa-angle-right u-slick__arrow-classic-inner--right"
+                data-responsive='[{
+                    "breakpoint": 992,
+                    "settings": {
+                        "slidesToShow": 2
+                    }
+                }, {
+                    "breakpoint": 768,
+                    "settings": {
+                        "slidesToShow": 1
+                    }
+                }, {
+                    "breakpoint": 554,
+                    "settings": {
+                        "slidesToShow": 1
+                    }
+                }]'>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img1.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img2.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img3.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img4.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img5.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+                <div class="js-slide">
+                    <a href="#" class="link-hover__brand">
+                        <img class="img-fluid m-auto max-height-50" src="{{ 'assets/images/200X60/img6.png" alt="Image Description' | theme }}">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <!-- End Brand Carousel -->
+</main>
+<!-- ========== END MAIN CONTENT ========== -->
+
+
+
+<!-- Load Facebook SDK for JavaScript -->
+<div id="fb-root"></div>
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            xfbml: true,
+            version: 'v8.0'
+        });
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+</script>
+
+<!-- Your Chat Plugin code -->
+<div class="fb-customerchat" attribution=setup_tool page_id="179175042740213" theme_color="#ff7e29"
+    logged_in_greeting="Do you want to import product?" logged_out_greeting="Do you want to import product?">
+</div>
+
+
+
+{% put scripts %}
+
+<script type="text/javascript">
+    var typed = new Typed('#search-product', {
+        strings: ["{{'Give the product link or url to get shipping cost'|_}}",
+            "{{'Upload or drop the product photo here to get shipping cost'|_}}",
+            "{{'Give the product link or url to get shipping cost'|_}}",
+            "{{'Source any product from all over the world'|_}}",
+            "{{'Register in our website to get reliable service'|_}}"
+        ],
+        typeSpeed: 30,
+        backSpeed: 0,
+        cursorChar: '|',
+        attr: 'placeholder',
+        smartBackspace: true,
+        bindInputFocusEvents: true,
+        loop: true
+    });
+
+</script>
+{% endput %}

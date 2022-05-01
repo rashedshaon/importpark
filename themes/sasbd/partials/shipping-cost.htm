@@ -1,0 +1,36 @@
+<div class="row mb-2">
+    <div class="col-md-6">
+        <div class="card border-success w-100">
+            <!-- <div class="card-header">Header</div> -->
+            <div class="card-body">
+              <h6 class="text-success card-title mb-0">{{'Approximate Cost Calculation'|_}}</h6>
+              <div class="card-text">
+                <strong>{{'Grand Total'|_}}: {{ total_price }} {{'Tk'|_}} </strong> 
+                <div class="font-size-12"> {{'Total Tax'|_}}: <strong>{{ total_tax }} {{'Tk'|_}}</strong> at {{ tax }}% </div>
+                <div class="font-size-12"> {{'Total Shipping Cost'|_}}: <strong>{{ total_shipping_cost }} {{'Tk'|_}}</strong> for {{gross_weight}} {{'KG'|_}} </div>
+                <div class="font-size-12"> {{'Shipping Cost + Tax'|_}}: <strong> {{ total_tax_shipping_cost }} {{'Tk'|_}}/{{'KG'|_}}</strong> </div>
+                <div class="font-size-12"> {{'Cost per pcs'|_}}: <strong> {{ cost_per_pcs }} {{'Tk'|_}}</strong> </div>
+
+                {% if cbm %}
+                <div class="font-size-12"> {{'Total CBM'|_}}: <strong> {{ total_cbm }} </strong> </div>
+                {% endif %}
+                
+                <div class="text-danger" style="font-size: 0.8rem;"><b>{{'Note:'|_}}</b> {{'This is an approximate calculation for your understanding. Please submit a request for final price.'|_}}</div>
+              </div>
+            </div>
+        </div>
+        
+    </div>
+    <div class="col-md-6">
+        <div class="card border-secondary">
+            <!-- <div class="card-header">Header</div> -->
+            <div class="card-body text-secondary">
+              <div class="text-danger" style="font-size: 0.8rem;">{{'Approximate Shipping Date:'|_}} <b>{{ shipping_date.format('d M Y') }}</b></div>
+              <h6 class="card-title mb-0">{{'Shipping Address'|_}}</h6>
+              <p class="card-text">
+                {{ shipping_address }}
+              </p>
+            </div>
+        </div>
+    </div>
+</div>

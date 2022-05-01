@@ -1,0 +1,78 @@
+title = "Wish List"
+layout = "default"
+url = "/order-list"
+
+[shopUser]
+
+[session]
+security='user'
+redirect='login'
+
+[shopOrders]
+
+==
+<main id="content" role="main" class="cart-page">
+            <!-- breadcrumb -->
+            <div class="bg-gray-13 bg-md-transparent">
+                <div class="container">
+                    <!-- breadcrumb -->
+                    <div class="my-md-3">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-3 flex-nowrap flex-xl-wrap overflow-auto overflow-xl-visble">
+                                <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1"><a href="{{ url('/') }}">Home</a></li>
+                                <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1 active" aria-current="page">Order list</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <!-- End breadcrumb -->
+                </div>
+            </div>
+            <!-- End breadcrumb -->
+
+            <div class="container">
+                <div class="my-6">
+                    <h1 class="text-center">Order List</h1>
+                </div>
+                <div class="mb-16 wishlist-table">
+                    <div class="row">
+
+                        <div class="col-xl-4">
+                            <div class="cart-widget">
+
+                                {% partial 'site/profile-side-menu' %}
+                                
+
+                            </div>
+                        </div>
+
+                        <div class="col-xl-8">
+                            
+                            <div class="product-content">
+                                <div class="table-responsive">
+                                    <table class="table table-2">
+                                        <thead>
+                                            <tr>
+                                                <th class="remove-porduct">Order</th>
+                                                <th class="product-image">Date</th>
+                                                <th class="product-title">Name</th>
+                                                <th class="total">Total</th>
+                                                <th class="quantity">Status</th>
+                                                <th class="total">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="cart_items">
+
+                                            {% component 'shopOrders' partial='list-items' %}
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </main>

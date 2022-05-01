@@ -1,0 +1,12 @@
+<div class=" text-success">Total Price: ৳ <span>{{ product.unit_price }}</span> <sup class="text-dark"> {{ product.stock > 0 ? '(Free Shipping)' : '(Tax + Shipping)' }}</sup></div>
+{% if product.stock == 0 %}
+<div class=" text-dark font-size-12">Total Tax: {{ product.unit_tax }} tk at {{  product.hscode.total }}%</div>
+<div class=" text-dark font-size-12">
+    Total Shipping: {{ product.unit_shipping_cost }} tk for {{ product.unit_gross_weight }} kg 
+    
+    {% if product.discount %}
+    <sup class="text-danger">(Discount {{ product.shipping_cost_discount }} tk)</sup>
+    {% endif %}
+</div>
+<div class="mb-2 text-dark font-size-12">Cost per  {{ product.unit_name }}: {{ product.unit_cost }} tk</div>
+{% endif %}

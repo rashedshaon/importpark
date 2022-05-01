@@ -1,0 +1,35 @@
+{% if results %}
+
+{% for data in results %}
+<li class="product-item__list pb-2 mb-2 pb-md-0 mb-md-0">
+    <div class="product-item__outer h-100">
+        <div class="product-item__inner py-md-3 mx-3 border-bottom row no-gutters">
+            <div class="col-auto product-media-left">
+                <a href="{{ url('product-details/' ~  data.slug) }}" class="max-width-70 d-block"><img class="img-fluid" src="{{ data.featuredPhoto()  }}" alt="{{ data.title }}"></a>
+            </div>
+            <div class="col product-item__body pl-2 pl-lg-3">
+                <div class="mb-2">
+                    <h5 class="product-item__title"><a href="{{ url('product-details/' ~  data.slug) }}" class="text-gray-90">{{ data.title | raw }}</a></h5>
+                </div>
+                <div class="flex-center-between">
+                    {% if data.discount > 0 %}
+                    <div class="prodcut-price d-flex align-items-center flex-wrap position-relative mt-2">
+                        <ins class="font-size-15 text-red text-decoration-none mr-2">{{ data.price_label }}</ins>
+                        <del class="font-size-12 tex-gray-6 position-absolute bottom-100">{{ data.original_price_label }}</del>
+                    </div>
+                    {% else %}
+                    <div class="prodcut-price">
+                        <div class="text-gray-100 font-size-15 font-weight-bold">{{ data.price_label }}</div>
+                    </div>
+                    {% endif %}
+                    <!-- <div class="prodcut-price">
+                        <div class="text-gray-100 font-size-15 font-weight-bold">৳ {{ data.price_label }}</div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
+{% endfor %}
+
+{% endif %}

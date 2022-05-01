@@ -1,0 +1,122 @@
+<!-- order confirm code for service type 0 -->
+{% if data.status == 1 and data.service_type == 0 %}
+<div class="prodcut-add-cart">
+    <a data-toggle="modal" href="#confirm-order-{{id}}" class="btn btn-{{id}} mt-1 btn-block btn-primary-dark btn-wide transition-3d-hover">{{'Confirm Order'|_}}</a>
+
+    <div class="control-popup modal fade" id="confirm-order-{{id}}" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+                    <h5 class="modal-title">{{'Confirm Order'|_}}</h5>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0 font-size-10 text-danger">{{'Please send product to warehouse & give the tracking id.'|_}}</p>
+                    <p class="text-dark">{{data.shipping_method.warehouse}}</p>
+                    <form id="confirm-order-{{id}}-form" class="form-elements" role="form">
+                        <div class="form-group span-full">
+                            <label>{{'Tracking ID'|_}}</label>
+                            <input name="id" type="hidden" value="{{data.id}}">
+                            <input name="tracking_code" placeholder="{{'Enter Tracking ID'|_}}" class="form-control"></input>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer loading-indicator-container">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{'Cancel'|_}}</button>
+                    <button type="button" class="btn btn-primary" 
+                        data-request="onOrderConfirm"
+                        data-request-redirect="{{ url('order-requests') }}"
+                        data-request-form="#confirm-order-{{id}}-form" 
+                        data-load-indicator="<?= e(trans('backend::lang.form.saving')) ?>" 
+                        data-request-flash>{{'Confirm'|_}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<!-- order confirm code for service type 1 -->
+{% if data.status == 1 and data.service_type == 1 %}
+<div class="prodcut-add-cart">
+    <a data-toggle="modal" href="#confirm-order-{{id}}-payment" class="btn btn-{{id}} btn-block btn-primary-dark btn-wide transition-3d-hover">{{'Confirm Order'|_}}</a>
+
+    <div class="control-popup modal fade" id="confirm-order-{{id}}-payment" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+                    <h5 class="modal-title">{{'Confirm Order'|_}}</h5>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0 font-size-10 text-danger">{{'Please send total :amount tk to our Bank Account.'|_({amount: data.total_price})}}</p>
+                    <p class="mb-0 font-size-10 text-danger">{{'Shipping cost and Tax amount will paid after product received.'|_}}</p>
+                    <p class="text-dark">
+                        <b>Account Details:</b> <br>
+                        A/C Name: AIS BUSINESS CONSULTANT <br>
+                        CD:20501020101193206 <br>
+                        Islami Bank Bangladesh limited <br>
+                        Branch:  Local Office Dhaka. Bangladesh <br>
+                    </p>
+                    <form id="confirm-order-{{id}}-payment-form" class="form-elements" role="form">
+                        <div class="form-group span-full">
+                            <input name="id" type="hidden" value="{{data.id}}">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer loading-indicator-container">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{'Cancel'|_}}</button>
+                    <button type="button" class="btn btn-primary" 
+                        data-request="onOrderConfirm"
+                        data-request-redirect="{{ url('order-requests') }}"
+                        data-request-form="#confirm-order-{{id}}-payment-form" 
+                        data-load-indicator="<?= e(trans('backend::lang.form.saving')) ?>" 
+                        data-request-flash>{{'Confirm'|_}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- payment confirm code for service type 1 -->
+{% if data.status == 3 and data.service_type == 1 %}
+<div class="prodcut-add-cart">
+    <a data-toggle="modal" href="#confirm-payment-{{id}}-payment" class="btn btn-{{id}} btn-block btn-primary-dark btn-wide transition-3d-hover">{{'Confirm Payment'|_}}</a>
+
+    <div class="control-popup modal fade" id="confirm-payment-{{id}}-payment" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> -->
+                    <h5 class="modal-title">{{'Confirm Payment'|_}}</h5>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0 font-size-10 text-danger">{{'Please send total (:amount tk) to our Bank Account.'|_({amount: data.total_price})}}</p>
+                    <p class="mb-0 font-size-10 text-danger">{{'Shipping cost and Tax amount (:amount tk) will paid after product received.'|_({amount: data.payment_on_delivery})}}</p>
+                    <p class="text-dark">
+                        <b>Account Details:</b> <br>
+                        A/C Name: AIS BUSINESS CONSULTANT <br>
+                        CD:20501020101193206 <br>
+                        Islami Bank Bangladesh limited <br>
+                        Branch:  Local Office Dhaka. Bangladesh <br>
+                    </p>
+                    <form id="confirm-payment-{{id}}-payment-form" class="form-elements" role="form">
+                        <div class="form-group span-full">
+                            <input name="id" type="hidden" value="{{data.id}}">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer loading-indicator-container">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{'Cancel'|_}}</button>
+                    <button type="button" class="btn btn-primary" 
+                        data-request="onPaymentConfirm"
+                        data-request-redirect="{{ url('order-requests') }}"
+                        data-request-form="#confirm-payment-{{id}}-payment-form" 
+                        data-load-indicator="<?= e(trans('backend::lang.form.saving')) ?>" 
+                        data-request-flash>{{'Confirm'|_}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,188 @@
+title = "Submit Order Request"
+url = "/submit-order-request"
+layout = "default"
+is_hidden = 0
+
+[session]
+security = "user"
+redirect = "/"
+
+[loadProducts shoe]
+page_size = 12
+keywords = "shoe"
+template = 'list'
+
+==
+use Carbon\Carbon;
+use RainLab\User\Models\User;
+use ItRail\ExportImport\Models\ShippingMethod;
+use ItRail\ExportImport\Models\Hscode;
+use ItRail\ExportImport\Models\Order;
+use ItRail\ExportImport\Models\Search;
+
+use ItRail\ExportImport\Classes\OrderData;
+
+function onStart()
+{
+
+    //dd(OrderData::get());
+}
+
+
+function onSubmitOrder()
+{
+    $data = post();
+
+    $rules = [
+        'service_type' => 'required',
+        'delivery_method' => 'required',
+    ];
+
+    if(post('address'))
+    {
+        $rules['address'] = 'required';
+    }
+
+    $validation = Validator::make($data, $rules);
+
+    if ($validation->fails()) {
+        throw new ValidationException($validation);
+    }
+
+    $user = Auth::getUser();
+    
+    User::where('id', $user->id)->update(['address' => $data['address']??'']);
+
+    $order_data = OrderData::get();
+
+    //dd($_COOKIE);
+
+    $order                     = new Order();
+    $order->user_id            = $user->id;
+    $order->name               = $order_data->name;
+    $order->url                = $order_data->product_url;
+    $order->hscode_id          = $order_data->options['hscode_id'];
+    $order->price              = $order_data->price;
+    $order->discount           = 0;
+    $order->unit               = $order_data->options['unit'];
+    $order->quantity           = $order_data->qty;
+    $order->size               = $order_data->options['size'];
+    $order->gross_weight       = $order_data->options['gross_weight'];
+    $order->shipping_method_id = $order_data->options['shipping_method_id'];
+    $order->shipping_date      = $order_data->options['shipping_date'];
+    $order->service_type       = $data['service_type'];
+    $order->delivery_method    = $data['delivery_method'];
+    $order->save();
+
+    if($order_data->options['product_photo'])
+    {
+        $order->addPhoto($order_data->options['product_photo']);
+    }
+    else if($order_data->options['search_id'])
+    {
+        $photo_url = Search::find($order_data->options['search_id'])->photo->getPath();
+        $order->addPhoto($photo_url);
+    }
+
+    setcookie("order_number", $order->order_id, time() + (10));
+
+    OrderData::clear();
+
+    return Redirect::to('order-requests')->with(['order_number' => $order->order_id]);
+}
+
+
+==
+<!-- ========== MAIN CONTENT ========== -->
+<main id="content" role="main">
+    <div class="container">
+        <div class="mb-md-5 mt-md-5 mb-sm-1 mt-sm-1">
+            <h2 class="text-center">{{'Submit Order Request'|_}}</h2>
+        </div>
+        <div class="row mb-10">
+            <div class="d-none d-xl-block col-xl-3 col-wd-2gdot5">
+                
+                <div class="mb-8">
+                    <div class="border-bottom border-color-1 mb-5">
+                        <h3 class="section-title section-title__sm mb-0 pb-2 font-size-18">{{'Latest Products'|_}}</h3>
+                    </div>
+                    <ul class="list-unstyled">
+                        {% component 'shoe'  %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-9 mb-8 mb-lg-0">
+                <div class="mr-xl-6">
+                    <form id="submit-order"  data-request="onSubmitOrder" data-request-flash>
+                
+                        <div class="row justify-content-center">
+                                
+                                <div class="col-md-8 col-sm-10">
+                                    
+                                    <div class="row">
+
+                                        <div class="col-md-12">
+                                            <!-- Input -->
+                                            <div class="js-form-message mb-3" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="{{'If you want to payment by own to supplier then click yes.'|_}}">
+                                                <label class="form-label">
+                                                    {{'Will you buy the product yourself?'|_}}
+                                                    <span class="text-danger"></span>
+                                                </label>
+                                                <input name="service_type" value="0" type="radio" aria-label="Radio button for following text input"> {{'Yes'|_}} &nbsp;
+                                                <input name="service_type" value="1" type="radio" aria-label="Radio button for following text input"> {{'No'|_}}
+                                            </div>
+                                            <!-- End Input -->
+                                        </div>
+                                        <div class="col-md-12">
+                                            <!-- Input -->
+                                            <div onclick="$(this).find('.delivery-method:checked').val() == 1 ? $('#address').show() : $('#address').hide()" class="js-form-message mb-3" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="{{'If you want to payment by own to supplier then click yes.'|_}}">
+                                                <label class="form-label">
+                                                    {{'how do you want to get delivery?'|_}}
+                                                    <span class="text-danger"></span>
+                                                </label>
+                                                <input class="delivery-method" name="delivery_method" value="1" type="radio" aria-label="Radio button for following text input"> {{'Home Delivery'|_}} &nbsp;
+                                                <input class="delivery-method" name="delivery_method" value="0" type="radio" aria-label="Radio button for following text input"> {{'Pickup from Office'|_}}
+                                                <input class="delivery-method" name="delivery_method" value="2" type="radio" aria-label="Radio button for following text input"> {{'Pickup from Port'|_}}
+                                            </div>
+                                            <!-- End Input -->
+                                        </div>
+                                        
+                                        <div id="address" class="col-md-6" style="display: none;">
+                                            <!-- Input -->
+                                            <div class="js-form-message mb-3" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="{{'Enter your details address'|_}}">
+                                                <label class="form-label">
+                                                    {{'Details Address'|_}}
+                                                </label>
+                                                <input type="text" class="form-control" value="{{ user.address }}" name="address" placeholder="{{'Address'|_}}" >
+                                            </div>
+                                            <!-- End Input -->
+                                        </div>
+      
+
+                                        <div id="buttons" class="col-md-12 mb-3">
+                                            <button type="button" class="btn btn-primary-dark-w px-5"
+                                            onclick="this.style.display='none'; this.innerText='Processing…';" 
+                                            data-request-complete="if(data.statusText == 'Not Acceptable'){this.style.display='initial'; this.innerText='{{'Submit Request'|_}}';}"
+                                            data-request="onSubmitOrder" 
+                                            data-request-form="#submit-order" 
+                                            data-request-flash
+                                            >{{'Submit Request'|_}}</button>
+                                        </div>
+                                        
+                                        <div id="info-block" class="col-md-12">
+                                            
+                                        </div>
+
+                                    </div>
+                                </div>
+                                
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</main>
+<!-- ========== END MAIN CONTENT ========== -->
+

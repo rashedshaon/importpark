@@ -1,0 +1,336 @@
+
+<div class="d-none d-sm-block">
+    <form id="calculate-price"  data-request="onCalculatePrice" data-request-flash>
+        
+        <div class="row">
+            <div class="col-md-4 col-xs-2">
+                <img id="upload-preview" onclick="$('#price-image-upload').trigger('click');" class="img-fluid" src="{{ product_photo ? : 'https://dummyimage.com/300x300/ededed/000000.jpg&text=Click+to+upload+photo' }}" alt="Image Description">
+                <input type="hidden" name="product_photo" value="{{ product_photo }}" >
+            </div>
+            <div class="col-md-8 col-xs-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- Input -->
+                        <div class="js-form-message mb-2" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="{{'Please give Product details name & type.'|_}}">
+                            <label class="form-label">
+                                {{'Product Title'|_}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" value="{{ product_name }}" class="form-control" name="name" placeholder="" aria-label="" required="" data-msg="{{'Please enter Product Name.'|_}}" data-error-class="u-has-error" data-success-class="u-has-success">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Input -->
+                        <div class="js-form-message mb-2" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="{{'Please give Product URL from where you want to buy.'|_}}">
+                            <label class="form-label">
+                                {{'Product URL'|_}}
+                            </label>
+                            <input type="text" value="{{ product_url }}" class="form-control" name="url" placeholder="" aria-label="" data-msg="{{'Please enter Product URL.'|_}}" data-error-class="u-has-error" data-success-class="u-has-success">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                    <div class="col-md-6 col-xs-6">
+                        <!-- Input -->
+                        <div class="js-form-message mb-2"  data-container="body" data-toggle="popover" data-trigger="focus" data-placement="left" data-html="true" data-content="{{'If you give the HS-CODE for your desired product then can see the shipping cost instantly.'|_}} <a href='{{ url('search-hs-code') }}'>Search HS-CODE</a>">
+                            <label class="form-label">
+                                {{'HS-CODE'|_}} <a class="text-danger" href="{{ url('search-hs-code') }}">(?)</a>
+                            </label>
+                            <input type="text" value="{{ hs_code }}" class="form-control" name="hs_code" placeholder="{{'Enter HS-CODE to get price'|_}}" onkeyup="$('#calculate-price').request('onCalculatePrice')">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                    <div class="col-md-6 col-xs-6">
+                        <!-- Input -->
+                        <div class="js-form-message mb-2" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="{{'To get shipping cost please mention the product unit price.'|_}}">
+                            <label class="form-label">
+                                {{'Unit Price'|_}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" value="{{ product_price }}" class="form-control" name="price" onchange="$('#calculate-price').request('onCalculatePrice')" placeholder="">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Input -->
+                        <div class="js-form-message mb-2">
+                            <label class="form-label">
+                                {{'Shipping From'|_}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-control" name="shipping_method_id" id="" onchange="$('#calculate-price').request('onCalculatePrice')">
+                            {% for method in shipping_methods %}
+                                <option value="{{ method.id }}">{{ method.title }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                        <!-- End Input -->
+                    </div>
+    
+                    <div class="col-md-4">
+                        <!-- Input -->
+                        <div class="js-form-message mb-2">
+                            <label class="form-label">
+                                {{'Total Quantity'|_}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" class="form-control" name="quantity" placeholder="" value="1" onchange="$('#calculate-price').request('onCalculatePrice')">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+    
+                    <div class="col-md-4">
+                        <!-- Input -->
+                        <div class="js-form-message mb-2">
+                            <label class="form-label">
+                                {{'Unit'|_}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-control" name="unit" id="">
+                                {% for unit in units %}
+                                <option value="{{ unit.value }}" {{ unit.value == selected_unit ? 'selected="selected"' : '' }}>{{ unit.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                    <div class="col-md-4">
+                        <!-- Input -->
+                        <div class="js-form-message mb-3">
+                            <label class="form-label">
+                                {{'Gross Weight (KG)'|_}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" value="{{ product_weight }}" class="form-control" name="gross_weight" value="1" placeholder="" onchange="$('#calculate-price').request('onCalculatePrice')">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                    <div class="col-md-4">
+                        <!-- Input -->
+                        <div class="js-form-message mb-3">
+                            <label class="form-label">
+                                {{'Package Size (cm)'|_}}
+                                <span class="text-danger"></span>
+                            </label>
+                            <input type="number" class="form-control" name="height" placeholder="{{'Height'|_}}" onchange="$('#calculate-price').request('onCalculatePrice')">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                    <div class="col-md-4">
+                        <!-- Input -->
+                        <div class="js-form-message mb-3">
+                            <label class="form-label">
+                                &nbsp;
+                                <span class="text-danger"></span>
+                            </label>
+                            <input type="number" class="form-control" name="width" placeholder="{{'width'|_}}" onchange="$('#calculate-price').request('onCalculatePrice')">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                    <div class="col-md-4">
+                        <!-- Input -->
+                        <div class="js-form-message mb-3">
+                            <label class="form-label">
+                                &nbsp;
+                                <span class="text-danger"></span>
+                            </label>
+                            <input type="number" class="form-control" name="length" placeholder="{{'Length'|_}}" onchange="$('#calculate-price').request('onCalculatePrice')">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                    
+                    <div class="info-block" class="col-md-12">
+                        {% if hs_code %}
+                            {% partial 'shipping-cost' %}
+                        {% endif %}
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+    </form>
+    <div id="buttons" class="mb-3 text-right">
+        <button type="button" class="btn btn-primary-dark-w px-5"
+        onclick="this.style.display='none'; this.innerText='Processing…';" 
+        data-request-complete="if(data.statusText == 'Not Acceptable'){this.style.display='initial'; this.innerText='{{'Request for Price'|_}}';}"
+        data-request="onSubmitPriceRequest" 
+        data-request-form="#calculate-price" 
+        data-request-flash
+        >{{'Request for Price'|_}}</button>
+    </div>
+</div>
+
+
+
+
+
+<div class="d-sm-none d-xs-block xs-form">
+    <form id="calculate-price-xs"  data-request="onCalculatePrice" data-request-flash>
+        <div class="row">
+            <div class="col-md-4 col-xs-4">
+                <img id="upload-preview-xs" onclick="$('#price-image-upload').trigger('click');" class="img-fluid" src="{{ product_photo ? : 'https://dummyimage.com/300x300/ededed/000000.jpg&text=Click+to+upload+photo' }}" alt="Image Description">
+                <input type="hidden" name="product_photo" value="{{ product_photo }}" >
+            </div>
+            <div class="col-md-8 col-xs-8">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- Input -->
+                        <div class="js-form-message mb-2" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="{{'Please give Product details name & type.'|_}}">
+                            <label class="form-label">
+                                {{'Product Title'|_}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" value="{{ product_name }}" class="form-control" name="name" placeholder="" aria-label="" required="" data-msg="{{'Please enter Product Name.'|_}}" data-error-class="u-has-error" data-success-class="u-has-success">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Input -->
+                        <div class="js-form-message mb-2" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="{{'Please give Product URL from where you want to buy.'|_}}">
+                            <label class="form-label">
+                                {{'Product URL'|_}}
+                            </label>
+                            <input type="text" value="{{ product_url }}" class="form-control" name="url" placeholder="" aria-label="" data-msg="{{'Please enter Product URL.'|_}}" data-error-class="u-has-error" data-success-class="u-has-success">
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            
+        <div class="row">
+            <div class="col-md-6 col-xs-6 pr-1">
+                <!-- Input -->
+                <div class="js-form-message mb-2"  data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-html="true" data-content="{{'If you give the HS-CODE for your desired product then can see the shipping cost instantly.'|_}} <a href='{{ url('search-hs-code') }}'>Search HS-CODE</a>">
+                    <label class="form-label">
+                        {{'HS-CODE'|_}} <a class="text-danger" href="{{ url('search-hs-code') }}">(?)</a>
+                    </label>
+                    <input type="text" value="{{ hs_code }}" class="form-control" name="hs_code" placeholder="{{'Enter HS-CODE to get price'|_}}" onkeyup="$('#calculate-price-xs').request('onCalculatePrice')">
+                </div>
+                <!-- End Input -->
+            </div>
+            
+            <div class="col-md-6 col-xs-6 pl-1">
+                <!-- Input -->
+                <div class="js-form-message mb-2">
+                    <label class="form-label">
+                        {{'Shipping From'|_}}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-control" name="shipping_method_id" id="" onchange="$('#calculate-price-xs').request('onCalculatePrice')">
+                    {% for method in shipping_methods %}
+                        <option value="{{ method.id }}">{{ method.title }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+                <!-- End Input -->
+            </div>
+
+            <div class="col-md-6 col-xs-6 pr-1">
+                <!-- Input -->
+                <div class="js-form-message mb-2" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="{{'To get shipping cost please mention the product unit price.'|_}}">
+                    <label class="form-label">
+                        {{'Unit Price'|_}}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" class="form-control" name="price" onchange="$('#calculate-price-xs').request('onCalculatePrice')" placeholder="">
+                </div>
+                <!-- End Input -->
+            </div>
+
+            <div class="col-md-4 col-xs-6 pl-1">
+                <!-- Input -->
+                <div class="js-form-message mb-2">
+                    <label class="form-label">
+                        {{'Total Quantity'|_}}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" class="form-control" name="quantity" placeholder="" value="1" onchange="$('#calculate-price-xs').request('onCalculatePrice')">
+                </div>
+                <!-- End Input -->
+            </div>
+
+            <div class="col-md-4 col-xs-6 pr-1">
+                <!-- Input -->
+                <div class="js-form-message mb-2">
+                    <label class="form-label">
+                        {{'Unit'|_}}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-control" name="unit" id="">
+                        {% for unit in units %}
+                        <option value="{{ unit.value }}" {{ unit.value == selected_unit ? 'selected="selected"' : '' }}>{{ unit.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- End Input -->
+            </div>
+            <div class="col-md-4 col-xs-6 pl-1">
+                <!-- Input -->
+                <div class="js-form-message mb-3">
+                    <label class="form-label font-size-10">
+                        {{'Gross Weight (KG)'|_}}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" value="{{ product_weight }}" class="form-control" name="gross_weight" value="1" placeholder="" onchange="$('#calculate-price-xs').request('onCalculatePrice')">
+                </div>
+                <!-- End Input -->
+            </div>
+            <div class="col-md-4 col-xs-4 pr-1">
+                <!-- Input -->
+                <div class="js-form-message mb-3">
+                    <label class="form-label">
+                        {{'Package Size'|_}}
+                        <span class="text-danger"></span>
+                    </label>
+                    <input type="number" class="form-control" name="height" placeholder="{{'Height'|_}}" onchange="$('#calculate-price-xs').request('onCalculatePrice')">
+                </div>
+                <!-- End Input -->
+            </div>
+            <div class="col-md-4 col-xs-4 pl-1 pr-1">
+                <!-- Input -->
+                <div class="js-form-message mb-3">
+                    <label class="form-label">
+                        (cm)
+                        <span class="text-danger"></span>
+                    </label>
+                    <input type="number" class="form-control" name="width" placeholder="{{'width'|_}}" onchange="$('#calculate-price-xs').request('onCalculatePrice')">
+                </div>
+                <!-- End Input -->
+            </div>
+            <div class="col-md-4 col-xs-4 pl-1">
+                <!-- Input -->
+                <div class="js-form-message mb-3">
+                    <label class="form-label">
+                        &nbsp;
+                        <span class="text-danger"></span>
+                    </label>
+                    <input type="number" class="form-control" name="length" placeholder="{{'Length'|_}}" onchange="$('#calculate-price-xs').request('onCalculatePrice')">
+                </div>
+                <!-- End Input -->
+            </div>
+            
+            <div class="info-block" class="col-md-12">
+                {% if hs_code %}
+                    {% partial 'shipping-cost' %}
+                {% endif %}
+            </div>
+
+        </div>
+            
+        </form>
+        <div id="buttons" class="mb-3 text-right">
+            <button type="button" class="btn btn-primary-dark-w px-5"
+            onclick="this.style.display='none'; this.innerText='Processing…';" 
+            data-request-complete="if(data.statusText == 'Not Acceptable'){this.style.display='initial'; this.innerText='{{'Request for Price'|_}}';}"
+            data-request="onSubmitPriceRequest" 
+            data-request-form="#calculate-price-xs" 
+            data-request-flash
+            >{{'Request for Price'|_}}</button>
+        </div>
+    </div>
+
+    
+
+

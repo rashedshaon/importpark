@@ -1,0 +1,40 @@
+title = "Order Success"
+layout = "default"
+url = "/order-success"
+
+[shopUser]
+
+[session]
+security='user'
+redirect='login'
+
+==
+<?php
+
+use Bol\Eshop\Models\Order;
+
+function onStart()
+{
+    $this['order'] = Order::orderBy('id', 'desc')->get()->first();
+}
+==
+<main id="content" role="main" class="cart-page">
+    <div class="container">
+        <div class="mt-10 text-center text-success">
+            <i class="ec ec-shopping-bag font-size-40"></i>
+        </div>
+        <div class="my-6">
+            <h4 class="text-center text-success">Your order <span class="text-dark">#{{order.order_number}}</span> successfully submitted.</h4>
+        </div>
+        <div class="mb-20">
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <a href="{{ url('/') }}" class="btn btn-success  w-md-auto">Go to Home</a>
+                </div>
+                <div class="col-auto">
+                    <a href="{{ url('order-list') }}" class="btn btn-primary-dark  w-md-auto">Go to Order List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

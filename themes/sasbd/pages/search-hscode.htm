@@ -1,0 +1,79 @@
+title = "Search HS-CODE"
+url = "/search-hs-code"
+layout = "default"
+is_hidden = 0
+
+==
+
+use ItRail\ExportImport\Models\Hscode;
+
+function onStart()
+{
+    $this['hs_codes'] = Hscode::take(15)->get();
+}
+
+function onSearchHscode()
+{
+    $search_query = post('search_query');
+    $this['hs_codes'] = Hscode::where(function($query) use ($search_query) {
+        $query->where('description_en','LIKE','%'.$search_query.'%')
+            ->orWhere('description_bn','LIKE','%'.$search_query.'%')
+            ->orWhere('tags','LIKE','%'.$search_query.'%')
+            ->orWhere('hscode','LIKE','%'.$search_query.'%');
+    })->take(15)->get();
+
+    return [
+        '#hs-code-list' => $this->renderPartial('hs-code-list')
+    ];
+}
+
+==
+
+<main id="content" role="main">
+    <div class="container">
+        <div class="mb-0 mt-5">
+            <h1 class="text-center">{{'Search HS-CODE'|_}}</h1>
+        </div>
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-6 col-sm-12">
+                <p class="text-gray-90 text-center">
+                    {{'HS stands for Harmonized System. It was developed by the WCO (World Customs Organization). Customs officers use HS code to define Product TAX.'|_}}
+                </p>
+                <div class="input-group">
+                    <input type="text" 
+                            class="form-control py-2 pl-5 font-size-15 border-1 border border-success height-40 rounded-left-pill" 
+                            name="search_query" 
+                            id="search-hs-code" 
+                            placeholder=""
+                            data-request="onSearchHscode"
+                            data-track-input>
+                    <div class="input-group-append">
+                        <button class="btn btn-success height-40 py-2 px-3 rounded-right-pill " type="button" id="">
+                            <span class="ec ec-search font-size-24"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-10">
+            <div id="hs-code-list" class="col-md-10 col-sm-12">
+                {% partial "hs-code-list" %}
+            </div>
+        </div>
+    </div>
+</main>
+
+{% put scripts %}
+    <script type="text/javascript">
+        var typed = new Typed('#search-hs-code', {
+                        strings: ["{{'Search what you want to import'|_}}", "{{'Type Mobile'|_}}", "{{'Type Watch'|_}}", "{{'Type TV'|_}}", "{{'Type Fridge'|_}}", "{{'Type Laptop'|_}}"],
+                        typeSpeed: 30,
+                        backSpeed: 15,
+                        cursorChar: '|',
+                        attr: 'placeholder',
+                        smartBackspace: true,
+                        bindInputFocusEvents: true,
+                        loop: true
+                    });
+    </script>
+{% endput %}

@@ -1,0 +1,22 @@
+<table class="table table-sm">
+    <thead>
+      <tr>
+        <th scope="col">Description</th>
+        <th scope="col">TAX</th>
+        <th scope="col">Unit</th>
+        <th scope="col">HS-CODE</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for data in hs_codes %}
+        <tr>
+          <td>{{ data.description_en }}</td>
+          <td>{{ data.total }}</td>
+          <td>{{ data.unit }}</td>
+          <th scope="row">{{ data.hscode }}</th>
+          <td><a class="btn btn-link p-0 text-dark"  href="{{ url('price-calculation') }}/?hs_code={{ data.hscode }}">Use</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
