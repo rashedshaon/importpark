@@ -65,12 +65,12 @@
                                         <div class="js-scrollbar u-sidebar__body">
                                             <div id="headerSidebarContent" class="u-sidebar__content u-header-sidebar__content">
                                                 <!-- Logo -->
-                                                <a class="d-flex ml-0 mb-3 navbar-brand u-header__navbar-brand u-header__navbar-brand-vertical" href="{{ url('/') }}" aria-label="Import Park">
+                                                <a class="d-flex ml-0 mb-3 navbar-brand u-header__navbar-brand u-header__navbar-brand-vertical" href="{{ url('/') }}" aria-label="SAS Bangladesh">
                                                     {% partial 'logo' %}      
                                                 </a>
                                                 <!-- End Logo -->
                                                 <div>
-                                                    <a href="tel:+8801710479506" class="text-gray-90"><i class="ec ec-phone mr-1"></i> {{'(+880) 1710 479 506'|_}}</a>
+                                                    <a href="tel:+8801816600042" class="text-gray-90"><i class="ec ec-phone mr-1"></i> {{'(+880) 1816 60 00 42'|_}}</a>
                                                 </div>
 
                                                 {% if user %}
@@ -170,11 +170,11 @@
                                     {{'CALL US NOW'|_}}
                                 </div>
                                 <!-- <div class="phone">
-                                    <strong>{{'Support'|_}}</strong> <a href="tel:+8801710479506" class="text-gray-90"> {{'(+880) 1710 479 506'|_}}</a>
+                                    <strong>{{'Support'|_}}</strong> <a href="tel:+8801816600042" class="text-gray-90"> {{'(+880) 1816 60 00 42'|_}}</a>
                                 </div> -->
                                 <div class="phone">
                                     <!-- <a href="mailto:importparkbd@gmail.com" class="text-gray-90">importparkbd@gmail.com</a> -->
-                                    <a href="tel:+8801710479506" class="text-dark"> {{'01710 479 506'|_}}</a>
+                                    <a href="tel:+8801816600042" class="text-dark"> {{'01816 60 00 42'|_}}</a>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +243,7 @@
                                     <a href="{{ url('shopping-cart') }}" class="text-gray-90 position-relative d-flex " data-toggle="tooltip" data-placement="top" title="Cart">
                                         <i class="font-size-22 ec ec-shopping-bag"></i>
                                         <span class="cartcount width-22 height-22 bg-dark position-absolute d-flex align-items-center justify-content-center rounded-circle left-12 top-8 font-weight-bold font-size-12 text-white">
-                                            {% component 'de' partial='count' %}
+                                            {% component 'shoppingCart' partial='count' %}
                                         </span>
                                     </a>
                                 </li>

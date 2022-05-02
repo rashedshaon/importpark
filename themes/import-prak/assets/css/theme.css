@@ -181,7 +181,7 @@ sup {
 }
 
 a {
-  color: #fed700;
+  color: #333e48;
   text-decoration: none;
   background-color: transparent;
 }
@@ -36171,7 +36171,7 @@ blockquote:not(.blockquote) p {
 
 @media (max-width: 1199.98px) {
   .bg-primary-down-lg {
-    background-color: #fed700 !important;
+    background-color: #efefef !important;
   }
 }
 

@@ -8,3 +8,7 @@
     font-size: 18px;
     font-weight: 600;
 }
+
+ul#headerSidebarList li {
+    padding: 5px 0px 5px 0px;
+}
