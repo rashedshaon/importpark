@@ -1,0 +1,153 @@
+title = "Invoice"
+layout = "invoice"
+url = "/invoice/:id"
+
+[shopOrders]
+order_id={{:id}}
+==
+
+<!-- shop body section start -->
+<section class="cart-body mb-90 mt-100 pt-35">
+    <div class="has-breadcrumb-content">
+        <div class="container container-1430">
+            <div class="cart-body-content">
+                <div class="row justify-content-center">
+                    <div class="col-xl-8">
+                        <div class="row">
+                            <table class="table borderless">
+                                <tr>
+                                    <td>
+                                        <div class="logo">
+                                            <a href="#" id="imageContainer"><img
+                                                    src="{{ site_logo }}" alt=""></a>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        <h4>Invoice</h4>
+                                        {{ site_description | raw }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="product-content">
+                                    <div class="table-responsive">
+                                        <table class="table table-2">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="4"><h4>Order #{{order.order_number}}</h4> 
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="remove-porduct">Delivery Address</th>
+                                                    <th class="product-title">Delivery Method</th>
+                                                    <th class="total">Billing Address</th>
+                                                    <th class="product-title">Payment Method</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                
+                                                <tr>
+                                                    <td>
+                                                        <span> {{ order.delivery_address['name'] }} </span><br/>
+                                                        <span> {{ order.delivery_address['address'] }} </span><br/>
+                                                        <span> Phone: {{ order.delivery_address['phone'] }} </span><br/>     
+                                                        <span> Email: {{ order.delivery_address['email'] }} </span>      
+                                                    </td>
+                                                    <td>
+                                                       {{ order.shipping_method.name }}
+                                                    </td>
+                                                    <td>
+                                                        <span> {{ order.delivery_address['name'] }} </span><br/>
+                                                        <span> {{ order.delivery_address['address'] }} </span><br/>
+                                                        <span> Phone: {{ order.delivery_address['phone'] }} </span><br/>      
+                                                        <span> Email: {{ order.delivery_address['email'] }} </span>       
+                                                    </td>
+                                                    <td>
+                                                        {{ order.payment_method.name }}
+                                
+                                                        <div class="payment-status">
+                                                            <span class="badge badge-{{order.payment_status ? 'success' : 'danger'}}">{{order.payment_status ? 'Paid' : 'Unpaid'}}</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="product-content">
+                                    <div class="table-responsive">
+                                        <table class="table table-2">
+                                            <thead>
+                                                <tr><th colspan="6"><h5>Order Details</h5></th></tr>
+                                                <tr>
+                                                    <th class="">Sl.</th>
+                                                    <th class="remove-porduct">Product</th>
+                                                    <th class="product-title">Quantity</th>
+                                                    <th class="total">Unit</th>
+                                                    <th class="product-title">Actual Price</th>
+                                                    <th class="product-title">Price</th>
+                                                    <th class="quantity">Subtotal</th>
+                                                </tr>
+                                                {% for item in order.items %}
+                                                <tr>
+                                                    <td>{{ loop.index }}</td>
+                                                    <td>
+                                                        {{ item.title }}
+                                                        {% if item.color %}
+                                                        <br>Color: {{ item.color }}
+                                                        {% endif %}
+                                                        {% if item.size %}
+                                                        <br>Size: {{ item.size }}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ item.quantity }}</td>
+                                                    <td>{{ item.unit }}</td>
+                                                    <td>{{ item.actual_price_label }}</td>
+                                                    <td>{{ item.price_label }}</td>
+                                                    <td>{{ item.subtotal_label }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                
+                                                {% if order.remarks %}
+                                                <tr>
+                                                    <th colspan="7">
+                                                        *Note: {{ order.remarks }}
+                                                    </th>
+                                                </tr>
+                                                {% endif %}
+                                                
+                                
+                                                <tr>
+                                                    <th colspan="5"></th>
+                                                    <th class="product-title" style="width:130px;">
+                                                        Subtotal <br>
+                                                        Discount <br>
+                                                        Shipping <br>
+                                                        <!-- Tax ({{order.tax_percent}}%) <br> -->
+                                                        Grand Total <br>
+                                                    </th>
+                                                    <th class="quantity">
+                                                        {{ order.subtotal_label }} <br>
+                                                        {{ order.total_discount_label }} <br>
+                                                        {{ order.shipping_method.price_label }} <br>
+                                                        <!-- {{ order.tax_amount_label }} <br> -->
+                                                        {{ order.total_label }} <br>
+                                                    </th>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- shop body section end -->

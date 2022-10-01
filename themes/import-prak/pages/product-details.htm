@@ -9,434 +9,866 @@ categoryPage = "product-list"
 ==
 <?php
 use Goutte\Client;
+
 use GuzzleHttp\Client as GuzzleClient;
+
 use Bol\Eshop\Models\Product;
 
+
+
 function onStart()
+
 {
+
  
+
 }
 
+
+
 function onBuyNow()
+
 {
+
     $data = post();
 
+
+
     $rules = [
+
         'quantity' => 'required|numeric|min:1'
+
     ];
+
+
 
     if(isset($data['color']))
+
     {
+
         $rules['color'] = 'required';
+
     }
+
+
 
     if(isset($data['size']))
+
     {
+
         $rules['size'] = 'required';
+
     }
 
+
+
     $message = [
+
         'color.required' => 'Please select a color for this product.',
+
         'size.required' => 'Please select a size for this product.',
+
     ];
+
+
 
     $validation = Validator::make($data, $rules, $message);
 
+
+
     if ($validation->fails()) {
+
         throw new ValidationException($validation);
+
     }
+
+
 
     $product = Product::find($data['id']);
 
+
+
     //dd($product->photos[0]['url']);
 
+
+
     $cartItem = ShoppingCart::instance('shopping_cart')->add([
+
         "id" => $product->id,
+
         "name" => $product->title,            
+
         "price" => $product->unit_price,
+
         "qty" => $data['quantity'],
+
         "options" => [
+
                 "price" => $product->price, 
+
                 "shipping_cost" => $product->unit_shipping_cost * $data['quantity'], 
+
                 "total_tax" => $product->unit_tax * $data['quantity'], 
+
                 "total_cost" => ($product->unit_shipping_cost + $product->unit_tax) * $data['quantity'], 
+
                 "total_price" => $product->unit_price * $data['quantity'], 
+
                 "gross_weight" => $product->unit_gross_weight * $data['quantity'], 
+
                 "discount" => $product->discount,
+
                 "product_photo" => $product->photos[0]['url'],
+
                 "product_url" => url('product-details').'/'.$product->slug,
+
                 "shipping_method_id" => $product->shipping_method_id,
+
                 "shipping_date" => $product->shipping_method->shipping_date,
+
                 "hscode_id" => $product->hscode_id,
+
                 "unit" => $product->unit,
+
                 "size" => $data['size']??'',
+
                 "color" => $data['color']??'',
+
             ],            
+
     ]);
+
+
 
     $cartItem->associate('Product');
 
+
+
     return Redirect::to('checkout');
+
 }
 
+
+
 function onDetailsLoad()
+
 {
+
     
+
     
+
+
+
 
 
     if($crawler->count())
+
     {
+
         return ["#loaded-description" => $crawler->html()];
+
     }
 
+
+
     return [
+
     
+
     "#loaded-description" => "No Description Found for this product."];
+
 }
 
+
+
 function onUpdateQuantity()
+
 {
+
     //dd(post());
 
+
+
     $data = post();
+
+
 
     $product = Product::find(post('id'));
 
+
+
     if(!$data['quantity'])
+
     {
+
         Flash::error('Quantity can not be zero');
+
     }
+
     else if(!$product->stock)
+
     {
+
         $product_data['unit_price'] = $product->unit_price * $data['quantity'];
+
         $product_data['unit_tax'] = $product->unit_tax * $data['quantity'];
+
         $product_data['unit_shipping_cost'] = $product->unit_shipping_cost * $data['quantity'];
+
         $product_data['unit_gross_weight'] = $product->unit_gross_weight * $data['quantity'];
+
         $product_data['shipping_cost_discount'] = $product->shipping_cost_discount * $data['quantity'];
+
         $product_data['unit_cost'] = $product_data['unit_price'] / $data['quantity'];
+
         $product_data['stock'] = $product->stock;
+
         $product_data['hscode'] = $product->hscode;
+
         $product_data['discount'] = $product->discount;
+
         $product_data['unit_name'] = $product->unit_name;
+
+
 
         //dd($product_data);
 
+
+
         return ['#price-calculation' => $this->renderPartial('forms/product-price-calculation', ['product' => (object) $product_data])];
+
     }
+
     else
+
     {
+
         if(post('quantity') > $product->stock)
+
         {
+
             Flash::error('Product has not enough stock');
+
         }
+
     }
+
 }
+
+
 
 public function onAjaxItemsLoad()
+
 {       
+
     $data = post();
+
     return $this->{$data['target_id']}($data['target_id'], $data['partial_name']);
+
 }
 
+
+
 public function latestProducts($target_id, $partial_name)
+
 {
+
+
 
     $results = Product::where('is_published', 1)->inRandomOrder()->take(10)->get();
 
+
+
     // dd($partial_name);
 
+
+
     return [
+
         "#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+
     ];
+
 }
 ?>
 ==
 <!-- ========== MAIN CONTENT ========== -->
+
 <main id="content" role="main">
+
     <div class="container mt-5">
+
         <div class="row mb-10">
+
             <div class="d-none d-xl-block col-xl-3 col-wd-2gdot5">
+
                 
+
                 <div class="mb-8">
+
                     <div class="border-bottom border-color-1 mb-5">
+
                         <h4 class="section-title section-title__sm mb-0 pb-2 font-size-18">{{ 'Latest Products'|_ }}</h4>
+
                     </div>
+
                     <ul id="latestProducts" class="list-unstyled">
+
                         {% partial 'ajax/ajax-load' target_id='latestProducts' partial_name='product-list' %}
+
                     </ul>
+
                 </div>
+
             </div>
+
             <div class="col-xl-9 col-wd-9gdot5">
+
                 <!-- Single Product Body -->
+
                 <div class="mb-xl-4 mb-2">
+
                     <div class="row">
+
                         <div class="col-md-5 mb-4 mb-md-0">
+
                             <div id="sliderSyncingNav" class="js-slick-carousel u-slick mb-2"
+
                                 data-infinite="true"
+
                                 data-arrows-classes="d-none d-lg-inline-block u-slick__arrow-classic u-slick__arrow-centered--y rounded-circle"
+
                                 data-arrow-left-classes="fas fa-arrow-left u-slick__arrow-classic-inner u-slick__arrow-classic-inner--left ml-lg-2 ml-xl-4"
+
                                 data-arrow-right-classes="fas fa-arrow-right u-slick__arrow-classic-inner u-slick__arrow-classic-inner--right mr-lg-2 mr-xl-4"
+
                                 data-nav-for="#sliderSyncingThumb">
 
+
+
                                 {% for data in product.photos %}
+
                                 <div class="js-slide main">
+
                                     <img class="img-fluid" src="{{data.path()}}" alt="Image Description">
+
                                 </div>
+
                                 {% endfor %}
+
                                 
+
                             </div>
+
+
 
                             <div id="sliderSyncingThumb" class="js-slick-carousel u-slick u-slick--slider-syncing u-slick--gutters-1 u-slick--transform-off"
+
                                 data-infinite="true"
+
                                 data-slides-show="5"
+
                                 data-is-thumbs="true"
+
                                 data-nav-for="#sliderSyncingNav">
+
                                 {% for data in product.photos %}
+
                                 <div class="js-slide" style="cursor: pointer;">
+
                                     <img class="img-fluid" src="{{data.path()}}" alt="Image Description">
+
                                 </div>
+
                                 {% endfor %}
+
                                 
+
                             </div>
+
                         </div>
+
                         <div class="col-md-7 mb-md-6 mb-lg-0">
+
                             <div class="mb-2">
+
                                 <div class="border-bottom mb-3 pb-md-1 pb-3">
+
                                     <!-- <a href="#" class="font-size-12 text-gray-5 mb-2 d-inline-block">Headphones</a> -->
+
                                     <h2 class="font-size-25 text-lh-1dot2">{{ product.title }}</h2>
+
                                     <!-- <div class="mb-2">
+
                                         <a class="d-inline-flex align-items-center small font-size-15 text-lh-1" href="#">
+
                                             <div class="text-warning mr-2">
+
                                                 <small class="fas fa-star"></small>
+
                                                 <small class="fas fa-star"></small>
+
                                                 <small class="fas fa-star"></small>
+
                                                 <small class="fas fa-star"></small>
+
                                                 <small class="far fa-star text-muted"></small>
+
                                             </div>
+
                                             <span class="text-secondary font-size-13">(3 customer reviews)</span>
+
                                         </a>
+
                                     </div> -->
+
                                     <div class="d-md-flex align-items-center">
+
                                         <!-- <a href="#" class="max-width-150 ml-n2 mb-2 mb-md-0 d-block"><img class="img-fluid" src="../../assets/img/200X60/img1.png" alt="Image Description"></a> -->
+
                                         {% if product.stock > 0 %}
+
                                         <div class="ml-md-3 text-gray-9 font-size-14">Availability: <span class="text-green font-weight-bold">{{ product.stock }}</span></div>
+
                                         {% endif %}
+
                                         {% if product.weight > 0 %}
+
                                         <div class="ml-md-3 text-gray-9 font-size-14">Weight: <span class="text-red font-weight-bold">{{ product.weight }}</span></div>
+
                                         {% endif %}
+
                                     </div>
+
                                 </div>
+
                                 <div class="flex-horizontal-center flex-wrap mb-2">
+
                                     <a href="#" class="text-gray-6 font-size-13 mr-2"><i class="ec ec-favorites mr-1 font-size-15"></i> Wishlist</a>
+
                                     <!-- <a href="#" class="text-gray-6 font-size-13 ml-2"><i class="ec ec-compare mr-1 font-size-15"></i> Compare</a> -->
+
                                 </div>
+
                                 <!-- <div class="mb-2">
+
                                     <ul class="font-size-14 pl-3 ml-1 text-gray-110">
+
                                         <li>4.5 inch HD Touch Screen (1280 x 720)</li>
+
                                         <li>Android 4.4 KitKat OS</li>
+
                                         <li>1.4 GHz Quad Core™ Processor</li>
+
                                         <li>20 MP Electro and 28 megapixel CMOS rear camera</li>
+
                                     </ul>
+
                                 </div>
+
                                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p>
+
                                 <p><strong>SKU</strong>: FW511948218</p> -->
 
+
+
                                 <div class="mb-2">
+
                                     <div class="d-flex align-items-baseline">
+
                                         {% if product.discount > 0 %}
+
                                             <ins class="font-size-36 text-decoration-none">{{ product.price_label }}</ins>
+
                                             <del class="font-size-20 ml-2 text-danger">{{ product.original_price_label }}</del>
+
                                         {% else %}
+
                                             <ins class="font-size-36 text-decoration-none">{{ product.price_label }}</ins>
+
                                         {% endif %}
+
                                     </div>
+
                                 </div>
+
                                 {% if product.colors|length > 0 %}
+
                                 <div class="border-top border-bottom py-2 mb-3 ">
+
                                     <h6 class="font-size-14 mb-1">Select Color</h6>
+
                                     <div class=" align-items-center">
+
                                         
+
                                         {% for data in product.colors %}
+
                                         
+
                                             {% if data.color %}
+
                                             <div class="d-inline-block p-1 mr-1 mt-1 border" style="cursor: pointer; width: 50px;" onclick="$(this).parent().find('div').removeClass('border-danger'); $(this).addClass('border-danger')">
+
                                                 <img class="img-fluid" onclick="$('#input-color').val(this.src); $('.main.slick-current.slick-active > img').attr('src', this.src);" style="width: 50px;" src="{{ data.color | media }}" alt="{{data.label}}">
+
                                             </div>
+
                                             {% else %}
+
                                             <div class="d-inline-block p-1 mr-1 mt-1 border" style="cursor: pointer;"
+
                                                  onclick="$(this).parent().find('div').removeClass('border-danger'); $(this).addClass('border-danger'); $('#input-color').val($(this).text())">
+
                                                 {{data.label}}
+
                                             </div>
+
                                             {% endif %}
 
+
+
                                         {% endfor %}
+
                                     </div>
+
                                 </div>
+
                                 {% endif %}
+
                                 {% if product.sizes|length > 0 %}
+
                                 <div class="border-top border-bottom py-2 mb-3 ">
+
                                     <h6 class="font-size-14 mb-1">Select Size</h6>
+
                                     <div class=" align-items-center">
+
                                         
+
                                         {% for data in product.sizes %}
+
                                             <div class="d-inline-block p-1 mr-1 mt-1 border" style="cursor: pointer;"
+
                                                 onclick="$(this).parent().find('div').removeClass('border-danger'); $(this).addClass('border-danger'); $('#input-size').val($(this).text())">
+
                                                 {{data.label}}
+
                                             </div>
+
                                         {% endfor %}
+
                                     </div>
+
                                 </div>
+
                                 {% endif %}
+
+
 
                                 <form id="form-add-to-cart">
+
                                     <input type="hidden" name="product_id" value="{{ product.id }}">
+
                                     
+
                                     {% if product.colors|length > 0 %}
+
                                     <input id="input-color" type="hidden" name="color" value="">
+
                                     {% endif %}
+
                                     {% if product.sizes|length > 0 %}
+
                                     <input id="input-size" type="hidden" name="size" value="">
+
                                     {% endif %}
+
                                 
 
+
+
                                 <!-- <div id="price-calculation" class="">
+
                                     <div class=" text-success">Total Price: ৳ <span>{{ product.unit_price }}</span> <sup class="text-dark"> {{ product.stock > 0 ? '(Free Shipping)' : '(Tax + Shipping)' }}</sup></div>
+
                                     {% if product.stock == 0 %}
+
                                     <div class=" text-dark font-size-12">Total Tax: {{ product.unit_tax }} tk at {{  product.hscode.total }}%</div>
+
                                     <div class=" text-dark font-size-12">
+
                                         Total Shipping: {{ product.unit_shipping_cost }} tk for {{ product.unit_gross_weight }} kg 
+
                                         
+
                                         {% if product.discount %}
+
                                         <sup class="text-danger">(Discount {{ product.shipping_cost_discount }} tk)</sup>
+
                                         {% endif %}
+
                                     </div>
+
                                     <div class="mb-2 text-dark font-size-12">Cost per  {{ product.unit_name }}: {{ product.unit_price }} tk</div>
+
                                     {% endif %}
+
                                 </div> -->
 
 
+
+
+
                                 <div class="d-md-flex align-items-end mb-3">
+
                                     <div class="max-width-150 mb-4 mb-md-0">
+
                                         <h6 class="font-size-14">Quantity</h6>
+
                                         <!-- Quantity -->
+
                                         <div class="border rounded-pill py-2 px-3 border-color-1">
+
                                             <div class="js-quantity row align-items-center">
+
                                                 <div class="col">
+
                                                     <input name="quantity" class="js-result form-control h-auto border-0 rounded p-0 shadow-none" type="text" value="1">
+
                                                 </div>
+
                                                 <div class="col-auto pr-1">
+
                                                     <a class="js-minus btn btn-icon btn-xs btn-outline-secondary rounded-circle border-0" href="javascript:;">
+
                                                         <small class="fas fa-minus btn-icon__inner"></small>
+
                                                     </a>
+
                                                     <a class="js-plus btn btn-icon btn-xs btn-outline-secondary rounded-circle border-0" href="javascript:;">
+
                                                         <small class="fas fa-plus btn-icon__inner"></small>
+
                                                     </a>
+
                                                 </div>
+
                                             </div>
+
                                         </div>
+
                                         <!-- End Quantity -->
+
                                     </div>
+
                                     <div class="ml-md-3">
+
                                         <a href="#" class="btn px-5 btn-primary-dark transition-3d-hover"
+
                                         data-request="onAddToCart"
+
                                         data-request-form="#form-add-to-cart"
+
                                         data-request-flash><i class="ec ec-add-to-cart mr-2 font-size-20"></i> Add to Cart</a>
 
+
+
                                         <!-- <a href="#" class="btn px-5 btn-primary-dark transition-3d-hover"
+
                                             data-request="onAddToCart"
+
                                             data-request-flash>Add to Cart</a>
+
                                         <a href="#" class="btn px-5 btn-danger transition-3d-hover"
+
                                             onclick="this.style.display='none'; this.innerText='Processing…';" 
+
                                             data-request-complete="if(data.statusText == 'Not Acceptable'){this.style.display='block'; this.innerText='{{'Buy Now'|_}}';}"
+
                                             data-request="onBuyNow"
+
                                             data-request-flash>{{'Buy Now'|_}}</a> -->
+
                                     </div>
+
                                 </div>
+
                                 </form>
+
                             </div>
+
                         </div>
+
                     </div>
+
                 </div>
+
                 <!-- End Single Product Body -->
+
                 <!-- Single Product Tab -->
+
                 <div class="mb-8">
+
                     <div class="position-relative mx-md-6">
+
                         <ul class="nav nav-classic nav-tab nav-tab-lg justify-content-xl-center flex-nowrap flex-xl-wrap overflow-auto overflow-xl-visble border-0 pb-1 pb-xl-0 mb-n1 mb-xl-0" id="pills-tab-8" role="tablist">
+
                         
 
-                            <li class="nav-item flex-shrink-0 flex-xl-shrink-1 z-index-2">
-                                <a class="nav-link active" id="Jpills-details-block-tab" data-toggle="pill" href="#Jpills-details-block" role="tab" aria-controls="Jpills-details-block" aria-selected="false">Description</a>
-                            </li>
+
 
                             <li class="nav-item flex-shrink-0 flex-xl-shrink-1 z-index-2">
-                                <a class="nav-link" id="Jpills-one-example1-tab" data-toggle="pill" href="#Jpills-one-example1" role="tab" aria-controls="Jpills-one-example1" aria-selected="true">SHIPPING & DELIVERY</a>
+
+                                <a class="nav-link active" id="Jpills-details-block-tab" data-toggle="pill" href="#Jpills-details-block" role="tab" aria-controls="Jpills-details-block" aria-selected="false">Description</a>
+
                             </li>
+
+
+
+                            <li class="nav-item flex-shrink-0 flex-xl-shrink-1 z-index-2">
+
+                                <a class="nav-link" id="Jpills-one-example1-tab" data-toggle="pill" href="#Jpills-one-example1" role="tab" aria-controls="Jpills-one-example1" aria-selected="true">ORDER & DELIVERY</a>
+
+                            </li>
+
                             
+
                             
+
                         </ul>
+
                     </div>
+
                     <!-- Tab Content -->
+
                     <div class="borders-radius-17 border p-4 mt-4 mt-md-0 px-lg-10 px-xl-4 px-wd-10 py-lg-9 py-xl-5 py-wd-9">
+
                         <div class="tab-content" id="Jpills-tabContent">
+
                             <div class="tab-pane fade active show" id="Jpills-details-block" role="tabpanel" aria-labelledby="Jpills-details-block-tab">
+
                                 {{ product.short_description }}
 
+
+
                                 {{ product.description | raw }}
+
                             </div>
+
+
 
                             <div class="tab-pane fade" id="Jpills-one-example1" role="tabpanel" aria-labelledby="Jpills-one-example1-tab">
+
                                 <p class="mb-5">
-                                    কাস্টমার থেকে অর্ডার পেলেই শুধুমাত্র আমরা অর্ডার প্রসেস করি। সাধারণত আপনি যেদিন অর্ডার করেন ওই দিন বা তার পরের দিন উল্লেখিত সাইট থেকে পন্য কেনা হয়। বাই এয়ার বা বাই শিপ পন্য কেনার দিন থেকে সাধারনত ১৫ থেকে ৬০ দিন লাগে। তারপরও অনাকংখিত অনেক কারনে ব্যাতিক্রম হতে পারে যেটা আগে বলা সম্ভব না।
 
-তবে কাষ্টমস জটিলতা, এয়ারকার্গো বন্ধ থাকা, প্রতিকুল আবহাওয়া, সিএন্ডএফ জটিলতা,বিভিন্ন অভ্যন্তরীণ কর্মসূচির কারনে (শিপমেন্ট বাতিল) এসব কারনে  উল্লেখিত সময়ের চেয়ে ৫ থেকে ১৫ দিন পর্যন্ত হেরফের হতে পারে। তবে জাতীয় কোন ইস্যু যেমন CNF ধর্মঘট, হরতাল, অবরোধ, প্রাকৃতিক দুর্যোগ চায়না/বাংলাদেশ (যা আমাদের নিয়ন্ত্রনের বাইরে) থাকলে এই সময়কাল কার্যকর হবে না।
+                                    বিস্তারিত জানতে,
 
-ব্যক্তিগত ব্যাবহারের পন্য আলি এক্সপ্রেস ও ব্যংগুড সাইট থেকে আনা হয়। পন্য আসতে ২৫ থেকে ৪০ দিন সময় লাগে। কিন্তু যদি ৬০ দিনের মধ্যে পন্য না আসে তাহলে অগ্রিম দেয়া টাকা ফেরত দেয়া হবে।
+                                    কল করুন অথবা হোয়াটসঅ্যাপ এ যোগাযোগ করুন 
+
+                                    01710 479 506
+
+
+
+<br>
+
+                                    আমাদের ঠিকানা:
+
+                                    ৩৯২ জামতলা, স্বাধীনতা স্বরণী, উত্তর বাড্ডা, ঢাকা
+
                                 </p>
-                                <div class="row no-gutters">
+
+                                {# <div class="row no-gutters">
+
                                     <div class="col mb-6 mb-md-0">
+
                                         <h5>শর্ত সমূহ :</h5>
+
                     
+
                                         <div class="form-check pl-4 pl-md-0 ml-md-4 mb-2 pb-2 pb-md-0 mb-md-0 border-bottom border-md-bottom-0">
+
                                             <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option1" checked>
+
                                             <label class="form-check-label mb-1 text-blue" for="inlineCheckbox2">
+
                                                 <span class="text-decoration-on cursor-pointer-on">যদি ৬০ দিনের মধ্যে পন্য না আসে তাহলে অগ্রিম দেয়া টাকা ফেরত দেয়া হবে</span>
+
                                             </label>
+
                                         </div>
+
                                         <div class="form-check pl-4 pl-md-0 ml-md-4 mb-2 pb-2 pb-md-0 mb-md-0 border-bottom border-md-bottom-0">
+
                                             <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option2" checked>
+
                                             <label class="form-check-label mb-1 text-blue" for="inlineCheckbox3">
+
                                                 <span class="text-decoration-on cursor-pointer-on">জাতীয় কোন ইস্যু যেমন CNF ধর্মঘট, হরতাল, অবরোধ, প্রাকৃতিক দুর্যোগ চায়না/বাংলাদেশ (যা আমাদের নিয়ন্ত্রনের বাইরে) থাকলে এই সময়কাল কার্যকর হবে না</span>
+
                                             </label>
+
                                         </div>
+
                                     </div>
+
                                    
-                                </div>
+
+                                </div> #}
+
                             </div>
+
                             
+
                         </div>
+
                     </div>
+
                     <!-- End Tab Content -->
+
                 </div>
+
                 <!-- Single Product Tab -->
+
             </div>
+
         </div>
+
         
+
     </div>
+
 </main>
+
 <!-- ========== END MAIN CONTENT ========== -->
 
 
+
+
+
 {% put styles %}
+
     <style>
+
         #loaded-description img
+
         {
+
             max-width: 100%;
+
             height: auto;
+
         }
+
         #loaded-description table
+
         {
+
             width: 100% !important;
+
         }
+
     </style>
+
 {% endput %}

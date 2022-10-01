@@ -1,0 +1,52 @@
+title = "Order Details"
+layout = "default"
+url = "/order-details/:id"
+
+[shopUser]
+
+[session]
+security='user'
+redirect='login'
+
+[shopOrders]
+order_id={{:id}}
+==
+
+
+<!-- shop body section start -->
+<section class="cart-body mb-90 mt-100 gray-border-top pt-35">
+    <div class="has-breadcrumb-content">
+        <div class="container container-1430">
+            <div class="breadcrumb-content" style="flex-direction: column;">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb p-0 m-0">
+                        <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Orders</li>
+                    </ol>
+                </nav>
+                <h2 class="cart-title mt-40">Orders Details</h2>
+            </div>
+
+            <div class="cart-body-content">
+                <div class="row">
+
+                    <div class="col-xl-4">
+                        <div class="cart-widget">
+
+                            {% partial 'site/profile-side-menu' %}
+
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8">
+
+                        {% component 'shopOrders' partial='details' %}
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- shop body section end -->

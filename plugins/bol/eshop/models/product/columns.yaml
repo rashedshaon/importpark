@@ -6,9 +6,11 @@ columns:
     title:
         label: bol.eshop::lang.product.title
         type: text
+        searchable: true
     short_description:
         label: bol.eshop::lang.product.short_description
         type: text
+        searchable: true
     stock_count:
         label: bol.eshop::lang.product.stock_count
         type: number

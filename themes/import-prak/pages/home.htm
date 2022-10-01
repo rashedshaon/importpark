@@ -56,13 +56,69 @@ public function latestWatch($target_id, $partial_name)
 }
 
 public function featured($target_id, $partial_name)
+
 {
 
-    $results = Product::where('is_published', 1)->inRandomOrder()->get();
+
+
+    $results = Product::where('is_published', 1)->whereHas('categories', function($q) {
+
+        $q->where('slug', 'smart-door-lock');
+
+    })->orderBy('price')->get();
+
+
 
     return [
+
         "#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+
     ];
+
+}
+
+public function smartSwitches($target_id, $partial_name)
+
+{
+
+
+
+    $results = Product::where('is_published', 1)->whereHas('categories', function($q) {
+
+        $q->where('slug', 'smart-switch');
+
+    })->get();
+
+
+
+    return [
+
+        "#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+
+    ];
+
+}
+
+public function smartSpeakers($target_id, $partial_name)
+
+{
+
+
+
+    $results = Product::where('is_published', 1)->whereHas('categories', function($q) {
+
+        $q->where('slug', 'smart-speaker');
+
+    })->get();
+
+
+
+    return [
+
+        "#$target_id" => $this->renderPartial("$partial_name", ["results" => $results])
+
+    ];
+
 }
 
 ==
@@ -122,7 +178,7 @@ public function featured($target_id, $partial_name)
                                     data-link-group="groups"
                                     data-animation-in="slideInUp">
                                     <div class="d-md-flex justify-content-md-center align-items-md-center">
-                                        Featured
+                                        Smart Switches
                                     </div>
                                 </a>
                             </li>
@@ -132,7 +188,7 @@ public function featured($target_id, $partial_name)
                                     data-link-group="groups"
                                     data-animation-in="slideInUp">
                                     <div class="d-md-flex justify-content-md-center align-items-md-center">
-                                        On Sale
+                                        Smart Door Locks
                                     </div>
                                 </a>
                             </li>
@@ -142,7 +198,7 @@ public function featured($target_id, $partial_name)
                                     data-link-group="groups"
                                     data-animation-in="slideInUp">
                                     <div class="d-md-flex justify-content-md-center align-items-md-center">
-                                        Top Rated
+                                        Smart Speakers
                                     </div>
                                 </a>
                             </li>
@@ -151,19 +207,24 @@ public function featured($target_id, $partial_name)
 
                     <div class="tab-content" id="pills-tabContent">
                         <div class="tab-pane fade pt-2 show active" id="pills-one-example1" role="tabpanel" aria-labelledby="pills-one-example1-tab" data-target-group="groups">
-                            <ul id="featured" class="row list-unstyled products-group no-gutters">
-                                {% partial 'ajax/ajax-load' target_id='featured' partial_name='top-list' %}
+                            <ul id="smartSwitches" class="row list-unstyled products-group no-gutters">
+
+                                {% partial 'ajax/ajax-load' target_id='smartSwitches' partial_name='top-list' %}
+
                             </ul>
                         </div>
                         <div class="tab-pane fade pt-2" id="pills-two-example1" role="tabpanel" aria-labelledby="pills-two-example1-tab" data-target-group="groups">
-                            <ul id="onSale" class="row list-unstyled products-group no-gutters">
-                                
+                            <ul id="featured" class="row list-unstyled products-group no-gutters">
+
+                                {% partial 'ajax/ajax-load' target_id='featured' partial_name='top-list' %}
+
                             </ul>
                         </div>
                         <div class="tab-pane fade pt-2" id="pills-three-example1" role="tabpanel" aria-labelledby="pills-three-example1-tab" data-target-group="groups">
-                            <ul id="topRated" class="row list-unstyled products-group no-gutters">
-                                
-                                
+                            <ul id="smartSpeakers" class="row list-unstyled products-group no-gutters">
+
+                                {% partial 'ajax/ajax-load' target_id='smartSpeakers' partial_name='top-list' %}
+
                             </ul>
                         </div>
                     </div>

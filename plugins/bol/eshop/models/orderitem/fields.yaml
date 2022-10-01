@@ -3,6 +3,10 @@ fields:
         label: 'Product'
         span: auto
         type: dropdown
+    price:
+        label: Price
+        span: left
+        type: number
     quantity:
         label: Quantity
         span: left

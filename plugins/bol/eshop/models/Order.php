@@ -125,6 +125,12 @@ class Order extends Model
             $total = $total + $item->discount_subtotal;
         }
 
+        
+        if($this->other_deduction)
+        {
+            $total = $total + $this->other_deduction;
+        }
+
         return $total;
     }
 
@@ -186,6 +192,9 @@ class Order extends Model
 
         //add tax amount
         $total = $total + $this->tax_amount;
+
+        //other discount
+        $total = $total - $this->other_deduction;
 
         return $total;
     }

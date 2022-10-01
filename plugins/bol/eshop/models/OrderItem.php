@@ -70,6 +70,25 @@ class OrderItem extends Model
         return $this->price;
     }
 
+    public function getActualPriceLabelAttribute()
+    {
+        if(Settings::get('show_currency'))
+        {
+            $currency = Currency::where('is_default', 1)->where('is_active', 1)->get()->first();
+
+            if(Settings::get('currency_label') == 'symbol')
+            {
+                return $currency->symbol."".number_format($this->actual_price);
+            }
+            else
+            {
+                return number_format($this->actual_price)." ".$currency->name;
+            }
+        }
+
+        return $this->actual_price;
+    }
+
     public function getDiscountSubtotalAttribute()
     {
         return ($this->actual_price - $this->price) * $this->quantity;
@@ -87,6 +106,14 @@ class OrderItem extends Model
         });
 
         return $options;
+    }
+
+    public function beforeCreate()
+    {
+        $product = Product::find($this->product_id);
+        $this->title = $product->title;
+        $this->actual_price = $product->price;
+        $this->unit = $product->unit->name;
     }
 
     public function afterCreate()
