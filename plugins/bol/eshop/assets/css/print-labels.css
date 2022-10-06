@@ -1,0 +1,64 @@
+.main-block
+{
+    width: 192px;
+    height: 102.05px;
+    border: 1px solid #f2f3f3;
+}
+
+.label-area
+{
+    width: 166px;
+    height: 71px;
+    margin-top: 15px;
+    margin-left: 13px;
+    /* border: 1px solid gray; */
+}
+
+.qr-block
+{
+    width: 71px;
+}
+
+.qr-block img{
+    vertical-align: unset;
+}
+
+.qr-block, .text-block
+{
+    display: inline-block;
+    /* border: 1px solid black; */
+}
+
+.text-block
+{
+    position: relative;
+    line-height: 0;
+    width: 89px;
+    height: 71px;
+}
+
+.label, .code, .number
+{
+    position: absolute;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.label
+{
+    top: 10px;
+    font-size: 14px;
+}
+
+.code
+{
+    top: 35px;
+    font-size: 35px;
+}
+
+.number
+{
+    top: 61px;
+    font-size: 20px;
+}

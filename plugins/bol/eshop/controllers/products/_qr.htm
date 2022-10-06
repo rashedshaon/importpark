@@ -1,0 +1,20 @@
+<div class="main-block">
+    <div style="border: 1px solid black; margin-top: 60.47px"></div>
+</div>
+<?php for($i=100000; $i<= 100010; $i++): ?>
+<div class="main-block">
+    <div class="label-area">
+        <div class="qr-block">
+            <img src="https://chart.googleapis.com/chart?chs=69x69&chld=L|0&cht=qr&chl=<?=$i?>" title="<?=$i?>" />
+        </div>
+        <div class="text-block">
+            <?php 
+                $label = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(9/strlen($x)) )),1,9);
+            ?>
+            <div class="label"><?=$label?></div>
+            <div class="code"><?=rand(11,99)?></div>
+            <div class="number"><?=$i?></div>
+        </div>
+    </div>
+</div>
+<?php endfor; ?>

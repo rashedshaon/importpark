@@ -30,6 +30,16 @@ class Products extends Controller
         BackendMenu::setContext('Bol.Eshop', 'main-menu-item', 'side-menu-item');
     }
 
+    public function qr()
+    {
+        $this->addCss('/plugins/bol/eshop/assets/css/print-labels.css');
+        // $indent = Indent::find($id);
+        $this->pageTitle = 'QR Codes';
+        // $this->vars['indent'] = $indent;
+        
+        return $this->makePartial('qr');
+    }
+
     public function listExtendQuery($query)
     {
         if (!$this->user->hasAnyAccess(['bol.eshop.access_other_products'])) {
