@@ -1,22 +1,23 @@
 .main-block
 {
-    width: 192px;
+    /* width: 192px; */
+    width: 211.65px;
     height: 102.05px;
     border: 1px solid #f2f3f3;
 }
 
 .label-area
 {
-    width: 166px;
+    width: 159px;
     height: 71px;
-    margin-top: 15px;
-    margin-left: 13px;
+    margin-top: 40px;
+    margin-left: 60px;
     /* border: 1px solid gray; */
 }
 
 .qr-block
 {
-    width: 71px;
+    width: 50px;
 }
 
 .qr-block img{
@@ -33,11 +34,11 @@
 {
     position: relative;
     line-height: 0;
-    width: 89px;
+    width: 75px;
     height: 71px;
 }
 
-.label, .code, .number
+.label-text, .code, .number
 {
     position: absolute;
     display: block;
@@ -45,7 +46,7 @@
     text-align: center;
 }
 
-.label
+.label-text
 {
     top: 10px;
     font-size: 14px;
