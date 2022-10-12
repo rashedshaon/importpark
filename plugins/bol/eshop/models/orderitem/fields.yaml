@@ -3,6 +3,12 @@ fields:
         label: 'Product'
         span: auto
         type: dropdown
+        context: [create]
+    title:
+        label: 'Product'
+        span: auto
+        type: text
+        context: [update]
     price:
         label: Price
         span: left
@@ -11,3 +17,4 @@ fields:
         label: Quantity
         span: left
         type: number
+        default: 1
