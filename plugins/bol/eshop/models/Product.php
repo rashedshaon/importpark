@@ -56,6 +56,11 @@ class Product extends Model
         ['slug', 'index' => true]
     ];
 
+    public $hasOne = [
+        'unit' => ['Bol\Eshop\Models\Unit', 'key' => 'id', 'otherKey' => 'unit_id'],
+        'brand' => ['Bol\Eshop\Models\Brand', 'key' => 'id', 'otherKey' => 'brand_id'],
+    ];
+
     public $hasMany = [
         'wish_items' => ['Bol\Eshop\Models\WishList', 'key' => 'product_id', 'otherKey' => 'id'],
         'stocks' => ['Bol\Eshop\Models\Stock', 'key' => 'product_id', 'otherKey' => 'id'],
@@ -104,10 +109,6 @@ class Product extends Model
         'published_at asc'  => 'bol.eshop::lang.sorting.published_asc',
         'published_at desc' => 'bol.eshop::lang.sorting.published_desc',
         'random'            => 'bol.eshop::lang.sorting.random'
-    ];
-
-    public $hasOne = [
-        'unit' => ['Bol\Eshop\Models\Unit', 'key' => 'id', 'otherKey' => 'unit_id'],
     ];
 
     /*

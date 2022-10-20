@@ -40,6 +40,14 @@ class Products extends Controller
         return $this->makePartial('qr');
     }
 
+    public function products_for_fb()
+    {
+        $this->pageTitle = 'All Products';
+        $this->vars['products'] = Product::get();
+
+        return $this->makePartial('products_for_fb');
+    }
+
     public function listExtendQuery($query)
     {
         if (!$this->user->hasAnyAccess(['bol.eshop.access_other_products'])) {
