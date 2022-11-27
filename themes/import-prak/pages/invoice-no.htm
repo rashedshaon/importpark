@@ -6,6 +6,10 @@ url = "/invoice-no/:id"
 order_id={{:id}}
 ==
 
+{% put title %}
+    <title>{{ order.delivery_address['name'] }} - {{ this.page.title }}</title>
+{% endput %}
+
 <!-- shop body section start -->
 <section class="cart-body mb-90 mt-100 pt-35">
     <div class="has-breadcrumb-content">

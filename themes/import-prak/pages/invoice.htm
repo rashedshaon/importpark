@@ -6,6 +6,10 @@ url = "/invoice/:id"
 order_id={{:id}}
 ==
 
+{% put title %}
+    <title>{{ order.delivery_address['name'] }} - {{ this.page.title }}</title>
+{% endput %}
+
 <!-- shop body section start -->
 <section class="cart-body mb-90 mt-100 pt-35">
     <div class="has-breadcrumb-content">
@@ -81,14 +85,13 @@ order_id={{:id}}
                                     <div class="table-responsive">
                                         <table class="table table-2">
                                             <thead>
-                                                <tr><th colspan="6"><h5>Order Details</h5></th></tr>
+                                                <tr><th colspan="5"><h5>Order Details</h5></th></tr>
                                                 <tr>
                                                     <th class="">Sl.</th>
                                                     <th class="remove-porduct">Product</th>
-                                                    <th class="product-title">Quantity</th>
-                                                    <th class="total">Unit</th>
                                                     <th class="product-title">Actual Price</th>
                                                     <th class="product-title">Price</th>
+                                                    <th class="product-title">Quantity</th>
                                                     <th class="quantity">Subtotal</th>
                                                 </tr>
                                                 {% for item in order.items %}
@@ -103,17 +106,16 @@ order_id={{:id}}
                                                         <br>Size: {{ item.size }}
                                                         {% endif %}
                                                     </td>
-                                                    <td>{{ item.quantity }}</td>
-                                                    <td>{{ item.unit }}</td>
                                                     <td>{{ item.actual_price_label }}</td>
-                                                    <td>{{ item.price_label }}</td>
+                                                    <td>{{ item.price_label }}/{{ item.unit }}</td>
+                                                    <td>{{ item.quantity }}</td>
                                                     <td>{{ item.subtotal_label }}</td>
                                                 </tr>
                                                 {% endfor %}
                                 
                                                 {% if order.remarks %}
                                                 <tr>
-                                                    <th colspan="7">
+                                                    <th colspan="6">
                                                         *Note: {{ order.remarks }}
                                                     </th>
                                                 </tr>
@@ -121,7 +123,7 @@ order_id={{:id}}
                                                 
                                 
                                                 <tr>
-                                                    <th colspan="5"></th>
+                                                    <th colspan="4"></th>
                                                     <th class="product-title" style="width:130px;">
                                                         Subtotal <br>
                                                         Discount <br>
