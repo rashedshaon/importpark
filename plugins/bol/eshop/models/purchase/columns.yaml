@@ -1,0 +1,48 @@
+columns:
+    id:
+        label: id
+        type: number
+        invisible: true
+    supplier_id:
+        label: supplier_id
+        type: number
+        searchable: true
+    paid_amount:
+        label: paid_amount
+        type: text
+    tracking_id:
+        label: tracking_id
+        type: number
+        searchable: true
+    gross_weight:
+        label: gross_weight
+        type: text
+    dimension:
+        label: dimension
+        type: text
+    cartoon_quantity:
+        label: cartoon_quantity
+        type: number
+    has_battery:
+        label: has_battery
+        type: text
+        searchable: true
+        sortable: true
+    status_id:
+        label: status_id
+        type: number
+    created_by:
+        label: created_by
+        type: number
+        searchable: true
+    updated_by:
+        label: updated_by
+        type: number
+        invisible: true
+    created_at:
+        label: created_at
+        type: datetime
+    updated_at:
+        label: updated_at
+        type: datetime
+        invisible: true

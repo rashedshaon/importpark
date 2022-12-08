@@ -1,0 +1,55 @@
+columns:
+    id:
+        label: id
+        type: number
+    name:
+        label: name
+        type: text
+    phone:
+        label: phone
+        type: text
+    email:
+        label: email
+        type: text
+    type_id:
+        label: type_id
+        type: text
+    region_id:
+        label: region_id
+        type: number
+    city_id:
+        label: city_id
+        type: number
+    area_id:
+        label: area_id
+        type: number
+    remarks:
+        label: remarks
+        type: text
+    remainder_date:
+        label: remainder_date
+        type: text
+    has_remainder:
+        label: has_remainder
+        type: text
+    is_activated:
+        label: is_activated
+        type: text
+    last_login:
+        label: last_login
+        type: text
+    created_at:
+        label: created_at
+        type: datetime
+    updated_at:
+        label: updated_at
+        type: datetime
+    username:
+        label: username
+        type: text
+    last_seen:
+        label: last_seen
+        type: text
+    last_ip_address:
+        label: last_ip_address
+        type: text

@@ -123,3 +123,33 @@
 1.0.42:
     - 'Created table bol_eshop_areas'
     - builder_table_create_bol_eshop_areas_2.php
+1.0.43:
+    - 'Created table bol_eshop_purchases'
+    - builder_table_create_bol_eshop_purchases.php
+1.0.44:
+    - 'Created table bol_eshop_purchase_items'
+    - builder_table_create_bol_eshop_purchase_items.php
+1.0.45:
+    - 'Created table bol_eshop_product_items'
+    - builder_table_create_bol_eshop_product_items.php
+1.0.46:
+    - 'Created table bol_eshop_items_statuses'
+    - builder_table_create_bol_eshop_items_statuses.php
+1.0.47:
+    - 'Created table bol_eshop_purchase_statuses'
+    - builder_table_create_bol_eshop_purchase_statuses.php
+1.0.48:
+    - 'Created table bol_eshop_suppliers'
+    - builder_table_create_bol_eshop_suppliers.php
+1.0.49:
+    - 'Updated table bol_eshop_products'
+    - builder_table_update_bol_eshop_products_3.php
+1.0.50:
+    - 'Updated table bol_eshop_orders'
+    - builder_table_update_bol_eshop_orders_7.php
+1.0.51:
+    - 'Created table bol_eshop_customer_types'
+    - builder_table_create_bol_eshop_customer_types.php
+1.0.52:
+    - 'Updated table users'
+    - builder_table_update_users.php

@@ -1,0 +1,31 @@
+columns:
+    id:
+        label: id
+        type: number
+        invisible: true
+    name:
+        label: name
+        type: text
+        searchable: true
+        sortable: false
+    phone:
+        label: phone
+        type: text
+        searchable: true
+    alibaba_url:
+        label: alibaba_url
+        type: text
+    wechat_id:
+        label: wechat_id
+        type: text
+    description:
+        label: description
+        type: text
+        searchable: true
+    created_at:
+        label: created_at
+        type: datetime
+    updated_at:
+        label: updated_at
+        type: datetime
+        invisible: true

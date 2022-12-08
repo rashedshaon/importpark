@@ -1,0 +1,33 @@
+fields:
+    supplier_id:
+        label: 'Supplier id'
+        span: auto
+        type: dropdown
+    paid_amount:
+        label: 'Paid amount'
+        span: auto
+        type: text
+    tracking_id:
+        label: 'Tracking id'
+        span: auto
+        type: dropdown
+    gross_weight:
+        label: 'Gross weight'
+        span: auto
+        type: text
+    dimension:
+        label: Dimension
+        span: auto
+        type: text
+    cartoon_quantity:
+        label: 'Cartoon quantity'
+        span: auto
+        type: number
+    has_battery:
+        label: 'Has battery'
+        span: auto
+        type: checkbox
+    status_id:
+        label: 'Status id'
+        span: auto
+        type: dropdown

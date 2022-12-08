@@ -1,0 +1,21 @@
+fields:
+    name:
+        label: Name
+        span: auto
+        type: text
+    phone:
+        label: Phone
+        span: auto
+        type: text
+    alibaba_url:
+        label: 'Alibaba url'
+        span: auto
+        type: text
+    wechat_id:
+        label: 'Wechat id'
+        span: auto
+        type: text
+    description:
+        label: Description
+        span: auto
+        type: textarea

@@ -1,0 +1,59 @@
+fields:
+    phone:
+        label: Phone
+        span: auto
+        type: text
+    type_id:
+        label: Type
+        span: auto
+        type: text
+    name:
+        label: Name
+        span: auto
+        type: text
+    email:
+        label: Email
+        span: auto
+        type: text
+    region_id:
+        label: Region
+        span: auto
+        type: number
+    city_id:
+        label: City
+        span: auto
+        dependsOn:
+            - region_id
+        type: number
+    area_id:
+        label: Area
+        span: auto
+        dependsOn:
+            - city_id
+        type: number
+    address:
+        label: Address
+        span: auto
+        type: text
+    has_remainder:
+        label: 'Has remainder'
+        span: auto
+        type: checkbox
+    remainder_date:
+        label: 'Remainder date'
+        mode: date
+        span: left
+        trigger:
+            action: show
+            field: has_remainder
+            condition: checked
+        type: datepicker
+    remarks:
+        label: Remarks
+        size: ''
+        span: left
+        trigger:
+            action: show
+            field: has_remainder
+            condition: checked
+        type: textarea
