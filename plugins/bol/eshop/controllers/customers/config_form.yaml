@@ -1,0 +1,10 @@
+name: Customers
+form: $/bol/eshop/models/customer/fields.yaml
+modelClass: Bol\Eshop\Models\Customer
+defaultRedirect: bol/eshop/customers
+create:
+    redirect: 'bol/eshop/customers/update/:id'
+    redirectClose: bol/eshop/customers
+update:
+    redirect: bol/eshop/customers
+    redirectClose: bol/eshop/customers

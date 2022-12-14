@@ -1,0 +1,24 @@
+columns:
+    id:
+        label: id
+        type: number
+        invisible: true
+    purchase_id:
+        label: purchase_id
+        type: number
+    product_id:
+        label: product_id
+        type: number
+    price:
+        label: price
+        type: text
+    quantity:
+        label: quantity
+        type: number
+    created_at:
+        label: created_at
+        type: datetime
+    updated_at:
+        label: updated_at
+        type: datetime
+        invisible: true

@@ -1,0 +1,10 @@
+name: ItemStatuses
+form: $/bol/eshop/models/itemstatus/fields.yaml
+modelClass: Bol\Eshop\Models\ItemStatus
+defaultRedirect: bol/eshop/itemstatuses
+create:
+    redirect: 'bol/eshop/itemstatuses/update/:id'
+    redirectClose: bol/eshop/itemstatuses
+update:
+    redirect: bol/eshop/itemstatuses
+    redirectClose: bol/eshop/itemstatuses

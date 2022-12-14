@@ -1,0 +1,10 @@
+name: ProductItems
+form: $/bol/eshop/models/productitem/fields.yaml
+modelClass: Bol\Eshop\Models\ProductItem
+defaultRedirect: bol/eshop/productitems
+create:
+    redirect: 'bol/eshop/productitems/update/:id'
+    redirectClose: bol/eshop/productitems
+update:
+    redirect: bol/eshop/productitems
+    redirectClose: bol/eshop/productitems

@@ -1,0 +1,10 @@
+name: Purchases
+form: $/bol/eshop/models/purchase/fields.yaml
+modelClass: Bol\Eshop\Models\Purchase
+defaultRedirect: bol/eshop/purchases
+create:
+    redirect: 'bol/eshop/purchases/update/:id'
+    redirectClose: bol/eshop/purchases
+update:
+    redirect: bol/eshop/purchases
+    redirectClose: bol/eshop/purchases

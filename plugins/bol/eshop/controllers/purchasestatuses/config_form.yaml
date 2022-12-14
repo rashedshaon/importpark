@@ -1,0 +1,10 @@
+name: PurchaseStatuses
+form: $/bol/eshop/models/purchasestatus/fields.yaml
+modelClass: Bol\Eshop\Models\PurchaseStatus
+defaultRedirect: bol/eshop/purchasestatuses
+create:
+    redirect: 'bol/eshop/purchasestatuses/update/:id'
+    redirectClose: bol/eshop/purchasestatuses
+update:
+    redirect: bol/eshop/purchasestatuses
+    redirectClose: bol/eshop/purchasestatuses

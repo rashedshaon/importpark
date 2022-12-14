@@ -1,0 +1,40 @@
+columns:
+    id:
+        label: id
+        type: number
+        invisible: true
+    product_id:
+        label: product_id
+        type: number
+        searchable: true
+        sortable: true
+    order_number:
+        label: order_number
+        type: text
+        searchable: true
+    serial:
+        label: serial
+        type: text
+        searchable: true
+    remarks:
+        label: remarks
+        type: text
+        searchable: true
+    status_id:
+        label: status_id
+        type: number
+        searchable: true
+        sortable: true
+    created_by:
+        label: created_by
+        type: number
+    updated_by:
+        label: updated_by
+        type: number
+    created_at:
+        label: created_at
+        type: datetime
+    updated_at:
+        label: updated_at
+        type: datetime
+        invisible: true

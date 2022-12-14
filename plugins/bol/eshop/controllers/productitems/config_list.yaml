@@ -1,0 +1,12 @@
+list: $/bol/eshop/models/productitem/columns.yaml
+modelClass: Bol\Eshop\Models\ProductItem
+title: ProductItems
+noRecordsMessage: 'backend::lang.list.no_records'
+showSetup: true
+showCheckboxes: true
+recordsPerPage: 20
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'
+recordUrl: 'bol/eshop/productitems/update/:id'

@@ -1,0 +1,10 @@
+name: Suppliers
+form: $/bol/eshop/models/supplier/fields.yaml
+modelClass: Bol\Eshop\Models\Supplier
+defaultRedirect: bol/eshop/suppliers
+create:
+    redirect: 'bol/eshop/suppliers/update/:id'
+    redirectClose: bol/eshop/suppliers
+update:
+    redirect: bol/eshop/suppliers
+    redirectClose: bol/eshop/suppliers

@@ -1,0 +1,21 @@
+fields:
+    product_id:
+        label: 'Product id'
+        span: auto
+        type: dropdown
+    order_number:
+        label: 'Order number'
+        span: auto
+        type: text
+    serial:
+        label: Serial
+        span: auto
+        type: text
+    remarks:
+        label: Remarks
+        span: auto
+        type: textarea
+    status_id:
+        label: 'Status id'
+        span: auto
+        type: dropdown

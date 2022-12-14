@@ -1,0 +1,17 @@
+fields:
+    purchase_id:
+        label: 'Purchase id'
+        span: auto
+        type: number
+    product_id:
+        label: 'Product id'
+        span: auto
+        type: number
+    price:
+        label: Price
+        span: auto
+        type: text
+    quantity:
+        label: Quantity
+        span: auto
+        type: number

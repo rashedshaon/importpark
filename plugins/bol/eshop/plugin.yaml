@@ -47,6 +47,24 @@ permissions:
     bol.eshop.manage_vendors:
         tab: 'bol.eshop::lang.plugin.name'
         label: 'bol.eshop::lang.permission.manage_vendors'
+    bol.eshop.manage_purchases:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_purchases'
+    bol.eshop.manage_suppliers:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_suppliers'
+    bol.eshop.manage_items_statuses:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_items_statuses'
+    bol.eshop.manage_purchase_statuses:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_purchase_statuses'
+    bol.eshop.manage_customers:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_customers'
+    bol.eshop.manage_product_items:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_product_items'
 navigation:
     main-menu-item:
         label: 'bol.eshop::lang.plugin.name'
@@ -91,3 +109,39 @@ navigation:
                 icon: icon-star
                 permissions:
                     - bol.eshop.manage_brands
+            side-menu-item7:
+                label: 'bol.eshop::lang.menu.purchases'
+                url: bol/eshop/purchases
+                icon: icon-star
+                permissions:
+                    - bol.eshop.manage_purchases
+            side-menu-item8:
+                label: 'bol.eshop::lang.menu.suppliers'
+                url: bol/eshop/suppliers
+                icon: icon-star
+                permissions:
+                    - bol.eshop.manage_suppliers
+            side-menu-item9:
+                label: 'bol.eshop::lang.menu.items_statuses'
+                url: bol/eshop/itemsstatuses
+                icon: icon-star
+                permissions:
+                    - bol.eshop.manage_items_statuses
+            side-menu-item10:
+                label: 'bol.eshop::lang.menu.purchase_statuses'
+                url: bol/eshop/purchasestatuses
+                icon: icon-star
+                permissions:
+                    - bol.eshop.manage_purchase_statuses
+            side-menu-item11:
+                label: 'bol.eshop::lang.menu.product_items'
+                url: bol/eshop/productitems
+                icon: icon-star
+                permissions:
+                    - bol.eshop.manage_product_items
+            side-menu-item12:
+                label: 'bol.eshop::lang.menu.customers'
+                url: bol/eshop/customers
+                icon: icon-star
+                permissions:
+                    - bol.eshop.manage_customers
