@@ -1,0 +1,22 @@
+<a  class="btn btn-primary"
+    data-request-form="#bulk-update" 
+    data-request="onBulkUpdate" 
+    data-request-flash>Update All</a>
+<br>
+<br>
+<table>
+    <form id="bulk-update">
+    <?php foreach($products as $data): ?>
+    <tr>
+        <input type="hidden" value="<?=$data->id?>">
+        <td><input name="products[<?=$data->id?>][title]" placeholder="title" type="text" value="<?=$data->title?>" style="width: 300px;"></td>
+        <td><input name="products[<?=$data->id?>][short_title]" placeholder="Short Title" type="text" value="<?=$data->short_title?>"></td>
+        <td><input name="products[<?=$data->id?>][price]" placeholder="price" type="text" value="<?=$data->price?>" style="width: 100px;"></td>
+        <td><input name="products[<?=$data->id?>][cost_rmb]" placeholder="Cost Rmb" type="text" value="<?=$data->cost_rmb?>" style="width: 100px;"></td>
+        <td><input name="products[<?=$data->id?>][cost_bdt]" placeholder="Cost Bdt" type="text" value="<?=$data->cost_bdt?>" style="width: 100px;"></td>
+        <td><input name="products[<?=$data->id?>][seller_sku]" placeholder="Seller Sku" type="text" value="<?=$data->seller_sku?>"></td>
+        <td><input name="products[<?=$data->id?>][label_code]" placeholder="Label Code" type="text" value="<?=$data->label_code?>"></td>
+    </tr>
+    <?php endforeach; ?>
+    </form>
+</table>

@@ -2,6 +2,7 @@
 
 use Backend\Classes\Controller;
 use BackendMenu;
+use Carbon\Carbon;
 
 class Orders extends Controller
 {
@@ -31,5 +32,13 @@ class Orders extends Controller
     {
         $this->vars['id'] = $id;
         parent::preview($id);
+    }
+
+    public function listInjectRowClass($record, $value)
+    {
+        $start_of_day = Carbon::today()->startOfDay();
+        if ($record->has_followup && $record->followup_date <= $start_of_day) {
+            return 'has-followup';
+        }
     }
 }

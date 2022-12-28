@@ -1,55 +1,76 @@
 columns:
     id:
-        label: id
+        label: Id
         type: number
     name:
-        label: name
+        label: Name
         type: text
+        searchable: true
     phone:
-        label: phone
+        label: Phone
         type: text
+        searchable: true
     email:
-        label: email
+        label: Email
         type: text
+        searchable: true
+        invisible: true
     type_id:
-        label: type_id
+        label: Type
         type: text
+        select: name
+        relation: type
+        searchable: true
     region_id:
-        label: region_id
-        type: number
-    city_id:
-        label: city_id
-        type: number
-    area_id:
-        label: area_id
-        type: number
-    remarks:
-        label: remarks
+        label: Region
         type: text
+        select: name
+        relation: region
+        searchable: true
+        invisible: true
+    city_id:
+        label: City
+        type: text
+        select: name
+        relation: city
+        searchable: true
+    area_id:
+        label: Area
+        type: text
+        select: name
+        relation: area
+        searchable: true
+    remarks:
+        label: Remarks
+        type: text
+        searchable: true
     remainder_date:
-        label: remainder_date
+        label: Remainder Date
         type: text
     has_remainder:
-        label: has_remainder
+        label: Has Remainder
         type: text
     is_activated:
-        label: is_activated
+        label: Is Activated
         type: text
     last_login:
-        label: last_login
+        label: Last Login
         type: text
     created_at:
-        label: created_at
+        label: Created at
         type: datetime
     updated_at:
-        label: updated_at
+        label: Updated at
         type: datetime
     username:
-        label: username
+        label: Username
         type: text
+        invisible: true
     last_seen:
-        label: last_seen
+        label: Last Seen
         type: text
+        invisible: true
     last_ip_address:
-        label: last_ip_address
+        label: Last Ip Address
         type: text
+        invisible: true

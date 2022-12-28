@@ -124,11 +124,12 @@ tabs:
                 'Pre Order': 'Pre Order'
                 'Digital Product': 'Digital Product'
             tab: 'bol.eshop::lang.product.tab_others'
+        
         colors:
             label: bol.eshop::lang.product.set_color_variation
             prompt: bol.eshop::lang.product.add_new_color_variation
             style: default
-            span: auto
+            span: right
             type: repeater
             comment: bol.eshop::lang.product.color_variation_comment
             tab: 'bol.eshop::lang.product.tab_others'
@@ -175,7 +176,7 @@ tabs:
             label: bol.eshop::lang.product.set_size_variation
             prompt: bol.eshop::lang.product.add_new_size_variation
             style: default
-            span: auto
+            span: right
             type: repeater
             comment: bol.eshop::lang.product.size_variation_comment
             tab: 'bol.eshop::lang.product.tab_others'
@@ -189,6 +190,36 @@ tabs:
                         label: bol.eshop::lang.product.price
                         span: auto
                         type: number
+        short_title:
+            label: 'bol.eshop::lang.product.short_title'
+            span: left
+            type: text
+            tab: 'bol.eshop::lang.product.tab_others'
+        cost_rmb:
+            label: 'bol.eshop::lang.product.cost_rmb'
+            span: left
+            type: text
+            tab: 'bol.eshop::lang.product.tab_others'
+        cost_bdt:
+            label: 'bol.eshop::lang.product.cost_bdt'
+            span: left
+            type: text
+            tab: 'bol.eshop::lang.product.tab_others'
+        seller_sku:
+            label: 'bol.eshop::lang.product.seller_sku'
+            span: left
+            type: text
+            tab: 'bol.eshop::lang.product.tab_others'
+        label_code:
+            label: 'bol.eshop::lang.product.label_code'
+            span: left
+            type: text
+            tab: 'bol.eshop::lang.product.tab_others'
+        supplier_id:
+            label: 'bol.eshop::lang.product.supplier_id'
+            span: left
+            type: dropdown
+            tab: 'bol.eshop::lang.product.tab_others'
         meta_title:
             label: 'bol.eshop::lang.product.meta_title'
             span: auto

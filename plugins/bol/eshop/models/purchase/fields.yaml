@@ -1,33 +1,47 @@
-fields:
-    supplier_id:
-        label: 'Supplier id'
-        span: auto
-        type: dropdown
-    paid_amount:
-        label: 'Paid amount'
-        span: auto
-        type: text
-    tracking_id:
-        label: 'Tracking id'
-        span: auto
-        type: dropdown
-    gross_weight:
-        label: 'Gross weight'
-        span: auto
-        type: text
-    dimension:
-        label: Dimension
-        span: auto
-        type: text
-    cartoon_quantity:
-        label: 'Cartoon quantity'
-        span: auto
-        type: number
-    has_battery:
-        label: 'Has battery'
-        span: auto
-        type: checkbox
-    status_id:
-        label: 'Status id'
-        span: auto
-        type: dropdown
+tabs:
+    fields:
+        status_id:
+            label: 'Status'
+            span: full
+            type: balloon-selector
+            tab: 'Purchase Details'
+        supplier_id:
+            label: 'Supplier'
+            span: left
+            type: dropdown
+            tab: 'Purchase Details'
+        paid_amount:
+            label: 'Paid amount'
+            span: auto
+            type: text
+            tab: 'Purchase Details'
+        tracking_id:
+            label: 'Tracking ID'
+            span: auto
+            type: text
+            tab: 'Purchase Details'
+        gross_weight:
+            label: 'Gross weight'
+            span: auto
+            type: text
+            tab: 'Purchase Details'
+        dimension:
+            label: Dimension
+            span: auto
+            type: text
+            tab: 'Purchase Details'
+        cartoon_quantity:
+            label: 'Cartoon quantity'
+            span: auto
+            type: number
+            tab: 'Purchase Details'
+        has_battery:
+            label: 'Has battery'
+            span: auto
+            type: checkbox
+            tab: 'Purchase Details'
+        purchase_items:
+            span: full
+            path: $/bol/eshop/controllers/purchases/_purchase_items.htm
+            type: partial
+            tab: 'Purchase Items'

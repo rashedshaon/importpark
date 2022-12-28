@@ -33,11 +33,19 @@ class Products extends Controller
     public function qr()
     {
         $this->addCss('/plugins/bol/eshop/assets/css/print-labels.css');
-        // $indent = Indent::find($id);
         $this->pageTitle = 'QR Codes';
-        // $this->vars['indent'] = $indent;
-        
+
         return $this->makePartial('qr');
+    }
+
+    public function bulk_update()
+    {
+        $this->addCss('/plugins/bol/eshop/assets/css/print-labels.css');
+
+        $this->pageTitle = 'Bulk Update';
+        $this->vars['products'] = Product::get();
+        
+        return $this->makePartial('bulk_update');
     }
 
     public function products_for_fb()
@@ -46,6 +54,18 @@ class Products extends Controller
         $this->vars['products'] = Product::get();
 
         return $this->makePartial('products_for_fb');
+    }
+
+    public function onBulkUpdate()
+    {
+        // dd(post('products'));
+
+        foreach(post('products') as $key => $data)
+        {
+            Product::where('id', $key)->update($data);
+        }
+
+        Flash::success('Successfully Updated');
     }
 
     public function listExtendQuery($query)

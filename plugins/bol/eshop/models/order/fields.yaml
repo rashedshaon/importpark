@@ -17,6 +17,7 @@ tabs:
             showSearch: true
             span: auto
             type: dropdown
+            default: 1
             tab: 'bol.eshop::lang.order.tab_info'
         payment_status:
             label: 'Payment status'
@@ -28,12 +29,14 @@ tabs:
             showSearch: true
             span: auto
             type: dropdown
+            default: 1
             tab: 'bol.eshop::lang.order.tab_info'
         shipping_method_id:
             label: 'Shipping method'
             showSearch: true
             span: auto
             type: dropdown
+            default: 1
             tab: 'bol.eshop::lang.order.tab_info'
         user_id:
             label: 'bol.eshop::lang.order.user_id'
@@ -41,16 +44,25 @@ tabs:
             span: auto
             type: dropdown
             tab: 'bol.eshop::lang.order.tab_info'
+            context:
+                - create
+                - update
         customer_name:
             label: 'Customer name'
             span: auto
             type: text
             tab: 'bol.eshop::lang.order.tab_info'
+            context:
+                - update
+                - preview
         phone:
             label: 'Phone'
             span: auto
             type: text
             tab: 'bol.eshop::lang.order.tab_info'
+            context:
+                - update
+                - preview
         
         tax_percent:
             label: 'Tax percent'
@@ -62,20 +74,23 @@ tabs:
             span: auto
             type: dropdown
             context:
-                - create
-                - update
+                # - update
                 - preview
             tab: 'bol.eshop::lang.order.tab_info'
         other_deduction:
             label: 'Other deduction'
             span: auto
             type: number
+            context:
+                - update
+                - preview
             tab: 'bol.eshop::lang.order.tab_info'
         coupon_discount:
             label: 'Coupon discount'
             span: auto
             type: number
             context:
+                # - update
                 - preview
             tab: 'bol.eshop::lang.order.tab_info'
         remarks:
@@ -83,6 +98,21 @@ tabs:
             size: large
             span: auto
             type: textarea
+            tab: 'bol.eshop::lang.order.tab_info'
+        has_remainder:
+            label: 'Has remainder'
+            span: left
+            type: checkbox
+            tab: 'bol.eshop::lang.order.tab_info'
+        remainder_date:
+            label: 'Remainder date'
+            mode: date
+            span: left
+            trigger:
+                action: show
+                field: has_remainder
+                condition: checked
+            type: datepicker
             tab: 'bol.eshop::lang.order.tab_info'
         order_items:
             span: full
@@ -96,6 +126,9 @@ tabs:
             label: 'Delivery Address'
             type: nestedform
             showPanel: false
+            context:
+                - update
+                - preview
             form:
                 fields:
                     name:
@@ -132,6 +165,9 @@ tabs:
             label: 'Billing Address'
             type: nestedform
             showPanel: false
+            context:
+                - update
+                - preview
             form:
                 fields:
                     name:

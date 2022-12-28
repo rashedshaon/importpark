@@ -3,6 +3,7 @@
 use Model;
 use Lang;
 use Auth;
+use Carbon\Carbon;
 use October\Rain\Argon\Argon;
 use RainLab\User\Models\User;
 
@@ -23,12 +24,16 @@ class Order extends Model
      * @var array Validation rules
      */
     public $rules = [
+        'status_id'          => 'required',
+        'payment_method_id'  => 'required',
+        'shipping_method_id' => 'required',
+        'user_id'            => 'required',
     ];
 
     public $hasOne = [
-        'status' => ['Bol\Eshop\Models\OrderStatus', 'key' => 'id', 'otherKey' => 'status_id'],
+        'status'          => ['Bol\Eshop\Models\OrderStatus', 'key' => 'id', 'otherKey' => 'status_id'],
         'shipping_method' => ['Bol\Eshop\Models\ShippingMethod', 'key' => 'id', 'otherKey' => 'shipping_method_id'],
-        'payment_method' => ['Bol\Eshop\Models\PaymentMethod', 'key' => 'id', 'otherKey' => 'payment_method_id'],
+        'payment_method'  => ['Bol\Eshop\Models\PaymentMethod', 'key' => 'id', 'otherKey' => 'payment_method_id'],
     ];
 
     public $hasMany = [
@@ -240,9 +245,9 @@ class Order extends Model
             0 => Lang::get('bol.eshop::lang.order.select_user'),
         ];
 
-        $items = User::get();
+        $items = User::orderBy('id', 'desc')->get();
         $items->each(function ($item) use (&$options) {
-            return $options[$item->id] = $item->name;
+            return $options[$item->id] = $item->name.' ('.$item->phone.')';
         });
 
         return $options;
@@ -316,7 +321,33 @@ class Order extends Model
         }
     }
 
- 
+    public function beforeSave()
+    {
+        $customer = Customer::find($this->user_id);
+
+        $this->customer_name = $customer->name;
+        $this->phone = $customer->phone;
+
+        $this->delivery_address = [
+            'name'    => $customer->name,
+            'phone'   => $customer->phone,
+            'email'   => $customer->email,
+            'region'  => $customer->region->name,
+            'city'    => $customer->city->name,
+            'area'    => $customer->area->name,
+            'address' => $customer->address,
+        ];
+
+        $this->billing_address = [
+            'name'    => $customer->name,
+            'phone'   => $customer->phone,
+            'email'   => $customer->email,
+            'region'  => $customer->region->name,
+            'city'    => $customer->city->name,
+            'area'    => $customer->area->name,
+            'address' => $customer->address,
+        ];
+    }
 
     public function afterUpdate()
     {
@@ -401,8 +432,15 @@ class Order extends Model
 
     public static function submissionCount()
     {
+        $total = [];
+
         $initial_order_status = Settings::get('initial_order_status');
 
-        return self::where('status_id', $initial_order_status)->count();
+        $start_of_day = Carbon::today()->startOfDay();
+
+        $total[] = self::where('status_id', $initial_order_status)->count();
+        $total[] = self::where('has_remainder', 1)->whereDate('remainder_date', '<=', $start_of_day)->count();
+
+        return array_sum($total);
     }
 }

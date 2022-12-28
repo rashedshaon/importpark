@@ -12,10 +12,12 @@ class BuilderTableUpdateUsers extends Migration
             $table->boolean('has_remainder')->default(0)->after('email');
             $table->date('remainder_date')->nullable()->after('email');
             $table->text('remarks')->nullable()->after('email');
+            $table->integer('address')->after('email')->nullable();
             $table->integer('area_id')->after('email')->nullable();
             $table->integer('city_id')->after('email')->nullable();
             $table->integer('region_id')->after('email')->nullable();
             $table->string('type_id')->after('email');
+            $table->string('phone')->after('email')->nullable();
         });
     }
     
@@ -23,10 +25,12 @@ class BuilderTableUpdateUsers extends Migration
     {
         Schema::table('users', function($table)
         {
+            $table->dropColumn('address');
             $table->dropColumn('area_id');
             $table->dropColumn('city_id');
             $table->dropColumn('region_id');
             $table->dropColumn('type_id');
+            $table->dropColumn('phone');
             $table->dropColumn('has_remainder');
             $table->dropColumn('remainder_date');
             $table->dropColumn('remarks');

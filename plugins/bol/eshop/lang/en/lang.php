@@ -53,6 +53,12 @@
         'select_a_brand' => 'Select a Brand',
         'select_a_unit' => 'Select a Unit',
         'published_validation' => 'Please select a published date',
+        'short_title' => 'Short Title',
+        'cost_rmb' => 'Cost Rmb',
+        'cost_bdt' => 'Cost Bdt',
+        'seller_sku' => 'Seller Sku',
+        'label_code' => 'Label Code',
+        'supplier_id' => 'Supplier',
     ],
     'categories' => [
         'list_title' => 'Manage the blog categories',
@@ -227,6 +233,7 @@
         'product_items' => 'Product Items',
         'purchase_statuses' => 'Purchase Statuses',
         'customers' => 'Customers',
+        'customer_types' => 'Customer Types',
     ],
     'menuitem' => [
         'shop_category' => 'Shop Category',

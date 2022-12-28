@@ -3,34 +3,34 @@ fields:
         label: Phone
         span: auto
         type: text
-    type_id:
-        label: Type
+    email:
+        label: Email
         span: auto
         type: text
     name:
         label: Name
         span: auto
         type: text
-    email:
-        label: Email
+    type_id:
+        label: Type
         span: auto
-        type: text
+        type: balloon-selector
     region_id:
         label: Region
         span: auto
-        type: number
+        type: dropdown
     city_id:
         label: City
         span: auto
         dependsOn:
             - region_id
-        type: number
+        type: dropdown
     area_id:
         label: Area
         span: auto
         dependsOn:
             - city_id
-        type: number
+        type: dropdown
     address:
         label: Address
         span: auto
@@ -42,7 +42,7 @@ fields:
     remainder_date:
         label: 'Remainder date'
         mode: date
-        span: left
+        span: auto
         trigger:
             action: show
             field: has_remainder

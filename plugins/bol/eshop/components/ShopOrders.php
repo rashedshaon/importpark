@@ -34,7 +34,7 @@ class ShopOrders extends ComponentBase
         
         if($this->property('order_id'))
         {
-            $this->page['order'] = Order::find($this->property('order_id'));
+            $this->page['order'] = Order::where('secret_key', $this->property('order_id'))->get()->first();
         }
     }
     

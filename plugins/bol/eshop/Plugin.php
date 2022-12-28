@@ -9,6 +9,7 @@ use Bol\Eshop\Classes\TagProcessor;
 use Bol\Eshop\Models\Product;
 use Bol\Eshop\Models\Category;
 use Bol\Eshop\Models\Order;
+use Bol\Eshop\Models\Customer;
 
 class Plugin extends PluginBase
 {
@@ -126,6 +127,11 @@ class Plugin extends PluginBase
             $manager->addSideMenuItems('Bol.Eshop', 'main-menu-item', [
                     'side-menu-item4' => [
                         'counter' => Order::submissionCount(),
+                    ],
+                ]);
+            $manager->addSideMenuItems('Bol.Eshop', 'main-menu-item', [
+                    'side-menu-item12' => [
+                        'counter' => Customer::remainderCount(),
                     ],
                 ]);
             });

@@ -20,4 +20,18 @@ class PurchaseItem extends Model
      */
     public $rules = [
     ];
+
+    public function getProductIdOptions()
+    {
+        $options = [
+            null => "Select Product"
+        ];
+
+        foreach (Product::get() as $item) 
+        {
+            $options[$item->id] = $item->title;
+        }
+
+        return $options;
+    }
 }

@@ -1,12 +1,8 @@
 fields:
-    purchase_id:
-        label: 'Purchase id'
-        span: auto
-        type: number
     product_id:
-        label: 'Product id'
+        label: 'Product'
         span: auto
-        type: number
+        type: dropdown
     price:
         label: Price
         span: auto
@@ -15,3 +11,4 @@ fields:
         label: Quantity
         span: auto
         type: number
+        default: 1

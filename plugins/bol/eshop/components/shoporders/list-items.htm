@@ -9,7 +9,7 @@
         <td>
             <span class="badge badge-success" style="background-color: {{item.status.color}}">{{item.status.name}}</span>
         </td>
-        <td><a href="{{ url('/order-details') }}/{{ item.id }}">View</a></td>
+        <td><a href="{{ url('/order-details') }}/{{ item.secret_key }}">View</a></td>
 
     </tr>
 

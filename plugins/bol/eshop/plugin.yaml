@@ -145,3 +145,9 @@ navigation:
                 icon: icon-star
                 permissions:
                     - bol.eshop.manage_customers
+            side-menu-item13:
+                label: 'bol.eshop::lang.menu.customer_types'
+                url: bol/eshop/customertypes
+                icon: icon-star
+                permissions:
+                    - bol.eshop.manage_customers

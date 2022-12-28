@@ -1,0 +1,10 @@
+name: CustomerTypes
+form: $/bol/eshop/models/customertype/fields.yaml
+modelClass: Bol\Eshop\Models\CustomerType
+defaultRedirect: bol/eshop/customertypes
+create:
+    redirect: 'bol/eshop/customertypes/update/:id'
+    redirectClose: bol/eshop/customertypes
+update:
+    redirect: bol/eshop/customertypes
+    redirectClose: bol/eshop/customertypes

@@ -57,13 +57,14 @@ class Product extends Model
     ];
 
     public $hasOne = [
-        'unit' => ['Bol\Eshop\Models\Unit', 'key' => 'id', 'otherKey' => 'unit_id'],
-        'brand' => ['Bol\Eshop\Models\Brand', 'key' => 'id', 'otherKey' => 'brand_id'],
+        'unit'     => ['Bol\Eshop\Models\Unit', 'key' => 'id', 'otherKey' => 'unit_id'],
+        'brand'    => ['Bol\Eshop\Models\Brand', 'key' => 'id', 'otherKey' => 'brand_id'],
+        'supplier' => ['Bol\Eshop\Models\Supplier', 'key' => 'id', 'otherKey' => 'supplier_id'],
     ];
 
     public $hasMany = [
-        'wish_items' => ['Bol\Eshop\Models\WishList', 'key' => 'product_id', 'otherKey' => 'id'],
-        'stocks' => ['Bol\Eshop\Models\Stock', 'key' => 'product_id', 'otherKey' => 'id'],
+        'wish_items'       => ['Bol\Eshop\Models\WishList', 'key' => 'product_id', 'otherKey' => 'id'],
+        'stocks'           => ['Bol\Eshop\Models\Stock', 'key' => 'product_id', 'otherKey' => 'id'],
         'stock_deductions' => ['Bol\Eshop\Models\StockDeduction', 'key' => 'product_id', 'otherKey' => 'id'],
     ];
 
@@ -838,6 +839,20 @@ class Product extends Model
         foreach (Unit::all() as $unit) 
         {
             $options[$unit->id] = $unit->name;
+        }
+
+        return $options;
+    }
+
+    public function getSupplierIdOptions()
+    {
+        $options = [
+            null => "Select Supplier"
+        ];
+
+        foreach (Supplier::get() as $item) 
+        {
+            $options[$item->id] = $item->name;
         }
 
         return $options;
