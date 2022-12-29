@@ -2,10 +2,54 @@ title = "Invoice"
 description = "Bill Invoice"
 layout = "bol.eshop::pdf.layouts.default"
 ==
-<div style="line-height: 0;">
+
+<style>
+    @font-face {
+        font-family: 'Open Sans';
+        src: url({{ 'plugins/renatio/dynamicpdf/assets/fonts/OpenSans-Regular.ttf'|app }});
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        font-weight: bold;
+        src: url({{ 'plugins/renatio/dynamicpdf/assets/fonts/OpenSans-Bold.ttf'|app }});
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        font-style: italic;
+        src: url({{ 'plugins/renatio/dynamicpdf/assets/fonts/OpenSans-Italic.ttf'|app }});
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        font-style: italic;
+        font-weight: bold;
+        src: url({{ 'plugins/renatio/dynamicpdf/assets/fonts/OpenSans-BoldItalic.ttf'|app }});
+    }
+
+    @page {
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+
+    body {
+        font-family: "Open Sans", sans-serif;
+        margin: 0px !important;
+        padding: 0px !important;
+        line-height: 10px;
+    }
+
+    html { 
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+</style>
+<div>
     abc <br>
     <!-- <div class="page-break"></div> -->
     abc
     <!-- <div class="page-break"></div> -->
     c
+    <img src="data:image/png;base64, <?= base64_encode($qr) ?>">
 </div>

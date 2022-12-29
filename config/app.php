@@ -113,7 +113,7 @@ return [
     'providers' => array_merge(include(base_path('modules/system/providers.php')), [
 
         // 'Illuminate\Html\HtmlServiceProvider', // Example
-
+        'SimpleSoftwareIO\QrCode\QrCodeServiceProvider',
         'System\ServiceProvider',
     ]),
 
@@ -131,6 +131,7 @@ return [
     'aliases' => array_merge(include(base_path('modules/system/aliases.php')), [
 
         // 'Str' => 'Illuminate\Support\Str', // Example
+        'QrCode' => 'SimpleSoftwareIO\QrCode\Facades\QrCode'
 
     ]),
 
