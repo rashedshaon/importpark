@@ -22,7 +22,7 @@
   top: 4px;
 }
 .relation-behavior .list-header {
-  padding: 0;
+  padding: 0 !important;
 }
 .relation-behavior .control-list:last-child > table {
   margin-bottom: 0;
@@ -40,8 +40,6 @@
 .relation-behavior.relation-view-multi,
 .relation-behavior.relation-view-single {
   margin-bottom: 20px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
   border-radius: 4px;
   border: 1px solid #CFD7E1;
   background: white;
@@ -77,11 +75,8 @@
 }
 .relation-behavior.relation-view-multi .control-list,
 .relation-behavior.relation-view-single .control-list {
-  border-left: none;
-  border-right: none;
-  border-bottom: none;
-  border-top: 1px solid #d7e1eA;
   margin-bottom: 0;
+  border: none;
 }
 .relation-behavior.relation-view-multi .control-list table.table.data,
 .relation-behavior.relation-view-single .control-list table.table.data {

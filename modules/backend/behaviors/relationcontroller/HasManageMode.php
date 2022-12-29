@@ -4,10 +4,12 @@ use Lang;
 use Request;
 use Backend\Behaviors\RelationController;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Backend\Widgets\Form as FormWidget;
+use Backend\Widgets\Lists as ListWidget;
 use ApplicationException;
 
 /**
- * HasManageMode
+ * HasManageMode contains logic for managing related records
  */
 trait HasManageMode
 {
@@ -56,153 +58,155 @@ trait HasManageMode
     }
 
     /**
-     * makeManageWidget
+     * makeManageWidget returns a form or list widget based on configuration
      */
     protected function makeManageWidget()
     {
-        $widget = null;
-
-        /*
-         * List / Pivot
-         */
+        // Multiple (has many, belongs to many)
         if ($this->manageMode === 'list' || $this->manageMode === 'pivot') {
-            $isPivot = $this->manageMode === 'pivot';
-
-            $config = $this->makeConfigForMode('manage', 'list');
-            $config->model = $this->relationModel;
-            $config->alias = $this->alias . 'ManageList';
-            $config->showSetup = false;
-            $config->showCheckboxes = $this->getConfig('manage[showCheckboxes]', !$isPivot);
-            $config->showSorting = $this->getConfig('manage[showSorting]', !$isPivot);
-            $config->defaultSort = $this->getConfig('manage[defaultSort]');
-            $config->recordsPerPage = $this->getConfig('manage[recordsPerPage]');
-
-            if ($this->viewMode === 'single') {
-                $config->showCheckboxes = false;
-                $config->recordOnClick = sprintf(
-                    "$.oc.relationBehavior.clickManageListRecord(':%s', '%s', '%s')",
-                    $this->relationModel->getKeyName(),
-                    $this->relationGetId(),
-                    $this->relationGetSessionKey()
-                );
-            }
-            elseif ($config->showCheckboxes) {
-                $config->recordOnClick = "$.oc.relationBehavior.toggleListCheckbox(this)";
-            }
-            elseif ($isPivot) {
-                $config->recordOnClick = sprintf(
-                    "$.oc.relationBehavior.clickManagePivotListRecord(':%s', '%s', '%s')",
-                    $this->relationModel->getKeyName(),
-                    $this->relationGetId(),
-                    $this->relationGetSessionKey()
-                );
-            }
-
-            $widget = $this->makeWidget(\Backend\Widgets\Lists::class, $config);
-
-            /*
-             * Apply defined constraints
-             */
-            if ($sqlConditions = $this->getConfig('manage[conditions]')) {
-                $widget->bindEvent('list.extendQueryBefore', function ($query) use ($sqlConditions) {
-                    $query->whereRaw($sqlConditions);
-                });
-            }
-            elseif ($scopeMethod = $this->getConfig('manage[scope]')) {
-                $widget->bindEvent('list.extendQueryBefore', function ($query) use ($scopeMethod) {
-                    $query->$scopeMethod($this->model);
-                });
-            }
-            else {
-                $widget->bindEvent('list.extendQueryBefore', function ($query) {
-                    $this->relationObject->addDefinedConstraintsToQuery($query);
-
-                    // Reset any orders that may have come from the definition
-                    // because it has a tendency to break things
-                    $query->getQuery()->orders = [];
-                });
-            }
-
-            /*
-             * Link the Search Widget to the List Widget
-             */
-            if ($this->searchWidget) {
-                $this->searchWidget->bindEvent('search.submit', function () use ($widget) {
-                    $widget->setSearchTerm($this->searchWidget->getActiveTerm());
-                    return $widget->onRefresh();
-                });
-
-                // Linkage for JS plugins
-                $this->searchWidget->listWidgetId = $widget->getId();
-
-                // Persist the search term across AJAX requests only
-                if (Request::ajax()) {
-                    $widget->setSearchTerm($this->searchWidget->getActiveTerm());
-                }
-            }
-
-            /*
-             * Link the Filter Widget to the List Widget
-             */
-            if ($this->manageFilterWidget) {
-                $this->manageFilterWidget->bindEvent('filter.update', function () use ($widget) {
-                    return $widget->onFilter();
-                });
-
-                // Apply predefined filter values
-                $widget->addFilter([$this->manageFilterWidget, 'applyAllScopesToQuery']);
-            }
+            return $this->makeManageWidgetAsList();
         }
-        /*
-         * Form
-         */
+        // Single (belongs to, has one)
         elseif ($this->manageMode === 'form') {
-            if (!$config = $this->makeConfigForMode('manage', 'form', false)) {
-                return null;
-            }
-
-            $config->model = $this->relationModel;
-            $config->arrayName = class_basename($this->relationModel);
-            $config->context = $this->evalFormContext('manage', !!$this->manageId);
-            $config->alias = $this->alias . 'ManageForm';
-
-            /*
-             * Existing record
-             */
-            if ($this->manageId) {
-                $this->manageModel = $config->model->find($this->manageId);
-                if ($this->manageModel) {
-                    $config->model = $this->manageModel;
-                }
-                else {
-                    throw new ApplicationException(Lang::get('backend::lang.model.not_found', [
-                        'class' => get_class($config->model),
-                        'id' => $this->manageId,
-                    ]));
-                }
-            }
-
-            $widget = $this->makeWidget(\Backend\Widgets\Form::class, $config);
+            return $this->makeManageWidgetAsForm();
         }
 
-        if (!$widget) {
+        return null;
+    }
+
+    /**
+     * makeManageWidgetAsList prepares the list widget for management
+     */
+    protected function makeManageWidgetAsList(): ?ListWidget
+    {
+        $isPivot = $this->manageMode === 'pivot';
+
+        $config = $this->makeConfigForMode('manage', 'list');
+        $config->model = $this->relationModel;
+        $config->alias = $this->alias . 'ManageList';
+        $config->showSetup = false;
+        $config->showCheckboxes = $this->getConfig('manage[showCheckboxes]', !$isPivot);
+        $config->showSorting = $this->getConfig('manage[showSorting]', !$isPivot);
+        $config->defaultSort = $this->getConfig('manage[defaultSort]');
+        $config->recordsPerPage = $this->getConfig('manage[recordsPerPage]');
+
+        if ($this->viewMode === 'single') {
+            $config->showCheckboxes = false;
+            $config->recordOnClick = sprintf(
+                "$.oc.relationBehavior.clickManageListRecord(':%s', '%s', '%s')",
+                $this->relationModel->getKeyName(),
+                $this->relationGetId(),
+                $this->relationGetSessionKey()
+            );
+        }
+        elseif ($config->showCheckboxes) {
+            $config->recordOnClick = "$.oc.relationBehavior.toggleListCheckbox(this)";
+        }
+        elseif ($isPivot) {
+            $config->recordOnClick = sprintf(
+                "$.oc.relationBehavior.clickManagePivotListRecord(':%s', '%s', '%s')",
+                $this->relationModel->getKeyName(),
+                $this->relationGetId(),
+                $this->relationGetSessionKey()
+            );
+        }
+
+        $widget = $this->makeWidget(ListWidget::class, $config);
+
+        // Apply defined constraints
+        if ($sqlConditions = $this->getConfig('manage[conditions]')) {
+            $widget->bindEvent('list.extendQueryBefore', function ($query) use ($sqlConditions) {
+                $query->whereRaw($sqlConditions);
+            });
+        }
+        elseif ($scopeMethod = $this->getConfig('manage[scope]')) {
+            $widget->bindEvent('list.extendQueryBefore', function ($query) use ($scopeMethod) {
+                $query->$scopeMethod($this->model);
+            });
+        }
+        else {
+            $widget->bindEvent('list.extendQueryBefore', function ($query) {
+                $this->relationObject->addDefinedConstraintsToQuery($query);
+
+                // Reset any orders that may have come from the definition
+                // because it has a tendency to break things
+                $query->getQuery()->orders = [];
+            });
+        }
+
+        // Link the Search Widget to the List Widget
+        if ($this->searchWidget) {
+            $this->searchWidget->bindEvent('search.submit', function () use ($widget) {
+                $widget->setSearchTerm($this->searchWidget->getActiveTerm());
+                return $widget->onRefresh();
+            });
+
+            // Linkage for JS plugins
+            $this->searchWidget->listWidgetId = $widget->getId();
+
+            // Pass search options
+            $widget->setSearchOptions([
+                'mode' => $this->getConfig('manage[searchMode]'),
+                'scope' => $this->getConfig('manage[searchScope]'),
+            ]);
+
+            // Persist the search term across AJAX requests only
+            if (Request::ajax()) {
+                $widget->setSearchTerm($this->searchWidget->getActiveTerm());
+            }
+        }
+
+        // Link the Filter Widget to the List Widget
+        if ($this->manageFilterWidget) {
+            $this->manageFilterWidget->bindEvent('filter.update', function () use ($widget) {
+                return $widget->onFilter();
+            });
+
+            // Apply predefined filter values
+            $widget->addFilter([$this->manageFilterWidget, 'applyAllScopesToQuery']);
+        }
+
+        // Exclude existing relationships
+        $widget->bindEvent('list.extendQuery', function ($query) {
+            // Where not in the current list of related records
+            $existingIds = $this->findExistingRelationIds();
+            if (count($existingIds)) {
+                $query->whereNotIn($this->relationModel->getQualifiedKeyName(), $existingIds);
+            }
+        });
+
+        return $widget;
+    }
+
+    /**
+     * makeManageWidgetAsForm prepares the form widget for management
+     */
+    protected function makeManageWidgetAsForm(): ?FormWidget
+    {
+        if (!$config = $this->makeConfigForMode('manage', 'form', false)) {
             return null;
         }
 
-        /*
-         * Exclude existing relationships
-         */
-        if ($this->manageMode === 'pivot' || $this->manageMode === 'list') {
-            $widget->bindEvent('list.extendQuery', function ($query) {
-                /*
-                 * Where not in the current list of related records
-                 */
-                $existingIds = $this->findExistingRelationIds();
-                if (count($existingIds)) {
-                    $query->whereNotIn($this->relationModel->getQualifiedKeyName(), $existingIds);
-                }
-            });
+        $config->model = $this->relationModel;
+        $config->arrayName = class_basename($this->relationModel);
+        $config->context = $this->evalFormContext('manage', !!$this->manageId);
+        $config->alias = $this->alias . 'ManageForm';
+
+        // Existing record
+        if ($this->manageId) {
+            $this->manageModel = $config->model->find($this->manageId);
+            if ($this->manageModel) {
+                $config->model = $this->manageModel;
+            }
+            else {
+                throw new ApplicationException(Lang::get('backend::lang.model.not_found', [
+                    'class' => get_class($config->model),
+                    'id' => $this->manageId,
+                ]));
+            }
         }
+
+        $widget = $this->makeWidget(FormWidget::class, $config);
 
         return $widget;
     }

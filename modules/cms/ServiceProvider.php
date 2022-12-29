@@ -16,12 +16,13 @@ use Backend\Classes\WidgetManager;
 use System\Classes\SettingsManager;
 use October\Rain\Support\ModuleServiceProvider;
 
+/**
+ * ServiceProvider for CMS module
+ */
 class ServiceProvider extends ModuleServiceProvider
 {
     /**
-     * Register the service provider.
-     *
-     * @return void
+     * register the service provider.
      */
     public function register()
     {
@@ -47,9 +48,7 @@ class ServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * Bootstrap the module events.
-     *
-     * @return void
+     * boot the module events.
      */
     public function boot()
     {
@@ -65,7 +64,7 @@ class ServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * Register command line specifics
+     * registerConsole for command line specifics
      */
     protected function registerConsole()
     {
@@ -78,7 +77,7 @@ class ServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * Register components.
+     * registerComponents
      */
     protected function registerComponents()
     {
@@ -89,7 +88,7 @@ class ServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * Registers theme logging on templates.
+     * registerThemeLogging on templates
      */
     protected function registerThemeLogging()
     {
@@ -124,7 +123,7 @@ class ServiceProvider extends ModuleServiceProvider
     {
         WidgetManager::instance()->registerReportWidgets(function ($manager) {
             $manager->registerReportWidget(\Cms\ReportWidgets\ActiveTheme::class, [
-                'label'   => 'cms::lang.dashboard.active_theme.widget_title_default',
+                'label' => 'cms::lang.dashboard.active_theme.widget_title_default',
                 'context' => 'dashboard'
             ]);
         });
@@ -182,11 +181,12 @@ class ServiceProvider extends ModuleServiceProvider
         });
     }
 
-    /*
-     * Register widgets
+    /**
+     * registerBackendWidgets
      */
     protected function registerBackendWidgets()
     {
+        // @deprecated
         WidgetManager::instance()->registerFormWidgets(function ($manager) {
             $manager->registerFormWidget(\Cms\FormWidgets\Components::class);
         });
@@ -200,32 +200,32 @@ class ServiceProvider extends ModuleServiceProvider
         SettingsManager::instance()->registerCallback(function ($manager) {
             $manager->registerSettingItems('October.Cms', [
                 'theme' => [
-                    'label'       => 'cms::lang.theme.settings_menu',
+                    'label' => 'cms::lang.theme.settings_menu',
                     'description' => 'cms::lang.theme.settings_menu_description',
-                    'category'    => SettingsManager::CATEGORY_CMS,
-                    'icon'        => 'octo-icon-text-image',
-                    'url'         => Backend::url('cms/themes'),
+                    'category' => SettingsManager::CATEGORY_CMS,
+                    'icon' => 'octo-icon-text-image',
+                    'url' => Backend::url('cms/themes'),
                     'permissions' => ['cms.manage_themes', 'cms.manage_theme_options'],
-                    'order'       => 200
+                    'order' => 200
                 ],
                 'maintenance_settings' => [
-                    'label'       => 'cms::lang.maintenance.settings_menu',
+                    'label' => 'cms::lang.maintenance.settings_menu',
                     'description' => 'cms::lang.maintenance.settings_menu_description',
-                    'category'    => SettingsManager::CATEGORY_CMS,
-                    'icon'        => 'octo-icon-power',
-                    'class'       => \Cms\Models\MaintenanceSetting::class,
+                    'category' => SettingsManager::CATEGORY_CMS,
+                    'icon' => 'octo-icon-power',
+                    'class' => \Cms\Models\MaintenanceSetting::class,
                     'permissions' => ['cms.manage_themes'],
-                    'order'       => 300
+                    'order' => 300
                 ],
                 'theme_logs' => [
-                    'label'       => 'cms::lang.theme_log.menu_label',
+                    'label' => 'cms::lang.theme_log.menu_label',
                     'description' => 'cms::lang.theme_log.menu_description',
-                    'category'    => SettingsManager::CATEGORY_LOGS,
-                    'icon'        => 'icon-magic',
-                    'url'         => Backend::url('cms/themelogs'),
+                    'category' => SettingsManager::CATEGORY_LOGS,
+                    'icon' => 'icon-magic',
+                    'url' => Backend::url('cms/themelogs'),
                     'permissions' => ['system.access_logs'],
-                    'order'       => 910,
-                    'keywords'    => 'theme change log'
+                    'order' => 910,
+                    'keywords' => 'theme change log'
                 ]
             ]);
         });

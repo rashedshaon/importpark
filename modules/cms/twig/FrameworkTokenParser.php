@@ -4,7 +4,7 @@ use Twig\Token as TwigToken;
 use Twig\TokenParser\AbstractTokenParser as TwigTokenParser;
 
 /**
- * Parser for the `{% framework %}` Twig tag.
+ * FrameworkTokenParser for the `{% framework %}` Twig tag.
  *
  *     {% framework %}
  *
@@ -14,9 +14,7 @@ use Twig\TokenParser\AbstractTokenParser as TwigTokenParser;
 class FrameworkTokenParser extends TwigTokenParser
 {
     /**
-     * Parses a token and returns a node.
-     *
-     * @param TwigToken $token A TwigToken instance
+     * parse a token and returns a node.
      * @return Twig\Node\Node A Twig\Node\Node instance
      */
     public function parse(TwigToken $token)
@@ -34,8 +32,7 @@ class FrameworkTokenParser extends TwigTokenParser
     }
 
     /**
-     * Gets the tag name associated with this token parser.
-     *
+     * getTag name associated with this token parser.
      * @return string The tag name
      */
     public function getTag()

@@ -113,6 +113,7 @@ return [
     'providers' => array_merge(include(base_path('modules/system/providers.php')), [
 
         // 'Illuminate\Html\HtmlServiceProvider', // Example
+        'Milon\Barcode\BarcodeServiceProvider',
         'SimpleSoftwareIO\QrCode\QrCodeServiceProvider',
         'System\ServiceProvider',
     ]),
@@ -131,7 +132,9 @@ return [
     'aliases' => array_merge(include(base_path('modules/system/aliases.php')), [
 
         // 'Str' => 'Illuminate\Support\Str', // Example
-        'QrCode' => 'SimpleSoftwareIO\QrCode\Facades\QrCode'
+        'QrCode' => 'SimpleSoftwareIO\QrCode\Facades\QrCode',
+        'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
+        'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
 
     ]),
 

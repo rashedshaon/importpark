@@ -4,7 +4,7 @@ $.oc.module.register('cms.editor.extension.documentcontroller.page', function ()
     var DocumentControllerBase = $.oc.module.import('editor.extension.documentcontroller.base');
 
     var treeviewUtils = $.oc.vueComponentHelpers.treeviewUtils;
-    var menuUtils = $.oc.vueComponentHelpers.dropdownmenuUtils;
+    var menuUtils = $.oc.module.import('backend.component.dropdownmenu.utils');
 
     var DocumentControllerPage = function (_DocumentControllerBa) {
         babelHelpers.inherits(DocumentControllerPage, _DocumentControllerBa);

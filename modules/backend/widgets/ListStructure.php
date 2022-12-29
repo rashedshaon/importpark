@@ -33,9 +33,19 @@ class ListStructure extends Lists
     public $showReorder = true;
 
     /**
+     * @var bool includeSortOrders specifies if "sort_orders" should be included in postback.
+     */
+    public $includeSortOrders = false;
+
+    /**
      * @var int|null maxDepth defines the maximum levels allowed for reordering.
      */
     public $maxDepth = null;
+
+    /**
+     * @var bool dragRow allows dragging the entire row in addition to the reorder handle.
+     */
+    public $dragRow = true;
 
     /**
      * __construct the widget
@@ -58,9 +68,11 @@ class ListStructure extends Lists
     {
         $this->fillFromConfig([
             'maxDepth',
+            'dragRow',
             'showTree',
             'showReorder',
             'treeExpanded',
+            'includeSortOrders',
         ]);
 
         parent::init();
@@ -92,13 +104,17 @@ class ListStructure extends Lists
     {
         parent::prepareVars();
 
+        // Alter tree status based on record content
+        $this->showTree = $this->getIndentTreeStatus($this->records);
+
         $this->vars['useStructure'] = $this->useStructure;
-        $this->vars['showReorder'] = $this->showReorder;
-        $this->vars['showTree'] = $this->showTree;
         $this->vars['maxDepth'] = $this->maxDepth;
+        $this->vars['dragRow'] = $this->dragRow;
+        $this->vars['showTree'] = $this->showTree;
+        $this->vars['showReorder'] = $this->showReorder;
         $this->vars['includeSortOrders'] = $this->useSortOrdering();
         $this->vars['treeLevel'] = 0;
-        $this->vars['indentSize'] = $this->showReorder && $this->showTree ? 24 : 12;
+        $this->vars['indentSize'] = $this->getIndentSize();
     }
 
     /**
@@ -157,19 +173,50 @@ class ListStructure extends Lists
     }
 
     /**
+     * getIndentSize returns the size increment of indentation
+     */
+    protected function getIndentSize(): int
+    {
+        return 18;
+    }
+
+    /**
+     * getIndentStartSize is used to pad each row based on its tree level
+     */
+    protected function getIndentStartSize(int $treeLevel): int
+    {
+        return ($treeLevel * $this->getIndentSize()) +
+            ($this->showTree ? 15 : 0) +
+            ($this->showReorder ? 0 : 15);
+    }
+
+    /**
+     * getIndentTreeStatus checks if the collapse UI should be shown
+     * based on if any records have children.
+     */
+    protected function getIndentTreeStatus($records): bool
+    {
+        if (!$this->showTree) {
+            return false;
+        }
+
+        foreach ($records as $record) {
+            if ($record->getChildCount()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * validateTree validates the model and settings if useStructure is used
      */
     public function validateTree()
     {
-        if (!$this->model->methodExists('getChildren')) {
+        if (!$this->model->isClassInstanceOf(\October\Contracts\Database\TreeInterface::class)) {
             throw new ApplicationException(
-                'To display list as a tree, the specified model must have a method "getChildren"'
-            );
-        }
-
-        if (!$this->model->methodExists('getChildCount')) {
-            throw new ApplicationException(
-                'To display list as a tree, the specified model must have a method "getChildCount"'
+                'To display list as a tree, the specified model must implement methods found in October\Contracts\Database\TreeInterface'
             );
         }
     }
@@ -179,13 +226,7 @@ class ListStructure extends Lists
      */
     public function useSortOrdering(): bool
     {
-        $modelTraits = class_uses($this->model);
-
-        if (isset($modelTraits[\October\Rain\Database\Traits\Sortable::class])) {
-            return true;
-        }
-
-        return false;
+        return $this->includeSortOrders || $this->model->isClassInstanceOf(\October\Contracts\Database\SortableInterface::class);
     }
 
     /**
@@ -193,20 +234,22 @@ class ListStructure extends Lists
      */
     public function onReorder()
     {
-        $item = $this->model->newQuery()->find(post('record_id'));
-        $modelTraits = class_uses($item);
+        $item = $this->model->newQueryWithoutScopes()->find(post('record_id'));
 
-        if (isset($modelTraits[\October\Rain\Database\Traits\NestedTree::class])) {
+        if ($this->model->isClassInstanceOf(\October\Contracts\Database\NestedSetInterface::class)) {
             $this->reorderForNestedTree($item);
         }
+        else {
+            if ($this->model->hasRelation('parent')) {
+                $this->reorderForSimpleTree($item);
+            }
 
-        if (isset($modelTraits[\October\Rain\Database\Traits\Sortable::class])) {
-            $this->reorderForSortable($item);
-        };
-
-        if (isset($modelTraits[\October\Rain\Database\Traits\SimpleTree::class])) {
-            $this->reorderForSimpleTree($item);
+            if ($this->model->isClassInstanceOf(\October\Contracts\Database\SortableInterface::class)) {
+                $this->reorderForSortable($item);
+            }
         }
+
+        $this->fireSystemEvent('backend.list.reorderStructure', [$item]);
 
         return $this->onRefresh();
     }
@@ -217,7 +260,7 @@ class ListStructure extends Lists
     protected function reorderForSimpleTree($item)
     {
         $item->parent = post('parent_id');
-        $item->save();
+        $item->save(['force' => true]);
     }
 
     /**
@@ -225,7 +268,7 @@ class ListStructure extends Lists
      */
     protected function reorderForSortable($item)
     {
-        $item->setSortableOrder(post('sort_orders'), array_keys(post('sort_orders')));
+        $item->setSortableOrder(post('sort_orders'), array_keys((array) post('sort_orders')));
     }
 
     /**
@@ -241,9 +284,6 @@ class ListStructure extends Lists
         }
         elseif ($parentId = post('parent_id')) {
             $item->makeChildOf($parentId);
-        }
-        else {
-            $item->makeRoot();
         }
     }
 

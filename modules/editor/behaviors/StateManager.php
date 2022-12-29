@@ -123,7 +123,7 @@ class StateManager extends ControllerBehavior
     private function loadUserData()
     {
         return [
-            'useMediaManager' => BackendAuth::getUser()->hasAccess('media.manage_media')
+            'useMediaManager' => BackendAuth::userHasAccess('media.manage_media')
         ];
     }
 }

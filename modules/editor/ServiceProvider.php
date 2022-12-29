@@ -1,19 +1,19 @@
 <?php namespace Editor;
 
 use App;
-use Event;
 use Backend;
 use BackendMenu;
 use BackendAuth;
 use Backend\Models\UserRole;
 use October\Rain\Support\ModuleServiceProvider;
 
+/**
+ * ServiceProvider for Editor module
+ */
 class ServiceProvider extends ModuleServiceProvider
 {
     /**
-     * Register the service provider.
-     *
-     * @return void
+     * register the service provider.
      */
     public function register()
     {
@@ -29,9 +29,7 @@ class ServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * Bootstrap the module events.
-     *
-     * @return void
+     * boot the module events.
      */
     public function boot()
     {
@@ -46,11 +44,11 @@ class ServiceProvider extends ModuleServiceProvider
         BackendMenu::registerCallback(function ($manager) {
             $manager->registerMenuItems('October.Editor', [
                 'editor' => [
-                    'label'       => 'editor::lang.editor.menu_label',
-                    'icon'        => 'icon-pencil',
-                    'iconSvg'     => 'modules/editor/assets/images/editor-icon.svg',
-                    'url'         => Backend::url('editor'),
-                    'order'       => 90,
+                    'label' => 'editor::lang.editor.menu_label',
+                    'icon' => 'icon-pencil',
+                    'iconSvg' => 'modules/editor/assets/images/editor-icon.svg',
+                    'url' => Backend::url('editor'),
+                    'order' => 90,
                     'permissions' => [
                         'editor.access_editor'
                     ]

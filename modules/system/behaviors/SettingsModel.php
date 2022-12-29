@@ -8,7 +8,7 @@ use Exception;
 use System\Classes\ModelBehavior;
 
 /**
- * Settings model extension
+ * SettingsModel extension
  *
  * Add this the model class definition:
  *
@@ -21,8 +21,19 @@ class SettingsModel extends ModelBehavior
 {
     use \System\Traits\ConfigMaker;
 
+    /**
+     * @var string recordCode
+     */
     protected $recordCode;
+
+    /**
+     * @var array fieldConfig
+     */
     protected $fieldConfig;
+
+    /**
+     * @var array fieldValues
+     */
     protected $fieldValues = [];
 
     /**

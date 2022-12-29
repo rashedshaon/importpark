@@ -1,22 +1,37 @@
 <div class="permissioneditor <?= $this->previewMode ? 'control-disabled' : '' ?>" <?= $field->getAttributes() ?>>
     <table>
         <?php
-            $firstTab = true;
             $globalIndex = 0;
             $checkboxMode = !($this->mode === 'radio');
         ?>
         <?php foreach ($permissions as $tab => $tabPermissions): ?>
             <tr class="section">
-                <th class="tab"><?= e(trans($tab)) ?></th>
+                <th class="tab" colspan="100">
+                    <div class="tab-inner">
+                        <div class="tab-title">
+                            <?= e(trans($tab)) ?>
+                        </div>
 
-                <th class="permission-type"><?= $firstTab ? e(trans('backend::lang.user.allow')) : '' ?></th>
+                        <div class="tab-controls">
+                            <?php if ($this->mode === 'radio'): ?>
+                                <a href="javascript:;" class="backend-toolbar-button control-button" data-field-permission-toggle>
+                                    <i class="octo-icon-check-multi"></i>
+                                    <span class="button-label"><?= e(trans('backend::lang.form.select_all')) ?></span>
+                                </a>
+                            <?php else: ?>
+                                <a href="javascript:;" class="backend-toolbar-button control-button" data-field-permission-all>
+                                    <i class="octo-icon-check-multi"></i>
+                                    <span class="button-label"><?= e(trans('backend::lang.form.select_all')) ?></span>
+                                </a>
 
-                <?php if ($this->mode === 'radio'): ?>
-                    <th class="permission-type"><?= $firstTab ? e(trans('backend::lang.user.inherit')) : '' ?></th>
-                    <th class="permission-type"><?= $firstTab ? e(trans('backend::lang.user.deny')) : '' ?></th>
-                <?php endif ?>
-
-                <th></th>
+                                <a href="javascript:;" class="backend-toolbar-button control-button" style="display: none" data-field-permission-none>
+                                    <i class="octo-icon-eraser"></i>
+                                    <span class="button-label"><?= e(trans('backend::lang.form.select_none')) ?></span>
+                                </a>
+                            <?php endif ?>
+                        </div>
+                    </div>
+                </th>
             </tr>
 
             <?php
@@ -51,11 +66,6 @@
                     <?= !$checkboxMode && $permissionValue == -1 ? 'disabled' : '' ?>
                 ">
 
-                    <td class="permission-name">
-                        <?= e(trans($permission->label)) ?>
-                        <p class="comment"><?= e(trans($permission->comment)) ?></p>
-                    </td>
-
                     <?php if ($this->mode === 'radio'): ?>
                         <td class="permission-value">
                             <div class="radio custom-radio">
@@ -67,8 +77,7 @@
                                     <?= $permissionValue == 1 ? 'checked="checked"' : '' ?>
                                     data-radio-color="green"
                                 >
-
-                                <label class="storm-icon-pseudo" for="<?= $allowId ?>"><span>Allow</span></label>
+                                <label title="<?= e(trans('backend::lang.user.allow')) ?>" class="storm-icon-pseudo" for="<?= $allowId ?>"><span><?= e(trans('backend::lang.user.allow')) ?></span></label>
                             </div>
                         </td>
                         <td class="permission-value">
@@ -80,8 +89,7 @@
                                     <?= $permissionValue == 0 ? 'checked="checked"' : '' ?>
                                     type="radio"
                                 >
-
-                                <label class="storm-icon-pseudo" for="<?= $inheritId ?>"><span>Inherit</span></label>
+                                <label title="<?= e(trans('backend::lang.user.inherit')) ?>" class="storm-icon-pseudo" for="<?= $inheritId ?>"><span><?= e(trans('backend::lang.user.inherit')) ?></span></label>
                             </div>
                         </td>
                         <td class="permission-value">
@@ -94,8 +102,7 @@
                                     type="radio"
                                     data-radio-color="red"
                                 >
-
-                                <label class="storm-icon-pseudo" for="<?= $denyId ?>"><span>Deny</span></label>
+                                <label title="<?= e(trans('backend::lang.user.deny')) ?>" class="storm-icon-pseudo" for="<?= $denyId ?>"><span><?= e(trans('backend::lang.user.deny')) ?></span></label>
                             </div>
                         </td>
                     <?php elseif ($this->mode === 'switch'): ?>
@@ -129,17 +136,17 @@
                                     <?= $isChecked ? 'checked="checked"' : '' ?>
                                 >
 
-                                <label class="storm-icon-pseudo" for="<?= $allowId ?>"><span>Allow</span></label>
+                                <label title="<?= e(trans('backend::lang.user.allow')) ?>" class="storm-icon-pseudo" for="<?= $allowId ?>"><span><?= e(trans('backend::lang.user.allow')) ?></span></label>
                             </div>
                         </td>
                     <?php endif ?>
 
-                    <td></td>
+                    <td class="permission-name">
+                        <?= e(trans($permission->label)) ?>
+                        <p class="comment"><?= e(trans($permission->comment)) ?></p>
+                    </td>
                 </tr>
             <?php endforeach ?>
-        <?php
-            $firstTab = false;
-        ?>
         <?php endforeach ?>
     </table>
     <div class="permissions-overlay"></div>

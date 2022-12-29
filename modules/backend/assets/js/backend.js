@@ -212,10 +212,28 @@ $.oc.escapeHtmlString = function(string) {
     })
 }
 
-window.addEventListener('touchstart', function onFirstTouch() {
-    window.removeEventListener('touchstart', onFirstTouch, false);
+$.oc.isTouchEnabled = function() {
+    return document.documentElement.classList &&
+        document.documentElement.classList.contains('user-touch');
+}
 
-    $.cookie('oc-user-touch', 1, { expires: 365, path: '/' });
+;(function() {
+    // Look if user is touching, not if device is capable
+    window.addEventListener('touchstart', function onFirstTouch() {
+        document.documentElement.classList.add('user-touch');
+        $.cookie('oc-user-touch', 1, { expires: 365, path: '/' });
+    }, { once: true });
 
-    $(document.documentElement).addClass('user-touch');
-}, false);
+    // Cookie is found on a non-touch device (cookie was from debugging)
+    if ($.oc.isTouchEnabled() && !isTouchEnabledBrowser()) {
+        document.documentElement.classList.remove('user-touch');
+        $.removeCookie('oc-user-touch', { path: '/' });
+    }
+
+    // Private
+    function isTouchEnabledBrowser() {
+        return ('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            (navigator.msMaxTouchPoints > 0);
+    }
+})();

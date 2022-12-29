@@ -9,7 +9,7 @@ use Backend\Models\UserPreference;
  *
  * Add this the model class definition:
  *
- *     public $implement = ['Backend.Behaviors.UserPreferencesModel'];
+ *     public $implement = [\Backend\Behaviors\UserPreferencesModel::class];
  *     public $settingsCode = 'author.plugin::code';
  *     public $settingsFields = 'fields.yaml';
  *

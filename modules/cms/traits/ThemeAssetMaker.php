@@ -25,7 +25,7 @@ trait ThemeAssetMaker
             return '';
         }
 
-        $assetPath = $localPath ?: $this->assetPath;
+        $assetPath = $localPath ?: $this->assetLocalPath;
 
         return Url::to(CombineAssets::combine(
             $this->getMultipleThemeAssetPaths($assets),

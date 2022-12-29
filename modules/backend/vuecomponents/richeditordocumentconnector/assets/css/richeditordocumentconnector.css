@@ -182,6 +182,9 @@ body.richeditor-document-connector-resizing * {
 .field-richeditor.vue-mode .editor-write.editor-focus {
   border: 1px solid #72809d;
 }
+.field-richeditor.vue-mode.size-adaptive .editor-write {
+  border: none!important;
+}
 .field-richeditor.vue-mode.size-tiny .editor-write {
   min-height: 95px;
 }
@@ -206,7 +209,7 @@ body.richeditor-document-connector-resizing * {
 .field-richeditor.vue-mode .height-indicator {
   display: none;
 }
-.field-richeditor.vue-mode .component-backend-richeditor .fr-box.fr-basic .fr-element.fr-view {
+.field-richeditor.vue-mode div.no-resizing-ui .component-backend-richeditor .fr-box.fr-basic .fr-element.fr-view {
   padding: 10px;
 }
 .field-richeditor.vue-mode .component-backend-document .document-content-container {

@@ -58,17 +58,31 @@ div.control-popover {
         &:before { z-index: @zindex-popover; }
     }
 
-    &.placement-bottom > div {
-        &:after {
-            .triangle(up, 15px, 8px, @color-popover-bg);
-            left: 15px;
-            top: -8px;
+    &.placement-bottom {
+        > div {
+            &:after {
+                .triangle(up, 15px, 8px, @color-popover-bg);
+                left: 15px;
+                top: -8px;
+            }
+
+            &:before {
+                .triangle(up, 17px, 9px, @color-popover-border);
+                left: 14px;
+                top: -9px;
+            }
         }
 
-        &:before {
-            .triangle(up, 17px, 9px, @color-popover-border);
-            left: 14px;
-            top: -9px;
+        &.placement-bottom-right > div {
+            &:after {
+                left: auto;
+                right: 15px;
+            }
+
+            &:before {
+                left: auto;
+                right: 14px;
+            }
         }
     }
 
@@ -275,6 +289,17 @@ div.popover-overlay {
     bottom: 0;
     background: @overlay-background;
     z-index: @zindex-popover - 3;
+
+    &.vue-mode {
+        background: rgba(0, 0, 0, 0);
+        font-size: @font-size-base;
+
+        > div.control-popover {
+            > div {
+                .border-radius(@border-radius-base);
+            }
+        }
+    }
 }
 
 @media (max-width: @screen-xs) {

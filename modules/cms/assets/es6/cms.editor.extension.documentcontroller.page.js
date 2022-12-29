@@ -4,7 +4,7 @@ $.oc.module.register('cms.editor.extension.documentcontroller.page', function() 
     const DocumentControllerBase = $.oc.module.import('editor.extension.documentcontroller.base');
 
     const treeviewUtils = $.oc.vueComponentHelpers.treeviewUtils;
-    const menuUtils = $.oc.vueComponentHelpers.dropdownmenuUtils;
+    const menuUtils = $.oc.module.import('backend.component.dropdownmenu.utils');
 
     class DocumentControllerPage extends DocumentControllerBase {
         constructor(editorExtension) {

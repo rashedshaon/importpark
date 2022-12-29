@@ -45,7 +45,7 @@ class BackendController extends ControllerBase
     public static $params;
 
     /**
-     * Instantiate a new BackendController instance.
+     * __construct a new BackendController instance
      */
     public function __construct()
     {
@@ -53,7 +53,7 @@ class BackendController extends ControllerBase
     }
 
     /**
-     * Extend this object properties upon construction.
+     * extend this object properties upon construction
      */
     public static function extend(Closure $callback)
     {
@@ -61,10 +61,7 @@ class BackendController extends ControllerBase
     }
 
     /**
-     * Pass unhandled URLs to the CMS Controller, if it exists
-     *
-     * @param string $url
-     * @return Response
+     * runCmsPage passses unhandled URLs to the CMS Controller, if it exists
      */
     protected function runCmsPage($url)
     {
@@ -77,7 +74,7 @@ class BackendController extends ControllerBase
     }
 
     /**
-     * Finds and serves the requested backend controller.
+     * run finds and serves the requested backend controller
      * If the controller cannot be found, returns the Cms page with the URL /404.
      * If the /404 page doesn't exist, returns the system 404 page.
      * @param string $url Specifies the requested page URL.
@@ -151,8 +148,8 @@ class BackendController extends ControllerBase
     }
 
     /**
-     * This method is used internally.
-     * Finds a backend controller with a callable action method.
+     * findController is used internally to find a backend controller with a
+     * callable action method
      * @param string $controller Specifies a method name to execute.
      * @param string $action Specifies a method name to execute.
      * @param string $inPath Base path for class file location.
@@ -193,11 +190,9 @@ class BackendController extends ControllerBase
     }
 
     /**
-     * Process the action name, since dashes are not supported in PHP methods.
-     * @param  string $actionName
-     * @return string
+     * parseAction processes the action name, since dashes are not supported in PHP methods
      */
-    protected function parseAction($actionName)
+    protected function parseAction(string $actionName): string
     {
         if (strpos($actionName, '-') !== false) {
             return snake_case(camel_case($actionName));

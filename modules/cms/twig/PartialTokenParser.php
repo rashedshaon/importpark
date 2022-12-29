@@ -6,7 +6,7 @@ use Twig\TokenParser\AbstractTokenParser as TwigTokenParser;
 use Twig\Error\SyntaxError as TwigErrorSyntax;
 
 /**
- * Parser for the `{% partial %}` Twig tag.
+ * PartialTokenParser for the `{% partial %}` Twig tag.
  *
  *     {% partial "sidebar" %}
  *
@@ -20,9 +20,7 @@ use Twig\Error\SyntaxError as TwigErrorSyntax;
 class PartialTokenParser extends TwigTokenParser
 {
     /**
-     * Parses a token and returns a node.
-     *
-     * @param TwigToken $token A TwigToken instance
+     * parse a token and returns a node.
      * @return TwigNode A TwigNode instance
      */
     public function parse(TwigToken $token)

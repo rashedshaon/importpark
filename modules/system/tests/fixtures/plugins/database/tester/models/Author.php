@@ -44,6 +44,14 @@ class Author extends Model
             'table' => 'database_tester_authors_roles',
             'conditions' => 'is_executive = 1'
         ],
+        'double_roles' => [
+            Role::class,
+            'table' => 'database_tester_double_joins',
+            'key' => 'host_id',
+            'otherKey' => 'entity_id',
+            'scope' => [self::class, 'applyDoubleJoinClassNames'],
+            'pivot' => ['host_type', 'entity_type']
+        ],
         'products' => [
             Product::class,
             'table' => 'database_tester_authors_products',
@@ -75,6 +83,12 @@ class Author extends Model
             'pivot' => ['added_by']
         ],
     ];
+
+    public static function applyDoubleJoinClassNames($query, $parent, $related)
+    {
+        $query->where('host_type', get_class($parent));
+        $query->where('entity_type', get_class($related));
+    }
 }
 
 class SoftDeleteAuthor extends Author

@@ -2,6 +2,7 @@
 
 use October\Rain\Database\Model;
 use October\Rain\Html\Helper as HtmlHelper;
+use October\Rain\Element\Lists\ColumnDefinition;
 
 /**
  * List Columns definition
@@ -10,43 +11,8 @@ use October\Rain\Html\Helper as HtmlHelper;
  * @package october\backend
  * @author Alexey Bobkov, Samuel Georges
  */
-class ListColumn
+class ListColumn extends ColumnDefinition
 {
-    /**
-     * @var string columnName within the list
-     */
-    public $columnName;
-
-    /**
-     * @var string label for list column
-     */
-    public $label;
-
-    /**
-     * @var string type for display mode, eg: text, number
-     */
-    public $type = 'text';
-
-    /**
-     * @var bool searchable specifies if this column can be searched
-     */
-    public $searchable = false;
-
-    /**
-     * @var bool invisible specifies if this column is hidden by default
-     */
-    public $invisible = false;
-
-    /**
-     * @var bool sortable specifies if this column can be sorted
-     */
-    public $sortable = true;
-
-    /**
-     * @var bool clickable disables the default click behavior when the column is clicked
-     */
-    public $clickable = true;
-
     /**
      * @var string valueFrom is a model attribute to use for the accessed value
      */
@@ -106,46 +72,23 @@ class ListColumn
     public $path;
 
     /**
-     * @var string Specifies the alignment of this column.
-     */
-    public $align;
-
-    /**
-     * @var array Raw field configuration.
-     */
-    public $config;
-
-    /**
-     * Constructor.
-     * @param string $columnName
-     * @param string $label
+     * __construct the column
+     * @todo remove this method if year >= 2023
      */
     public function __construct($columnName, $label)
     {
-        $this->columnName = $columnName;
-        $this->label = $label;
+        parent::__construct((string) $columnName);
+
+        $this->label((string) $label);
     }
 
     /**
-     * Specifies a list column rendering mode. Supported modes are:
-     * - text - text column, aligned left
-     * - number - numeric column, aligned right
-     * @param string $type Specifies a render mode as described above
+     * evalConfig from an array and apply them to the object
      */
-    public function displayAs($type, $config)
+    protected function evalConfig(array $config): void
     {
-        $this->type = strtolower($type) ?: $this->type;
-        $this->config = $this->evalConfig($config);
-        return $this;
-    }
+        parent::evalConfig($config);
 
-    /**
-     * Process options and apply them to this object.
-     * @param array $config
-     * @return array
-     */
-    protected function evalConfig($config)
-    {
         if (isset($config['width'])) {
             $this->width = $config['width'];
         }
@@ -154,18 +97,6 @@ class ListColumn
         }
         if (isset($config['headCssClass'])) {
             $this->headCssClass = $config['headCssClass'];
-        }
-        if (isset($config['searchable'])) {
-            $this->searchable = $config['searchable'];
-        }
-        if (isset($config['sortable'])) {
-            $this->sortable = $config['sortable'];
-        }
-        if (isset($config['clickable'])) {
-            $this->clickable = $config['clickable'];
-        }
-        if (isset($config['invisible'])) {
-            $this->invisible = $config['invisible'];
         }
         if (isset($config['valueFrom'])) {
             $this->valueFrom = $config['valueFrom'];
@@ -191,15 +122,10 @@ class ListColumn
         if (isset($config['path'])) {
             $this->path = $config['path'];
         }
-        if (isset($config['align']) && \in_array($config['align'], ['left', 'right', 'center'])) {
-            $this->align = $config['align'];
-        }
-
-        return $config;
     }
 
     /**
-     * Returns a HTML valid name for the column name.
+     * getName returns a HTML valid name for the column name.
      * @return string
      */
     public function getName()
@@ -208,7 +134,7 @@ class ListColumn
     }
 
     /**
-     * Returns a value suitable for the column id property.
+     * getId returns a value suitable for the column id property.
      * @param  string $suffix Specify a suffix string
      * @return string
      */
@@ -226,7 +152,7 @@ class ListColumn
     }
 
     /**
-     * Returns the column specific aligment css class.
+     * getAlignClass returns the column specific aligment css class.
      * @return string
      */
     public function getAlignClass()

@@ -83,6 +83,18 @@ class AuthManager extends RainAuthManager
     protected $permissionCache = false;
 
     /**
+     * userHasAccess is identical to User::hasAccess
+     */
+    public function userHasAccess($permissions, $all = true)
+    {
+        if ($user = $this->getUser()) {
+            return $user->hasAccess($permissions, $all);
+        }
+
+        return false;
+    }
+
+    /**
      * registerCallback registers a callback function that defines authentication permissions.
      * The callback function should register permissions by calling the manager's
      * registerPermissions() function. The manager instance is passed to the

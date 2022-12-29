@@ -18,6 +18,10 @@
         </div>
     </transition>
 
+    <div v-if="!loading && !errorLoadingDocument" class="flex-layout-item fix">
+        <slot name="drawer"></slot>
+    </div>
+
     <transition name="document-fade-in">
         <div v-if="!loading && !errorLoadingDocument" class="document-content-container flex-layout-item stretch relative">
             <slot name="content"></slot>

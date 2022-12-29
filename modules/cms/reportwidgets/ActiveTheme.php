@@ -9,7 +9,7 @@ use ApplicationException;
 use Exception;
 
 /**
- * Active theme report widget.
+ * ActiveTheme report widget.
  *
  * @package october\backend
  * @author Alexey Bobkov, Samuel Georges
@@ -17,12 +17,12 @@ use Exception;
 class ActiveTheme extends ReportWidgetBase
 {
     /**
-     * @var string A unique alias to identify this widget.
+     * @var string defaultAlias to identify this widget.
      */
     protected $defaultAlias = 'activetheme';
 
     /**
-     * Renders the widget.
+     * render the widget.
      */
     public function render()
     {
@@ -36,6 +36,9 @@ class ActiveTheme extends ReportWidgetBase
         return $this->makePartial('widget');
     }
 
+    /**
+     * defineProperties
+     */
     public function defineProperties()
     {
         return [
@@ -57,6 +60,9 @@ class ActiveTheme extends ReportWidgetBase
         $this->addCss('css/activetheme.css', 'core');
     }
 
+    /**
+     * loadData
+     */
     protected function loadData()
     {
         if (!$theme = Theme::getActiveTheme()) {

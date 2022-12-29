@@ -1,6 +1,5 @@
 <?php namespace Backend\FormWidgets;
 
-use Db;
 use Input;
 use Response;
 use Validator;
@@ -14,13 +13,13 @@ use ValidationException;
 use Exception;
 
 /**
- * File upload field
- * Renders a form file uploader field.
+ * FileUpload renders a form file uploader field.
  *
  * Supported options:
- * - mode: image-single, image-multi, file-single, file-multi
- * - upload-label: Add file
- * - empty-label: No file uploaded
+ *
+  *    file:
+ *        label: Some file
+ *        type: fileupload
  *
  * @package october\backend
  * @author Alexey Bobkov, Samuel Georges
@@ -65,6 +64,22 @@ class FileUpload extends FormWidgetBase
     public $maxFiles;
 
     /**
+     * @var string Defines a mount point for the editor toolbar.
+     * Must include a module name that exports the Vue application and a state element name.
+     * Format: module.name::stateElementName
+     * Only works in Vue applications and form document layouts.
+     */
+    public $externalToolbarAppState = null;
+
+    /**
+     * @var string Defines an event bus for an external toolbar.
+     * Must include a module name that exports the Vue application and a state element name.
+     * Format: module.name::eventBus
+     * Only works in Vue applications and form document layouts.
+     */
+    public $externalToolbarEventBus = null;
+
+    /**
      * @var array thumbOptions used for generating thumbnails
      */
     public $thumbOptions = [
@@ -94,7 +109,8 @@ class FileUpload extends FormWidgetBase
     protected $defaultAlias = 'fileupload';
 
     /**
-     * @var Backend\Widgets\Form The embedded form for modifying the properties of the selected file
+     * @var Backend\Widgets\Form configFormWidget is the embedded form for modifying the
+     * properties of the selected file.
      */
     protected $configFormWidget;
 
@@ -115,6 +131,8 @@ class FileUpload extends FormWidgetBase
             'thumbOptions',
             'useCaption',
             'attachOnUpload',
+            'externalToolbarAppState',
+            'externalToolbarEventBus'
         ]);
 
         if ($this->formField->disabled) {
@@ -134,7 +152,7 @@ class FileUpload extends FormWidgetBase
     }
 
     /**
-     * prepareVars for viewing purposes
+     * prepareVars for the view data
      */
     protected function prepareVars()
     {
@@ -163,6 +181,8 @@ class FileUpload extends FormWidgetBase
         $this->vars['maxFiles'] = $this->maxFiles;
         $this->vars['cssDimensions'] = $this->getCssDimensions();
         $this->vars['useCaption'] = $this->useCaption;
+        $this->vars['externalToolbarAppState'] = $this->externalToolbarAppState;
+        $this->vars['externalToolbarEventBus'] = $this->externalToolbarEventBus;
     }
 
     /**
@@ -181,8 +201,7 @@ class FileUpload extends FormWidgetBase
     }
 
     /**
-     * getConfigFormWidget used for configuration values
-     * @return object
+     * getConfigFormWidget for the instantiated Form widget
      */
     public function getConfigFormWidget()
     {
@@ -202,13 +221,13 @@ class FileUpload extends FormWidgetBase
     }
 
     /**
-     * getFileList
+     * getFileList returns a list of associated files
      */
     protected function getFileList()
     {
         $list = $this
             ->getRelationObject()
-            ->withDeferred($this->sessionKey)
+            ->withDeferred($this->getSessionKey())
             ->orderBy('sort_order')
             ->get()
         ;
@@ -242,10 +261,10 @@ class FileUpload extends FormWidgetBase
     }
 
     /**
-     * getCssDimensions for the uploaded image, uses auto where no dimension is provided
-     * @return string
+     * getCssDimensions returns the CSS dimensions for the uploaded image,
+     * uses auto where no dimension is provided.
      */
-    protected function getCssDimensions()
+    protected function getCssDimensions(): string
     {
         if (!$this->imageWidth && !$this->imageHeight) {
             return '';
@@ -314,7 +333,7 @@ class FileUpload extends FormWidgetBase
     {
         $fileModel = $this->getRelationModel();
         if (($fileId = post('file_id')) && ($file = $fileModel::find($fileId))) {
-            $this->getRelationObject()->remove($file, $this->sessionKey);
+            $this->getRelationObject()->remove($file, $this->getSessionKey());
         }
     }
 
@@ -338,17 +357,18 @@ class FileUpload extends FormWidgetBase
      */
     public function onLoadAttachmentConfig()
     {
-        if ($file = $this->getFileRecord()) {
-            $file = $this->decorateFileAttributes($file);
-
-            $this->vars['file'] = $file;
-            $this->vars['displayMode'] = $this->getDisplayMode();
-            $this->vars['cssDimensions'] = $this->getCssDimensions();
-
-            return $this->makePartial('config_form');
+        $file = $this->getFileRecord();
+        if (!$file) {
+            throw new ApplicationException('Unable to find file, it may no longer exist');
         }
 
-        throw new ApplicationException('Unable to find file, it may no longer exist');
+        $file = $this->decorateFileAttributes($file);
+
+        $this->vars['file'] = $file;
+        $this->vars['displayMode'] = $this->getDisplayMode();
+        $this->vars['cssDimensions'] = $this->getCssDimensions();
+
+        return $this->makePartial('config_form');
     }
 
     /**
@@ -358,21 +378,18 @@ class FileUpload extends FormWidgetBase
     {
         try {
             $formWidget = $this->getConfigFormWidget();
-            if ($file = $formWidget->model) {
-                $modelsToSave = $this->prepareModelsToSave($file, $formWidget->getSaveData());
-                Db::transaction(function () use ($modelsToSave, $formWidget) {
-                    foreach ($modelsToSave as $modelToSave) {
-                        $modelToSave->save(null, $formWidget->getSessionKey());
-                    }
-                });
 
-                return [
-                    'displayName' => $file->title ?: $file->file_name,
-                    'description' => trim($file->description)
-                ];
+            $file = $formWidget->model;
+            if (!$file) {
+                throw new ApplicationException('Unable to find file, it may no longer exist');
             }
 
-            throw new ApplicationException('Unable to find file, it may no longer exist');
+            $this->performSaveOnModel($file, $formWidget->getSaveData(), $formWidget->getSessionKey());
+
+            return [
+                'displayName' => $file->title ?: $file->file_name,
+                'description' => trim($file->description)
+            ];
         }
         catch (Exception $ex) {
             return json_encode(['error' => $ex->getMessage()]);
@@ -447,7 +464,7 @@ class FileUpload extends FormWidgetBase
                 $fileRelation->add($file);
             }
             else {
-                $fileRelation->add($file, $this->sessionKey);
+                $fileRelation->add($file, $this->getSessionKey());
             }
 
             $file = $this->decorateFileAttributes($file);
@@ -468,7 +485,8 @@ class FileUpload extends FormWidgetBase
     }
 
     /**
-     * decorateFileAttributes adds the bespoke attributes used internally by this widget
+     * decorateFileAttributes adds the bespoke attributes used
+     * internally by this widget. Added attributes are:
      * - thumbUrl
      * - pathUrl
      * @return System\Models\File

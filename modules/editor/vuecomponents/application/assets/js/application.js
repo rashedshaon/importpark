@@ -173,7 +173,7 @@ Vue.component('editor-component-application', {
             }
         });
 
-        var menuUtils = $.oc.vueComponentHelpers.dropdownmenuUtils;
+        var menuUtils = $.oc.module.import('backend.component.dropdownmenu.utils');
         var item = menuUtils.findMenuItem(this.tabContextMenuItems, ['reveal-in-sidebar'], 'command');
         if (item) {
             item.label = this.$el.getAttribute('data-lang-reveal-in-sidebar');

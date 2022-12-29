@@ -3,9 +3,10 @@
 use Db;
 use Lang;
 use ApplicationException;
+use Backend\Widgets\Form as FormWidget;
 
 /**
- * HasPivotMode
+ * HasPivotMode contains logic for managing pivot records
  */
 trait HasPivotMode
 {
@@ -30,7 +31,7 @@ trait HasPivotMode
     protected $foreignId;
 
     /**
-     * makePivotWidget
+     * makePivotWidget return a form widget based on pivot configuration
      */
     protected function makePivotWidget()
     {
@@ -76,9 +77,8 @@ trait HasPivotMode
             $config->model->setRelation('pivot', $this->relationObject->newPivot());
         }
 
-        return $this->makeWidget(\Backend\Widgets\Form::class, $config);
+        return $this->makeWidget(FormWidget::class, $config);
     }
-
 
     /**
      * onRelationManageAddPivot adds multiple items using a single pivot form.

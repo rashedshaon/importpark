@@ -33,6 +33,7 @@ class Controller extends Extendable
     use \System\Traits\ConfigMaker;
     use \System\Traits\EventEmitter;
     use \System\Traits\ResponseMaker;
+    use \System\Traits\DependencyMaker;
     use \System\Traits\SecurityController;
     use \Backend\Traits\VueMaker;
     use \Backend\Traits\ErrorMaker;
@@ -59,49 +60,54 @@ class Controller extends Extendable
     protected $params;
 
     /**
-     * @var string Page action being called.
+     * @var string action being called in the page
      */
     protected $action;
 
     /**
-     * @var array Defines a collection of actions available without authentication.
+     * @var string actionView to render, defaults to action name
+     */
+    protected $actionView;
+
+    /**
+     * @var array publicActions available without authentication.
      */
     protected $publicActions = [];
 
     /**
-     * @var array Permissions required to view this page.
+     * @var array requiredPermissions to view this page.
      */
     protected $requiredPermissions = [];
 
     /**
-     * @var string Page title
+     * @var string pageTitle
      */
     public $pageTitle;
 
     /**
-     * @var string Page title template
+     * @var string pageTitleTemplate
      */
     public $pageTitleTemplate;
 
     /**
-     * @var string Body class property used for customising the layout on a controller basis.
+     * @var string bodyClass property used for customising the layout on a controller basis.
      */
     public $bodyClass;
 
     /**
-     * @var array Default methods which cannot be called as actions.
+     * @var array hiddenActions methods that cannot be called as actions.
      */
     public $hiddenActions = [
         'run'
     ];
 
     /**
-     * @var array Controller specified methods which cannot be called as actions.
+     * @var array guarded methods that cannot be called as actions.
      */
     protected $guarded = [];
 
     /**
-     * Constructor.
+     * __construct the controller.
      */
     public function __construct()
     {
@@ -380,7 +386,7 @@ class Controller extends Extendable
         }
 
         // Execute the action
-        $result = $this->$actionName(...$parameters);
+        $result = $this->makeCallMethod($this, $actionName, $parameters);
 
         // Expecting \Response and \RedirectResponse
         if ($result instanceof \Symfony\Component\HttpFoundation\Response) {
@@ -394,7 +400,7 @@ class Controller extends Extendable
 
         // Load the view
         if (!$this->suppressView && $result === null) {
-            return $this->makeView($actionName);
+            return $this->makeView($this->actionView ?: $actionName);
         }
 
         return $this->makeViewContent($result);
@@ -620,7 +626,7 @@ class Controller extends Extendable
             $pageHandler = $this->action . '_' . $handler;
 
             if ($this->methodExists($pageHandler)) {
-                $result = $this->$pageHandler(...$this->params);
+                $result = $this->makeCallMethod($this, $pageHandler, $this->params);
                 return $result ?: true;
             }
 
@@ -628,7 +634,7 @@ class Controller extends Extendable
              * Process page global handler (onSomething)
              */
             if ($this->methodExists($handler)) {
-                $result = $this->$handler(...$this->params);
+                $result = $this->makeCallMethod($this, $handler, $this->params);
                 return $result ?: true;
             }
 
@@ -657,7 +663,7 @@ class Controller extends Extendable
     }
 
     /**
-     * Specific code for executing an AJAX handler for a widget.
+     * runAjaxHandlerForWidget is specific code for executing an AJAX handler for a widget.
      * This will append the widget view paths to the controller and merge the vars.
      * @return mixed
      */
@@ -665,7 +671,7 @@ class Controller extends Extendable
     {
         $this->addViewPath($widget->getViewPaths());
 
-        $result = call_user_func_array([$widget, $handler], $this->params);
+        $result = $this->makeCallMethod($widget, $handler, $this->params);
 
         $this->vars = $widget->vars + $this->vars;
 

@@ -439,7 +439,7 @@ class VersionManager
             'code' => $code,
             'type' => self::HISTORY_TYPE_COMMENT,
             'version' => $version,
-            'detail' => null,
+            'detail' => $comment,
             'created_at' => new Carbon
         ]);
     }
@@ -481,14 +481,7 @@ class VersionManager
             ]);
         }
         catch (Exception $ex) {
-            try {
-                $this->note('- <error>v' . $version . ':  Migration "' . $script . '" failed, attempting to rollback</error>');
-                $this->updater->packDown($updateFile);
-            }
-            catch (Exception $ex) {
-                $this->note('<error>Rollback failed! Reason: "' . $ex->getMessage() . '"</error>');
-            }
-
+            $this->note('<error>Rollback failed! Reason: "' . $ex->getMessage() . '"</error>');
             throw $ex;
         }
     }

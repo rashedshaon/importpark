@@ -6,15 +6,16 @@ use File;
 use Lang;
 use Http;
 use Cache;
+use Event;
 use Schema;
 use Config;
+use Request;
 use System as SystemHelper;
 use Carbon\Carbon;
 use Cms\Classes\ThemeManager;
 use System\Models\Parameter;
 use System\Models\PluginVersion;
-use October\Rain\Process\Composer as ComposerProcess;
-use System\Helpers\Cache as CacheHelper;
+use October\Rain\Process\ComposerPhp;
 use ApplicationException;
 use SystemException;
 use Exception;
@@ -113,7 +114,7 @@ class UpdateManager
     }
 
     /**
-     * update creates the migration table and updates
+     * update creates the migration table and updates.
      */
     public function update(): UpdateManager
     {
@@ -123,27 +124,34 @@ class UpdateManager
             $this->note('Migration table created');
         }
 
-        /*
-         * Update modules
-         */
+        // Update modules
         foreach (SystemHelper::listModules() as $module) {
             $this->migrateModule($module);
         }
 
-        /*
-         * Update plugins
-         */
+        // Update plugins
         $plugins = $this->pluginManager->getPlugins();
         foreach ($plugins as $code => $plugin) {
             $this->updatePlugin($code);
         }
 
+        // Reset update count
         Parameter::set('system::update.count', 0);
-        CacheHelper::clear();
 
-        /*
-         * Seed modules
+        /**
+         * @event system.updater.migrate
+         * Provides an opportunity to add migration logic to updater
+         *
+         * Example usage:
+         *
+         *     Event::listen('system.updater.migrate', function ((\System\Classes\UpdateManager) $updateManager) {
+         *         $updateManager->note('Done');
+         *     });
+         *
          */
+        Event::fire('system.updater.migrate', [$this]);
+
+        // Seed modules
         if ($firstUp) {
             foreach (SystemHelper::listModules() as $module) {
                 $this->seedModule($module);
@@ -360,7 +368,7 @@ class UpdateManager
         };
 
         $plugins = $themes = [];
-        $packages = (new ComposerProcess)->listAllPackages();
+        $packages = (new ComposerPhp)->listAllPackages();
         $project = $this->requestProjectDetails();
 
         foreach (($project['plugins'] ?? []) as $plugin) {
@@ -494,7 +502,8 @@ class UpdateManager
     {
         $version = SystemHelper::VERSION;
 
-        if ($build = $this->getCurrentBuildNumber()) {
+        $build = $this->getCurrentBuildNumber();
+        if ($build !== null) {
             $version .= '.' . $build;
         }
 
@@ -527,7 +536,7 @@ class UpdateManager
 
         try {
             // List packages to find version string from october/rain
-            $packages = (new ComposerProcess)->listPackages();
+            $packages = (new ComposerPhp)->listAllPackages();
             foreach ($packages as $package) {
                 $packageName = $package['name'] ?? null;
                 if (mb_strtolower($packageName) === 'october/system') {
@@ -540,9 +549,7 @@ class UpdateManager
             }
         }
         catch (Exception $ex) {
-            // Ask the server instead
-            $result = $this->requestServerData('ping');
-            $version = $result['pong'] ?? '0.0.0';
+            $version = '0.0.0';
         }
 
         $build = $this->getBuildFromVersion($version);
@@ -753,11 +760,11 @@ class UpdateManager
     //
 
     /**
-     * Raise a note event for the migrator.
+     * note writes a note event for the migrator.
      * @param  string  $message
      * @return self
      */
-    protected function note($message)
+    protected function note($message): UpdateManager
     {
         if ($this->notesOutput !== null) {
             $this->notesOutput->writeln($message);
@@ -767,15 +774,23 @@ class UpdateManager
     }
 
     /**
-     * Sets an output stream for writing notes.
+     * setNotesOutput sets an output stream for writing notes.
      * @param  Illuminate\Console\Command $output
      * @return self
      */
-    public function setNotesOutput($output)
+    public function setNotesOutput($output): UpdateManager
     {
         $this->notesOutput = $output;
 
         return $this;
+    }
+
+    /**
+     * getNotesOutput returns the note output, used by command line.
+     */
+    public function getNotesOutput()
+    {
+        return $this->notesOutput;
     }
 
     //
@@ -895,11 +910,12 @@ class UpdateManager
     protected function applyHttpAttributes($http, $postData)
     {
         $postData['protocol_version'] = '2.0';
-        $postData['client'] = 'october';
+        $postData['client'] = 'October CMS';
 
         $postData['server'] = base64_encode(json_encode([
-            'php'   => PHP_VERSION,
-            'url'   => Url::to('/'),
+            'php' => PHP_VERSION,
+            'url' => Url::to('/'),
+            'ip' => Request::ip(),
             'since' => PluginVersion::orderBy('created_at')->value('created_at')
         ]));
 

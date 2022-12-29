@@ -5,6 +5,8 @@ use App;
 use View;
 use Event;
 use Config;
+use Schema;
+use System;
 use Backend;
 use BackendMenu;
 use BackendAuth;
@@ -21,11 +23,9 @@ use System\Classes\SettingsManager;
 use System\Twig\Engine as TwigEngine;
 use System\Twig\Loader as TwigLoader;
 use System\Twig\Extension as TwigExtension;
-use System\Twig\SecurityPolicy as TwigSecurityPolicy;
 use Backend\Classes\WidgetManager;
 use October\Rain\Support\ModuleServiceProvider;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\Schema;
 use Twig\Environment as TwigEnvironment;
 use Twig\Extension\SandboxExtension;
 
@@ -36,7 +36,6 @@ class ServiceProvider extends ModuleServiceProvider
 {
     /**
      * register the service provider.
-     * @return void
      */
     public function register()
     {
@@ -48,7 +47,9 @@ class ServiceProvider extends ModuleServiceProvider
         /*
          * Register all plugins
          */
-        PluginManager::instance()->registerAll();
+        if (!$this->app->runningUnitTests()) {
+            PluginManager::instance()->registerAll();
+        }
 
         $this->registerConsole();
         $this->registerErrorHandler();
@@ -82,7 +83,6 @@ class ServiceProvider extends ModuleServiceProvider
 
     /**
      * boot the module events.
-     * @return void
      */
     public function boot()
     {
@@ -96,13 +96,14 @@ class ServiceProvider extends ModuleServiceProvider
             }
         }
 
-        Paginator::useBootstrapThree();
+        // Set pagination views
+        Paginator::defaultSimpleView('system::pagination.default');
         Paginator::defaultSimpleView('system::pagination.simple-default');
 
-        /*
-         * Boot plugins
-         */
-        PluginManager::instance()->bootAll();
+        // Boot plugins
+        if (!$this->app->runningUnitTests()) {
+            PluginManager::instance()->bootAll();
+        }
 
         parent::boot('system');
     }
@@ -140,6 +141,10 @@ class ServiceProvider extends ModuleServiceProvider
 
         App::singleton('backend.auth', function () {
             return \Backend\Classes\AuthManager::instance();
+        });
+
+        App::singleton('backend.ui', function () {
+            return new \Backend\Helpers\BackendUi;
         });
     }
 
@@ -181,10 +186,13 @@ class ServiceProvider extends ModuleServiceProvider
 
             $manager->registerFilters([
                 // Escaped Classes
+                'str_*' => [\Str::class, '*', true],
+                'html_*' => [\Html::class, '*', true],
                 'trans' => [\Lang::class, 'get', true],
                 'transchoice' => [\Lang::class, 'choice', true],
 
                 // Raw Classes
+                'url_*' => [\Url::class, '*'],
                 'slug' => [\Str::class, 'slug'],
                 'plural' => [\Str::class, 'plural'],
                 'singular' => [\Str::class, 'singular'],
@@ -253,6 +261,10 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function registerErrorHandler()
     {
+        Event::listen('exception.beforeReport', function (&$exception) {
+            $exception = (new ErrorHandler)->beforeReport($exception);
+        });
+
         Event::listen('exception.beforeRender', function ($exception, $httpCode, $request) {
             return (new ErrorHandler)->handleException($exception);
         });
@@ -281,7 +293,26 @@ class ServiceProvider extends ModuleServiceProvider
         App::singleton('twig.environment', function ($app) {
             $twig = new TwigEnvironment(new TwigLoader, ['auto_reload' => true]);
             $twig->addExtension(new TwigExtension);
-            $twig->addExtension(new SandboxExtension(new TwigSecurityPolicy, true));
+
+            // @deprecated use code below in v3
+            if (env('CMS_SECURITY_POLICY_V2', false)) {
+                $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicy, true));
+            }
+            else {
+                $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicyLegacy, true));
+            }
+
+            // @deprecated always use the main policy here
+            // if (env('CMS_SECURITY_POLICY_V1', false)) {
+            //     $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicyLegacy, true));
+            // }
+            // else {
+            //     $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicy, true));
+            // }
+
+            // Desired logic
+            // $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicy, true));
+
             return $twig;
         });
 
@@ -291,7 +322,26 @@ class ServiceProvider extends ModuleServiceProvider
         App::singleton('twig.environment.mailer', function ($app) {
             $twig = new TwigEnvironment(new TwigLoader, ['auto_reload' => true]);
             $twig->addExtension(new TwigExtension);
-            $twig->addExtension(new SandboxExtension(new TwigSecurityPolicy, true));
+
+            // @deprecated use code below in v3
+            if (env('CMS_SECURITY_POLICY_V2', false)) {
+                $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicy, true));
+            }
+            else {
+                $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicyLegacy, true));
+            }
+
+            // @deprecated always use the main policy here
+            // if (env('CMS_SECURITY_POLICY_V1', false)) {
+            //     $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicyLegacy, true));
+            // }
+            // else {
+            //     $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicy, true));
+            // }
+
+            // Desired logic
+            // $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicy, true));
+
             $twig->addTokenParser(new \System\Twig\MailPartialTokenParser);
             return $twig;
         });

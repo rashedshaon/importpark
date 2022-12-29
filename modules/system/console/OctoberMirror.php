@@ -126,16 +126,16 @@ class OctoberMirror extends Command
          */
         Event::fire('system.console.mirror.extendPaths', [$paths]);
 
-        foreach ($paths->files as $file) {
-            $this->mirrorFile($file);
-        }
-
         foreach ($paths->directories as $directory) {
             $this->mirrorDirectory($directory);
         }
 
         foreach ($paths->wildcards as $wildcard) {
             $this->mirrorWildcard($wildcard);
+        }
+
+        foreach ($paths->files as $file) {
+            $this->mirrorFile($file);
         }
     }
 

@@ -3,6 +3,7 @@
 use Lang;
 use Model;
 use Event;
+use October\Rain\Html\Helper as HtmlHelper;
 use Cms\Classes\Theme as CmsTheme;
 use System\Classes\CombineAssets;
 use System\Models\File;
@@ -79,7 +80,7 @@ class ThemeData extends Model
     }
 
     /**
-     * afterSave clear asset cache after saving to ensure `assetVar` form fields take
+     * afterSave clears asset cache after saving to ensure `assetVar` form fields take
      * immediate effect.
      */
     public function afterSave()
@@ -109,44 +110,34 @@ class ThemeData extends Model
             $themeData = static::createThemeDataModel(['theme' => $dirName]);
         }
 
+        $themeData->initFormFields();
+
         return self::$instances[$dirName] = $themeData;
     }
 
     /**
-     * After fetching the model, intiialize model relationships based
-     * on form field definitions.
-     * @return void
+     * afterFetch the model, intiialize model relationships based on form field definitions.
      */
     public function afterFetch()
     {
+        $this->initFormFields();
+
+        // Fill this model with the jsonable attributes kept in 'data' and
+        // purge the relations that don't need to exist as local attributes
         $data = (array) $this->data + $this->getDefaultValues();
 
-        /*
-         * Repeater form fields store arrays and must be jsonable.
-         */
+        $toPurge = ['fileupload'];
         foreach ($this->getFormFields() as $id => $field) {
-            if (!isset($field['type'])) {
-                continue;
-            }
-
-            if (in_array($field['type'], ['repeater', 'nestedform'])) {
-                $this->jsonable[] = $id;
-            }
-            elseif ($field['type'] === 'fileupload') {
-                $this->attachOne[$id] = File::class;
+            if (isset($field['type']) && in_array($field['type'], $toPurge)) {
                 unset($data[$id]);
             }
         }
 
-        /*
-         * Fill this model with the jsonable attributes kept in 'data'.
-         */
         $this->setRawAttributes((array) $this->getAttributes() + $data, true);
     }
 
     /**
-     * Before model is validated, set the default values.
-     * @return void
+     * beforeValidate set the default values.
      */
     public function beforeValidate()
     {
@@ -156,14 +147,37 @@ class ThemeData extends Model
     }
 
     /**
-     * Creates relationships for this model based on form field definitions.
+     * initFormFields sets relations and others based on field definitions.
      */
     public function initFormFields()
     {
+        foreach ($this->getFormFields() as $id => $field) {
+            if (strpos($id, '[') !== false) {
+                $idSeg = HtmlHelper::nameToArray($id)[0];
+                if (!$this->isJsonable($idSeg)) {
+                    $this->addJsonable($idSeg);
+                }
+
+                continue;
+            }
+
+            if (!isset($field['type'])) {
+                continue;
+            }
+
+            if (in_array($field['type'], ['repeater', 'nestedform'])) {
+                if (!$this->isJsonable($id)) {
+                    $this->addJsonable($id);
+                }
+            }
+            elseif ($field['type'] === 'fileupload') {
+                $this->attachOne[$id] = File::class;
+            }
+        }
     }
 
     /**
-     * Sets default values on this model based on form field definitions.
+     * setDefaultValues on this model based on form field definitions.
      */
     public function setDefaultValues()
     {
@@ -173,7 +187,7 @@ class ThemeData extends Model
     }
 
     /**
-     * Gets default values for this model based on form field definitions.
+     * getDefaultValues for this model based on form field definitions.
      * @return array
      */
     public function getDefaultValues()
@@ -192,7 +206,7 @@ class ThemeData extends Model
     }
 
     /**
-     * Returns all fields defined for this model, based on form field definitions.
+     * getFormFields defined for this model, based on form field definitions.
      * @return array
      */
     public function getFormFields()
@@ -209,7 +223,7 @@ class ThemeData extends Model
     }
 
     /**
-     * Returns variables that should be passed to the asset combiner.
+     * getAssetVariables returns variables that should be passed to the asset combiner.
      * @return array
      */
     public function getAssetVariables()

@@ -47,9 +47,10 @@
         <?php
             $isActive = $tabs->isPaneActive($index, $name);
             $isLazy = !$isActive && $tabs->isLazy($name);
+            $isAdaptive = $tabs->isAdaptive($name);
         ?>
             <div
-                class="tab-pane <?= $isLazy ? 'is-lazy' : '' ?> <?= e($tabs->getPaneCssClass($index, $name)) ?> <?= $isActive ? 'active' : '' ?> <?= $paneCss ?>"
+                class="tab-pane <?= $isLazy ? 'is-lazy' : '' ?> <?= $isAdaptive ? 'is-adaptive' : '' ?> <?= e($tabs->getPaneCssClass($index, $name)) ?> <?= $isActive ? 'active' : '' ?> <?= $paneCss ?>"
                 id="<?= $type . 'tab-' . $index ?>">
                 <?php if ($isLazy): ?>
                     <?= $this->makePartial('form_fields_lazy', ['fields' => $fields]) ?>

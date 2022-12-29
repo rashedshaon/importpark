@@ -263,7 +263,7 @@ class Themes extends Controller
         $widgetConfig->model->theme = $theme;
         $widgetConfig->arrayName = 'ThemeExport';
 
-        return $this->makeWidget('Backend\Widgets\Form', $widgetConfig);
+        return $this->makeWidget(\Backend\Widgets\Form::class, $widgetConfig);
     }
 
     //
@@ -307,7 +307,7 @@ class Themes extends Controller
         $widgetConfig->model->theme = $theme;
         $widgetConfig->arrayName = 'ThemeImport';
 
-        return $this->makeWidget('Backend\Widgets\Form', $widgetConfig);
+        return $this->makeWidget(\Backend\Widgets\Form::class, $widgetConfig);
     }
 
     //

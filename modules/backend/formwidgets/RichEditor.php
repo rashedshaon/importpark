@@ -42,6 +42,28 @@ class RichEditor extends FormWidgetBase
      */
     public $legacyMode = false;
 
+    /**
+     * @var bool Makes the field resizable.
+     * Only works in Vue applications and form document layouts.
+     */
+    public $resizable = false;
+
+    /**
+     * @var string Defines a mount point for the editor toolbar.
+     * Must include a module name that exports the Vue application and a state element name.
+     * Format: module.name::stateElementName
+     * Only works in Vue applications and form document layouts.
+     */
+    public $externalToolbarAppState = null;
+
+    /**
+     * @var string Defines an event bus for an external toolbar.
+     * Must include a module name that exports the Vue application and a state element name.
+     * Format: module.name::eventBus
+     * Only works in Vue applications and form document layouts.
+     */
+    public $externalToolbarEventBus = null;
+
     //
     // Object properties
     //
@@ -64,7 +86,10 @@ class RichEditor extends FormWidgetBase
             'fullPage',
             'readOnly',
             'toolbarButtons',
-            'legacyMode'
+            'legacyMode',
+            'resizable',
+            'externalToolbarAppState',
+            'externalToolbarEventBus'
         ]);
 
         if (!$this->legacyMode) {
@@ -92,10 +117,13 @@ class RichEditor extends FormWidgetBase
         $this->vars['stretch'] = $this->formField->stretch;
         $this->vars['size'] = $this->formField->size;
         $this->vars['readOnly'] = $this->readOnly;
+        $this->vars['resizable'] = $this->resizable;
+        $this->vars['externalToolbarAppState'] = $this->externalToolbarAppState;
+        $this->vars['externalToolbarEventBus'] = $this->externalToolbarEventBus;
         $this->vars['name'] = $this->getFieldName();
         $this->vars['value'] = $this->getLoadValue();
         $this->vars['toolbarButtons'] = $this->evalToolbarButtons();
-        $this->vars['useMediaManager'] = BackendAuth::getUser()->hasAccess('media.manage_media');
+        $this->vars['useMediaManager'] = BackendAuth::userHasAccess('media.manage_media');
         $this->vars['legacyMode'] = $this->legacyMode;
 
         $this->vars['globalToolbarButtons'] = EditorSetting::getConfigured('html_toolbar_buttons');

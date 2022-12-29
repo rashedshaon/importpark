@@ -23,7 +23,6 @@ class Category extends Model
     }
 }
 
-
 class CategorySimple extends Category
 {
     use \October\Rain\Database\Traits\SimpleTree;

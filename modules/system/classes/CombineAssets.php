@@ -113,9 +113,10 @@ class CombineAssets
     {
         // Default config
         $this->useCache = Config::get('cms.enable_asset_cache', false);
-        $this->useMinify = Config::get('cms.enable_asset_minify', null);
+        $this->useMinify = Config::get('cms.enable_asset_minify', false);
         $this->useDeepHashing = Config::get('cms.enable_asset_deep_hashing', null);
 
+        // @deprecated
         if ($this->useMinify === null) {
             $this->useMinify = !Config::get('app.debug', false);
         }
@@ -140,7 +141,7 @@ class CombineAssets
         }
 
         // Default Aliases
-        $this->registerAlias('jquery', '~/modules/backend/assets/js/vendor/jquery-and-migrate.min.js');
+        $this->registerAlias('jquery', '~/modules/backend/assets/js/vendor/jquery.min.js');
         $this->registerAlias('framework', '~/modules/system/assets/js/framework.js');
         $this->registerAlias('framework.extras', '~/modules/system/assets/js/framework.extras.js');
         $this->registerAlias('framework.extras.js', '~/modules/system/assets/js/framework.extras.js');

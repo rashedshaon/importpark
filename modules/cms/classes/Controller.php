@@ -22,9 +22,7 @@ use Cms\Twig\Extension as CmsTwigExtension;
 use Cms\Models\MaintenanceSetting;
 use System\Models\RequestLog;
 use System\Helpers\View as ViewHelper;
-use System\Classes\CombineAssets;
 use System\Twig\Extension as SystemTwigExtension;
-use System\Twig\SecurityPolicy;
 use October\Rain\Exception\AjaxException;
 use October\Rain\Exception\ValidationException;
 use October\Rain\Parse\Bracket as TextParser;
@@ -40,6 +38,7 @@ use Illuminate\Http\RedirectResponse;
 class Controller
 {
     use \Cms\Traits\ThemeAssetMaker;
+    use \Cms\Traits\ParsableController;
     use \System\Traits\EventEmitter;
     use \System\Traits\ResponseMaker;
     use \System\Traits\SecurityController;
@@ -122,6 +121,7 @@ class Controller
         }
 
         $this->assetPath = $this->getThemeAssetPath();
+        $this->assetLocalPath = $this->theme->getPath();
         $this->router = new Router($this->theme);
         $this->partialStack = new PartialStack;
         $this->initTwigEnvironment();
@@ -390,6 +390,11 @@ class Controller
             return $cycleResponse;
         }
 
+        /*
+         * Parse dynamic attributes on templates and components
+         */
+        $this->parseAllEnvironmentVars();
+
         /**
          * @event cms.page.beforeRenderPage
          * Fires after AJAX handlers are dealt with and provides an opportunity to modify the page contents
@@ -407,7 +412,7 @@ class Controller
          *     });
          *
          */
-        if ($event = $this->fireSystemEvent('cms.page.beforeRenderPage', [$page])) {
+        if ($event = $this->fireSystemEvent('cms.page.beforeRenderPage', [$this->page])) {
             $this->pageContents = $event;
         }
         else {
@@ -583,11 +588,7 @@ class Controller
     {
         $useCache = Config::get('cms.enable_twig_cache', true);
         $isDebugMode = System::checkDebugMode();
-        // @deprecated 2 lines below
-        $strictVariables = Config::get('cms.enable_twig_strict_variables', false);
-        $strictVariables = Config::get('cms.strict_variables', $strictVariables ?? $isDebugMode);
-        // Use 1 line below when removed
-        // $strictVariables = Config::get('cms.strict_variables', false);
+        $strictVariables = Config::get('cms.strict_variables', false);
         $forceBytecode = Config::get('cms.force_bytecode_invalidation', false);
 
         $options = [
@@ -607,7 +608,26 @@ class Controller
         $twig = new TwigEnvironment($loader, $options);
         $twig->addExtension(new CmsTwigExtension($this));
         $twig->addExtension(new SystemTwigExtension);
-        $twig->addExtension(new SandboxExtension(new SecurityPolicy, true));
+
+        // @deprecated use code below in v3
+        if (System::checkSafeMode()) {
+            if (env('CMS_SECURITY_POLICY_V2', false)) {
+                $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicy, true));
+            }
+            else {
+                $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicyLegacy, true));
+            }
+        }
+
+        // @deprecated use the main policy in safe mode only
+        // if (System::checkSafeMode()) {
+        //     if (env('CMS_SECURITY_POLICY_V1', false)) {
+        //         $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicyLegacy, true));
+        //     }
+        //     else {
+        //         $twig->addExtension(new SandboxExtension(new \System\Twig\SecurityPolicy, true));
+        //     }
+        // }
 
         if ($isDebugMode) {
             $twig->addExtension(new DebugExtension($this));
@@ -917,7 +937,7 @@ class Controller
     //
 
     /**
-     * Renders a requested page.
+     * renderPage renders a requested page.
      * The framework uses this method internally.
      */
     public function renderPage()
@@ -949,8 +969,61 @@ class Controller
     }
 
     /**
-     * Renders a requested partial.
-     * The framework uses this method internally.
+     * loadPartialObject loads a partial for rendering.
+     * @return Partial|false
+     */
+    public function loadPartialObject($name)
+    {
+        // Alias @ symbol for ::
+        if (substr($name, 0, 1) === '@') {
+            $name = '::' . substr($name, 1);
+        }
+
+        // Process Component partial
+        if (strpos($name, '::') !== false) {
+            [$componentAlias, $partialName] = explode('::', $name);
+
+            // Component alias not supplied
+            if (!strlen($componentAlias)) {
+                if ($this->componentContext !== null) {
+                    $componentObj = $this->componentContext;
+                }
+                elseif (($componentObj = $this->findComponentByPartial($partialName)) === null) {
+                    return false;
+                }
+            }
+            // Component alias is supplied
+            elseif (($componentObj = $this->findComponentByName($componentAlias)) === null) {
+                return false;
+            }
+
+            $this->componentContext = $componentObj;
+
+            // Check if the theme has an override
+            $partial = ComponentPartial::loadOverrideCached($this->theme, $componentObj, $partialName);
+
+            // Check the component partial
+            if ($partial === null) {
+                $partial = ComponentPartial::loadCached($componentObj, $partialName);
+            }
+
+            if ($partial === null) {
+                return false;
+            }
+
+            // Set context for self access
+            $this->vars['__SELF__'] = $componentObj;
+        }
+        // Process theme partial
+        elseif (($partial = Partial::loadCached($this->theme, $name)) === null) {
+            return false;
+        }
+
+        return $partial;
+    }
+
+    /**
+     * renderPartial renders a requested partial. The framework uses this method internally.
      * @param string $name The view to load.
      * @param array $parameters Parameter variables to pass to the view.
      * @param bool $throwException Throw an exception if the partial is not found.
@@ -960,13 +1033,6 @@ class Controller
     {
         $vars = $this->vars;
         $this->vars = array_merge($this->vars, $parameters);
-
-        /*
-         * Alias @ symbol for ::
-         */
-        if (substr($name, 0, 1) === '@') {
-            $name = '::' . substr($name, 1);
-        }
 
         /**
          * @event cms.page.beforeRenderPartial
@@ -988,79 +1054,20 @@ class Controller
         if ($event = $this->fireSystemEvent('cms.page.beforeRenderPartial', [$name])) {
             $partial = $event;
         }
-        /*
-         * Process Component partial
-         */
-        elseif (strpos($name, '::') !== false) {
-            [$componentAlias, $partialName] = explode('::', $name);
-
-            /*
-             * Component alias not supplied
-             */
-            if (!strlen($componentAlias)) {
-                if ($this->componentContext !== null) {
-                    $componentObj = $this->componentContext;
-                }
-                elseif (($componentObj = $this->findComponentByPartial($partialName)) === null) {
-                    if ($throwException) {
-                        throw new CmsException(Lang::get('cms::lang.partial.not_found_name', ['name'=>$partialName]));
-                    }
-
-                    return false;
-                }
-            }
-            /*
-             * Component alias is supplied
-             */
-            elseif (($componentObj = $this->findComponentByName($componentAlias)) === null) {
-                if ($throwException) {
-                    throw new CmsException(Lang::get('cms::lang.component.not_found', ['name'=>$componentAlias]));
-                }
-
-                return false;
-            }
-
-            $this->componentContext = $componentObj;
-
-            /*
-             * Check if the theme has an override
-             */
-            $partial = ComponentPartial::loadOverrideCached($this->theme, $componentObj, $partialName);
-
-            /*
-             * Check the component partial
-             */
-            if ($partial === null) {
-                $partial = ComponentPartial::loadCached($componentObj, $partialName);
-            }
-
-            if ($partial === null) {
-                if ($throwException) {
-                    throw new CmsException(Lang::get('cms::lang.partial.not_found_name', ['name'=>$name]));
-                }
-
-                return false;
-            }
-
-            /*
-             * Set context for self access
-             */
-            $this->vars['__SELF__'] = $componentObj;
+        else {
+            $partial = $this->loadPartialObject($name, $throwException);
         }
-        /*
-         * Process theme partial
-         */
-        elseif (($partial = Partial::loadCached($this->theme, $name)) === null) {
+
+        if ($partial === false) {
             if ($throwException) {
                 throw new CmsException(Lang::get('cms::lang.partial.not_found_name', ['name'=>$name]));
             }
-
-            return false;
+            else {
+                return false;
+            }
         }
 
-        /*
-         * Run functions for CMS partials only (Cms\Classes\Partial)
-         */
+        // Run functions for CMS partials only (Cms\Classes\Partial)
         if ($partial instanceof Partial) {
             $this->partialStack->stackPartial();
 
@@ -1070,7 +1077,7 @@ class Controller
                 // Do not inject the viewBag component to the environment.
                 // Not sure if they're needed there by the requirements,
                 // but there were problems with array-typed properties used by Static Pages
-                // snippets and setComponentPropertiesFromParams(). --ab
+                // snippets and parseRouteParamsOnComponent(). --ab
                 if ($component === 'viewBag') {
                     continue;
                 }
@@ -1079,17 +1086,32 @@ class Controller
                     ? explode(' ', $component)
                     : [$component, $component];
 
-                if (!$componentObj = $manager->makeComponent($name, $this->pageObj, $properties)) {
-                    throw new CmsException(Lang::get('cms::lang.component.not_found', ['name'=>$name]));
+                $componentObj = $manager->makeComponent($name, $this->pageObj, $properties);
+
+                if (!$componentObj) {
+                    $strictMode = Config::get('cms.strict_components', false);
+                    if ($strictMode) {
+                        throw new CmsException(Lang::get('cms::lang.component.not_found', ['name' => $name]));
+                    }
+                    else {
+                        $parameters[$alias] = null;
+                    }
                 }
+                else {
+                    $componentObj->alias = $alias;
 
-                $componentObj->alias = $alias;
-                $parameters[$alias] = $partial->components[$alias] = $componentObj;
+                    $partial->components[$alias] = $componentObj;
 
-                $this->partialStack->addComponent($alias, $componentObj);
+                    $parameters[$alias] = $componentObj->makePrimaryAccessor();
 
-                $this->setComponentPropertiesFromParams($componentObj, $parameters);
-                $componentObj->init();
+                    $this->partialStack->addComponent($alias, $componentObj);
+
+                    $this->parseRouteParamsOnComponent($componentObj, $this->router->getParameters());
+
+                    $componentObj->init();
+
+                    $this->parseEnvironmentVarsOnComponent($componentObj, $parameters + $this->vars);
+                }
             }
 
             CmsException::mask($this->page, 300);
@@ -1104,9 +1126,7 @@ class Controller
             CmsException::unmask();
         }
 
-        /*
-         * Render the partial
-         */
+        // Render the partial
         CmsException::mask($partial, 400);
         $this->loader->setObject($partial);
         $template = $this->twig->loadTemplate($partial->getFilePath());
@@ -1144,11 +1164,24 @@ class Controller
     }
 
     /**
-     * Renders a requested content file.
-     * The framework uses this method internally.
+     * loadContentObject loads content for rendering.
+     * @return Content|false
+     */
+    public function loadContentObject($name)
+    {
+        // Load content from theme
+        if (($content = Content::loadCached($this->theme, $name)) === null) {
+            return false;
+        }
+
+        return $content;
+    }
+
+    /**
+     * renderContent renders a requested content file. The framework uses this method internally.
      * @param string $name The content view to load.
      * @param array $parameters Parameter variables to pass to the view.
-     * @return string
+     * @return mixed Contents or false if now throwing an exception.
      */
     public function renderContent($name, $parameters = [], $throwException = true)
     {
@@ -1172,15 +1205,17 @@ class Controller
         if ($event = $this->fireSystemEvent('cms.page.beforeRenderContent', [$name])) {
             $content = $event;
         }
-        /*
-         * Load content from theme
-         */
-        elseif (($content = Content::loadCached($this->theme, $name)) === null) {
+        else {
+            $content = $this->loadContentObject($name);
+        }
+
+        if ($content === false) {
             if ($throwException) {
                 throw new CmsException(Lang::get('cms::lang.content.not_found_name', ['name'=>$name]));
             }
-
-            return false;
+            else {
+                return false;
+            }
         }
 
         $fileContent = $content->parsedMarkup;
@@ -1349,7 +1384,20 @@ class Controller
      */
     public static function pageNotFound()
     {
-        return (self::getController() ?: new self)->run('404');
+        try {
+            $controller = (self::getController() ?: new self);
+
+            $router = $controller->getRouter();
+
+            if (!$router->findByUrl('/404')) {
+                return View::make('cms::404');
+            }
+
+            return $controller->run('/404');
+        }
+        catch (Exception $ex) {
+            return View::make('cms::404');
+        }
     }
 
     /**
@@ -1357,11 +1405,24 @@ class Controller
      */
     public static function pageError()
     {
-        return (self::getController() ?: new self)->run('error');
+        try {
+            $controller = (self::getController() ?: new self);
+
+            $router = $controller->getRouter();
+
+            if (!$router->findByUrl('/error')) {
+                return View::make('cms::error');
+            }
+
+            return $controller->run('/error');
+        }
+        catch (Exception $ex) {
+            return View::make('cms::error');
+        }
     }
 
     /**
-     * Looks up the URL for a supplied page and returns it relative to the website root.
+     * pageUrl looks up the URL for a supplied page and returns it relative to the website root.
      *
      * @param mixed $name Specifies the Cms Page file name.
      * @param array $parameters Route parameters to consider in the URL.
@@ -1397,7 +1458,7 @@ class Controller
     }
 
     /**
-     * Looks up the current page URL with supplied parameters and route persistence.
+     * currentPageUrl looks up the current page URL with supplied parameters and route persistence.
      * @param array $parameters
      * @param bool $routePersistence
      * @return null|string
@@ -1418,10 +1479,7 @@ class Controller
     public function themeUrl($url = null): string
     {
         if (is_array($url)) {
-            return Url::to(CombineAssets::combine(
-                $this->getMultipleThemeAssetPaths($url),
-                $this->getTheme()->getPath()
-            ));
+            return $this->combineAssets($url);
         }
 
         return Url::asset($this->getThemeAssetPath($url));
@@ -1463,14 +1521,7 @@ class Controller
         }
 
         if (!$componentObj) {
-            // @deprecated 4 lines below
-            // v2.1 still uses strict mode by default, remove if version >= 2.2
-            $strictMode = Config::get('cms.strict_components', null);
-            if ($strictMode === null) {
-                $strictMode = true;
-            }
-            // Use 1 line below when removed
-            // $strictMode = Config::get('cms.strict_components', false);
+            $strictMode = Config::get('cms.strict_components', false);
             if ($strictMode) {
                 throw new CmsException(Lang::get('cms::lang.component.not_found', ['name' => $name]));
             }
@@ -1488,9 +1539,9 @@ class Controller
             $this->page->components[$alias] = $componentObj;
         }
 
-        $this->vars[$alias] = $componentObj;
+        $this->vars[$alias] = $componentObj->makePrimaryAccessor();
 
-        $this->setComponentPropertiesFromParams($componentObj);
+        $this->parseRouteParamsOnComponent($componentObj, $this->router->getParameters());
 
         $componentObj->init();
 
@@ -1573,43 +1624,5 @@ class Controller
     public function setComponentContext(ComponentBase $component = null)
     {
         $this->componentContext = $component;
-    }
-
-    /**
-     * setComponentPropertiesFromParams from routers and partial parameters.
-     * The property values should be defined as {{ param }}.
-     * @param ComponentBase $component The component object.
-     * @param array $parameters Specifies the partial parameters.
-     */
-    protected function setComponentPropertiesFromParams($component, $parameters = [])
-    {
-        if ($component instanceof \Cms\Components\ViewBag) {
-            return;
-        }
-
-        $properties = $component->getProperties();
-        $routerParameters = $this->router->getParameters();
-
-        foreach ($properties as $propertyName => $propertyValue) {
-            if (is_array($propertyValue)) {
-                continue;
-            }
-
-            $matches = [];
-            if (preg_match('/^\{\{([^\}]+)\}\}$/', $propertyValue, $matches)) {
-                $paramName = trim($matches[1]);
-
-                if (substr($paramName, 0, 1) === ':') {
-                    $routeParamName = substr($paramName, 1);
-                    $newPropertyValue = $routerParameters[$routeParamName] ?? null;
-                }
-                else {
-                    $newPropertyValue = $parameters[$paramName] ?? null;
-                }
-
-                $component->setProperty($propertyName, $newPropertyValue);
-                $component->setExternalPropertyName($propertyName, $paramName);
-            }
-        }
     }
 }

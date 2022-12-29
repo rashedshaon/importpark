@@ -13,7 +13,7 @@ use October\Rain\Auth\Models\Preferences as PreferencesBase;
 class UserPreference extends PreferencesBase
 {
     /**
-     * @var string table used by the model
+     * @var string table associated with the model
      */
     protected $table = 'backend_user_preferences';
 

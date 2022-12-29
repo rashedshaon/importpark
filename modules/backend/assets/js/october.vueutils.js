@@ -172,7 +172,7 @@
             }
         };
 
-        this.stringFuzzySearch = function(query, str) {
+        this.stringFuzzySearch = function (query, str) {
             var queryArray = query.split(' '),
                 wordsFound = 0;
 
@@ -183,7 +183,17 @@
             }
 
             return wordsFound == queryArray.length;
-        }
+        };
+
+        this.getRelativeOffset = function (element1, element2) {
+            var offset1 = $(element1).offset(),
+                offset2 = $(element2).offset();
+
+            return {
+                left: offset1.left - offset2.left,
+                top: offset1.top - offset2.top
+            }
+        };
     };
 
     $.oc.vueUtils = new VueUtils();

@@ -9,6 +9,7 @@ use Exception;
 /**
  * Components builds a collection of Cms components and configures them
  *
+ * @deprecated No longer used by the system
  * @package october\cms
  * @author Alexey Bobkov, Samuel Georges
  */
@@ -24,6 +25,9 @@ class Components extends FormWidgetBase
         return $this->makePartial('formcomponents', ['components' => $components]);
     }
 
+    /**
+     * listComponents
+     */
     protected function listComponents()
     {
         $result = [];
@@ -40,20 +44,8 @@ class Components extends FormWidgetBase
 
             try {
                 $componentObj = $manager->makeComponent($name, null, $properties);
-
                 $componentObj->alias = $alias;
-                $componentObj->pluginIcon = 'icon-puzzle-piece';
-
-                /*
-                 * Look up the plugin hosting this component
-                 */
-                $plugin = $manager->findComponentPlugin($componentObj);
-                if ($plugin) {
-                    $pluginDetails = $plugin->pluginDetails();
-                    if (isset($pluginDetails['icon'])) {
-                        $componentObj->pluginIcon = $pluginDetails['icon'];
-                    }
-                }
+                $componentObj->pluginIcon = $manager->findComponentOwnerDetails($componentObj)['icon'] ?? 'icon-puzzle-piece';
             }
             catch (Exception $ex) {
                 $componentObj = new UnknownComponent(null, $properties, $ex->getMessage());
@@ -63,25 +55,37 @@ class Components extends FormWidgetBase
 
             $result[] = $componentObj;
         }
-trace_log($result);
+
         return $result;
     }
 
+    /**
+     * getComponentName
+     */
     protected function getComponentName($component)
     {
         return ComponentHelpers::getComponentName($component);
     }
 
+    /**
+     * getComponentDescription
+     */
     protected function getComponentDescription($component)
     {
         return ComponentHelpers::getComponentDescription($component);
     }
 
+    /**
+     * getComponentsPropertyConfig
+     */
     protected function getComponentsPropertyConfig($component)
     {
         return ComponentHelpers::getComponentsPropertyConfig($component);
     }
 
+    /**
+     * getComponentPropertyValues
+     */
     protected function getComponentPropertyValues($component)
     {
         return ComponentHelpers::getComponentPropertyValues($component);

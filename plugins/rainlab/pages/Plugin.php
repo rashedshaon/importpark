@@ -16,21 +16,21 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'        => 'rainlab.pages::lang.plugin.name',
+            'name' => 'rainlab.pages::lang.plugin.name',
             'description' => 'rainlab.pages::lang.plugin.description',
-            'author'      => 'Alexey Bobkov, Samuel Georges',
-            'icon'        => 'icon-files-o',
-            'homepage'    => 'https://github.com/rainlab/pages-plugin'
+            'author' => 'Alexey Bobkov, Samuel Georges',
+            'icon' => 'icon-files-o',
+            'homepage' => 'https://github.com/rainlab/pages-plugin'
         ];
     }
 
     public function registerComponents()
     {
         return [
-            '\RainLab\Pages\Components\ChildPages' => 'childPages',
-            '\RainLab\Pages\Components\StaticPage' => 'staticPage',
-            '\RainLab\Pages\Components\StaticMenu' => 'staticMenu',
-            '\RainLab\Pages\Components\StaticBreadcrumbs' => 'staticBreadcrumbs'
+            \RainLab\Pages\Components\ChildPages::class => 'childPages',
+            \RainLab\Pages\Components\StaticPage::class => 'staticPage',
+            \RainLab\Pages\Components\StaticMenu::class => 'staticMenu',
+            \RainLab\Pages\Components\StaticBreadcrumbs::class => 'staticBreadcrumbs'
         ];
     }
 
@@ -70,6 +70,7 @@ class Plugin extends PluginBase
                 'iconSvg'     => 'plugins/rainlab/pages/assets/images/pages-icon.svg',
                 'permissions' => ['rainlab.pages.*'],
                 'order'       => 200,
+                'useDropdown' => false,
 
                 'sideMenu' => [
                     'pages' => [
@@ -153,14 +154,14 @@ class Plugin extends PluginBase
             }
         });
 
-        Event::listen('pages.menuitem.listTypes', function() {
+        Event::listen(['cms.pageLookup.listTypes', 'pages.menuitem.listTypes'], function() {
             return [
                 'static-page'      => 'rainlab.pages::lang.menuitem.static_page',
                 'all-static-pages' => 'rainlab.pages::lang.menuitem.all_static_pages'
             ];
         });
 
-        Event::listen('pages.menuitem.getTypeInfo', function($type) {
+        Event::listen(['cms.pageLookup.getTypeInfo', 'pages.menuitem.getTypeInfo'], function($type) {
             if ($type == 'url') {
                 return [];
             }
@@ -170,7 +171,7 @@ class Plugin extends PluginBase
             }
         });
 
-        Event::listen('pages.menuitem.resolveItem', function($type, $item, $url, $theme) {
+        Event::listen(['cms.pageLookup.resolveItem', 'pages.menuitem.resolveItem'], function($type, $item, $url, $theme) {
             if ($type == 'static-page' || $type == 'all-static-pages') {
                 return StaticPage::resolveMenuItem($item, $url, $theme);
             }
@@ -234,7 +235,7 @@ class Plugin extends PluginBase
     {
         return [
             'filters' => [
-                'staticPage' => ['RainLab\Pages\Classes\Page', 'url']
+                'staticPage' => [\RainLab\Pages\Classes\Page::class, 'url']
             ]
         ];
     }

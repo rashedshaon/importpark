@@ -6,7 +6,7 @@ use Yaml;
 use File;
 use System;
 use Cms\Classes\Theme as CmsTheme;
-use October\Rain\Process\Composer as ComposerProcess;
+use October\Rain\Process\ComposerPhp;
 use ApplicationException;
 use Exception;
 
@@ -408,7 +408,7 @@ class ThemeManager
      */
     public function findLockableThemes(): array
     {
-        $packages = (new ComposerProcess)->listPackages();
+        $packages = (new ComposerPhp)->listAllPackages();
 
         $themes = [];
 

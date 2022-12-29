@@ -1,15 +1,13 @@
 <?php namespace System\Classes;
 
-use Log;
 use View;
 use Lang;
 use System;
-use Cms\Classes\Theme;
-use Cms\Classes\Router;
 use Cms\Classes\Controller as CmsController;
 use October\Rain\Exception\ErrorHandler as ErrorHandlerBase;
 use October\Rain\Exception\ApplicationException;
-use October\Rain\Exception\SystemException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Exception;
 
 /**
  * ErrorHandler handles application exception events
@@ -22,29 +20,17 @@ class ErrorHandler extends ErrorHandlerBase
     /**
      * @inheritDoc
      */
-    // public function handleException(\Exception $proposedException)
-    // {
-    //     // The Twig runtime error is not very useful
-    //     if (
-    //         $proposedException instanceof \Twig\Error\RuntimeError &&
-    //         ($previousException = $proposedException->getPrevious()) &&
-    //         (!$previousException instanceof \Cms\Classes\CmsException)
-    //     ) {
-    //         $proposedException = $previousException;
-    //     }
-    //     return parent::handleException($proposedException);
-    // }
+    public function handleException(Exception $proposedException)
+    {
+        return parent::handleException($this->prepareException($proposedException));
+    }
 
     /**
-     * beforeHandleError happens when we are about to display an error page to the user,
-     * if it is an SystemException, this event should be logged.
-     * @return void
+     * beforeReport Twig errors masking Http exceptions
      */
-    public function beforeHandleError($exception)
+    public function beforeReport($exception)
     {
-        if ($exception instanceof SystemException) {
-            Log::error($exception);
-        }
+        return $this->prepareException($exception);
     }
 
     /**
@@ -58,23 +44,33 @@ class ErrorHandler extends ErrorHandlerBase
             return null;
         }
 
-        if (
-            System::hasModule('Cms') &&
-            ($theme = Theme::getActiveTheme())
-        ) {
-            $router = new Router($theme);
-
-            // Use the default view if no "/error" URL is found.
-            if (!$router->findByUrl('/error')) {
-                return View::make('cms::error');
-            }
-
-            // Route to the CMS error page.
-            $controller = new CmsController($theme);
-            $result = $controller->run('/error');
+        if (System::hasModule('Cms')) {
+            $result = CmsController::pageError();
         }
         else {
             $result = View::make('system::error');
+        }
+
+        // Extract content from response object
+        if ($result instanceof \Symfony\Component\HttpFoundation\Response) {
+            $result = $result->getContent();
+        }
+
+        return $result;
+    }
+
+    /**
+     * handleCustomNotFound checks if using a custom 404 page, if so return the contents.
+     * Return NULL if a custom 404 is not set up.
+     * @return mixed 404 page contents.
+     */
+    public function handleCustomNotFound()
+    {
+        if (System::hasModule('Cms')) {
+            $result = CmsController::pageNotFound();
+        }
+        else {
+            $result = View::make('system::404');
         }
 
         // Extract content from response object
@@ -114,11 +110,43 @@ class ErrorHandler extends ErrorHandlerBase
             return parent::getDetailedMessage($exception);
         }
 
-        // Prevent database exceptions from leaking
-        if ($exception instanceof \Illuminate\Database\QueryException) {
+        // Prevent PHP and database exceptions from leaking
+        if (
+            $exception instanceof \Illuminate\Database\QueryException ||
+            $exception instanceof \ErrorException
+        ) {
             return Lang::get('system::lang.page.custom_error.help');
         }
 
         return $exception->getMessage();
+    }
+
+    /**
+     * prepareException
+     */
+    protected function prepareException(Exception $exception)
+    {
+        if (
+            $exception instanceof \Twig\Error\RuntimeError &&
+            ($previousException = $exception->getPrevious())
+        ) {
+            // The Twig runtime error is not very useful sometimes, so
+            // uncomment this for an alternative debugging option
+            // if (!$previousException instanceof \Cms\Classes\CmsException) {
+            //     $exception = $previousException;
+            // }
+
+            // Convert HTTP exceptions
+            if ($previousException instanceof HttpException) {
+                $exception = $previousException;
+            }
+
+            // Convert Not Found exceptions
+            if ($this->isNotFoundException($previousException)) {
+                $exception = $previousException;
+            }
+        }
+
+        return $exception;
     }
 }

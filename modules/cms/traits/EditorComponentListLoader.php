@@ -1,10 +1,10 @@
 <?php namespace Cms\Traits;
 
-use Exception;
 use Cms\Classes\ComponentManager;
 use Cms\Classes\ComponentHelpers;
 use Cms\Classes\CmsCompoundObject;
 use Cms\Components\ViewBag;
+use Exception;
 
 /**
  * EditorComponentListLoader loads components the CMS Editor Extension
@@ -14,6 +14,9 @@ use Cms\Components\ViewBag;
  */
 trait EditorComponentListLoader
 {
+    /**
+     * loadTemplateComponents
+     */
     private function loadTemplateComponents(CmsCompoundObject $template)
     {
         $manager = ComponentManager::instance();
@@ -68,19 +71,17 @@ trait EditorComponentListLoader
         return $this->makeTemplateComponent($manager, 'viewBag', [], 'viewBag');;
     }
 
+    /**
+     * getComponentPluginIcon
+     */
     private function getComponentPluginIcon($manager, $componentObj)
     {
-        $plugin = $manager->findComponentPlugin($componentObj);
-        if ($plugin) {
-            $pluginDetails = $plugin->pluginDetails();
-            if (isset($pluginDetails['icon'])) {
-                return $pluginDetails['icon'];
-            }
-        }
-
-        return 'icon-puzzle-piece';
+        return $manager->findComponentOwnerDetails($componentObj)['icon'] ?? 'icon-puzzle-piece';
     }
 
+    /**
+     * makePropertiesForUnknownComponent
+     */
     private function makePropertiesForUnknownComponent($properties, $alias)
     {
         $properties['oc.alias'] = $alias;
@@ -88,9 +89,16 @@ trait EditorComponentListLoader
         return $properties;
     }
 
+    /**
+     * makeTemplateComponent
+     */
     private function makeTemplateComponent($manager, $name, $properties, $alias)
     {
         $componentObj = $manager->makeComponent($name, null, $properties);
+        if (!$componentObj) {
+            throw new Exception('Component not found');
+        }
+
         $componentObj->alias = $alias;
 
         $propertyConfig = ComponentHelpers::getComponentsPropertyConfig($componentObj, true, true);
@@ -100,7 +108,7 @@ trait EditorComponentListLoader
         $propertyValues = json_encode($propertyValues, JSON_UNESCAPED_SLASHES);
 
         return [
-            'title' =>  ComponentHelpers::getComponentName($componentObj),
+            'title' => ComponentHelpers::getComponentName($componentObj),
             'alias' => $alias,
             'icon' => $this->getComponentPluginIcon($manager, $componentObj),
             'description' => ComponentHelpers::getComponentDescription($componentObj),

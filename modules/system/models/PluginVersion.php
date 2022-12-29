@@ -21,7 +21,7 @@ class PluginVersion extends Model
     protected $guarded = ['*'];
 
     /**
-     * @var bool Disable model timestamps.
+     * @var bool timestamps enabled
      */
     public $timestamps = false;
 

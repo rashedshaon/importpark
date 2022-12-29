@@ -35,7 +35,7 @@ class ThemeTest extends TestCase
     {
         $theme = Theme::load('test');
 
-        $this->assertEquals(base_path('modules/system/tests/fixtures/themes/test'), $theme->getPath());
+        $this->assertEquals(base_path('modules/cms/tests/fixtures/themes/test'), $theme->getPath());
     }
 
     public function testListPages()
@@ -46,12 +46,12 @@ class ThemeTest extends TestCase
         $pages = array_values($pageCollection->all());
         $this->assertIsArray($pages);
 
-        $expectedPageNum = $this->countThemePages(base_path().'/modules/system/tests/fixtures/themes/test/pages');
+        $expectedPageNum = $this->countThemePages(base_path().'/modules/cms/tests/fixtures/themes/test/pages');
         $this->assertCount($expectedPageNum, $pages);
 
-        $this->assertInstanceOf('\Cms\Classes\Page', $pages[0]);
+        $this->assertInstanceOf(\Cms\Classes\Page::class, $pages[0]);
         $this->assertNotEmpty($pages[0]->url);
-        $this->assertInstanceOf('\Cms\Classes\Page', $pages[1]);
+        $this->assertInstanceOf(\Cms\Classes\Page::class, $pages[1]);
         $this->assertNotEmpty($pages[1]->url);
     }
 

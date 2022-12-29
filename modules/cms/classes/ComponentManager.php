@@ -1,13 +1,13 @@
 <?php namespace Cms\Classes;
 
+use App;
 use Str;
 use Config;
 use System\Classes\PluginManager;
 use SystemException;
-use Illuminate\Support\Facades\App;
 
 /**
- * Component manager
+ * ComponentManager
  *
  * @method static ComponentManager instance()
  *
@@ -19,46 +19,47 @@ class ComponentManager
     use \October\Rain\Support\Traits\Singleton;
 
     /**
-     * @var array Cache of registration callbacks.
+     * @var array callbacks for registration.
      */
     protected $callbacks = [];
 
     /**
-     * @var array An array where keys are codes and values are class names.
+     * @var array codeMap where keys are codes and values are class names.
      */
     protected $codeMap;
 
     /**
-     * @var array An array where keys are class names and values are codes.
+     * @var array classMap where keys are class names and values are codes.
      */
     protected $classMap;
 
     /**
-     * @var array An array containing references to a corresponding plugin for each component class.
+     * @var array ownerDetailsMap with owner information about a component.
      */
-    protected $pluginMap;
+    protected $ownerDetailsMap;
 
     /**
-     * @var array A cached array of component details.
+     * @var array ownerMap where keys are class name and values are owner class.
+     */
+    protected $ownerMap;
+
+    /**
+     * @var array detailsCache array of component details.
      */
     protected $detailsCache;
 
     /**
-     * Scans each plugin an loads it's components.
+     * loadComponents scans each plugin an loads it's components.
      * @return void
      */
     protected function loadComponents()
     {
-        /*
-         * Load module components
-         */
+        // Load module components
         foreach ($this->callbacks as $callback) {
             $callback($this);
         }
 
-        /*
-         * Load plugin components
-         */
+        // Load plugin components
         $pluginManager = PluginManager::instance();
         $plugins = $pluginManager->getPlugins();
 
@@ -75,13 +76,12 @@ class ComponentManager
     }
 
     /**
-     * Manually registers a component for consideration. Usage:
+     * registerComponents manually registers a component for consideration. Usage:
      *
      *     ComponentManager::registerComponents(function ($manager) {
-     *         $manager->registerComponent('October\Demo\Components\Test', 'testComponent');
+     *         $manager->registerComponent(\October\Demo\Components\Test::class, 'testComponent');
      *     });
      *
-     * @param callable $definitions
      * @return array Array values are class names.
      */
     public function registerComponents(callable $definitions)
@@ -90,9 +90,9 @@ class ComponentManager
     }
 
     /**
-     * Registers a single component.
+     * registerComponent registers a single component.
      */
-    public function registerComponent($className, $code = null, $plugin = null)
+    public function registerComponent($className, $code = null, $owner = null)
     {
         if (!$this->classMap) {
             $this->classMap = [];
@@ -106,7 +106,7 @@ class ComponentManager
             $code = Str::getClassId($className);
         }
 
-        if ($code === 'viewBag' && $className !== 'Cms\Components\ViewBag') {
+        if ($code === 'viewBag' && $className !== \Cms\Components\ViewBag::class) {
             throw new SystemException(sprintf(
                 'The component code viewBag is reserved. Please use another code for the component class %s.',
                 $className
@@ -114,15 +114,63 @@ class ComponentManager
         }
 
         $className = Str::normalizeClassName($className);
+
         $this->codeMap[$code] = $className;
+
         $this->classMap[$className] = $code;
-        if ($plugin !== null) {
-            $this->pluginMap[$className] = $plugin;
+
+        if ($owner !== null) {
+            if ($owner instanceof \System\Classes\PluginBase) {
+                $this->setComponentOwnerAsPlugin($code, $className, $owner);
+            }
+            else {
+                $this->setComponentOwnerAsModule($code, $className, $owner);
+            }
         }
     }
 
     /**
-     * Returns a list of registered components.
+     * setComponentOwnerAsPlugin
+     */
+    protected function setComponentOwnerAsPlugin(string $code, string $className, $pluginObj): void
+    {
+        $ownerClass = get_class($pluginObj);
+
+        if (!isset($this->ownerDetailsMap[$ownerClass])) {
+            $this->ownerDetailsMap[$ownerClass] = [
+                'details' => $pluginObj->pluginDetails(),
+                'components' => []
+            ];
+        }
+
+        $this->ownerMap[$className] = $ownerClass;
+        $this->ownerDetailsMap[$ownerClass]['components'][$code] = $className;
+    }
+
+    /**
+     * setComponentOwnerAsModule
+     */
+    protected function setComponentOwnerAsModule(string $code, string $className, $moduleObj): void
+    {
+        $ownerClass = get_class($moduleObj);
+
+        if (!isset($this->ownerDetailsMap[$ownerClass])) {
+            $moduleName = substr($ownerClass, 0, strrpos($ownerClass, '\\'));
+            $this->ownerDetailsMap[$ownerClass] = [
+                'details' => [
+                    'name' => class_basename($moduleName),
+                    'icon' => 'icon-puzzle-piece'
+                ],
+                'components' => []
+            ];
+        }
+
+        $this->ownerMap[$className] = $ownerClass;
+        $this->ownerDetailsMap[$ownerClass]['components'][$code] = $className;
+    }
+
+    /**
+     * listComponents returns a list of registered components.
      * @return array Array keys are codes, values are class names.
      */
     public function listComponents()
@@ -135,7 +183,7 @@ class ComponentManager
     }
 
     /**
-     * Returns an array of all component detail definitions.
+     * listComponentDetails returns an array of all component detail definitions.
      * @return array Array keys are component codes, values are the details defined in the component.
      */
     public function listComponentDetails()
@@ -153,7 +201,29 @@ class ComponentManager
     }
 
     /**
-     * Returns a class name from a component code
+     * listComponentOwnerDetails returns the components grouped by owner and injects the owner details.
+     */
+    public function listComponentOwnerDetails()
+    {
+        $details = $this->listComponentDetails();
+        if (!$this->ownerDetailsMap) {
+            return [];
+        }
+
+        $owners = $this->ownerDetailsMap;
+        foreach ($this->ownerDetailsMap as $ownerClass => $ownerArr) {
+            $components = $ownerArr['components'] ?? [];
+            foreach ($components as $code => $className) {
+                $detailsArr = $details[$code] ?? [];
+                $owners[$ownerClass]['components'][$code] = ['className' => $className] + $detailsArr;
+            }
+        }
+
+        return $owners;
+    }
+
+    /**
+     * resolve returns a class name from a component code
      * Normalizes a class name or converts an code to it's class name.
      * @return string The class name resolved, or null.
      */
@@ -174,7 +244,7 @@ class ComponentManager
     }
 
     /**
-     * Checks to see if a component has been registered.
+     * hasComponent checks to see if a component has been registered.
      * @param string $name A component class name or code.
      * @return bool Returns true if the component is registered, otherwise false.
      */
@@ -189,7 +259,7 @@ class ComponentManager
     }
 
     /**
-     * Makes a component object with properties set.
+     * makeComponent object with properties set.
      * @param string $name A component class name or code.
      * @param CmsObject $cmsObject The Cms object that spawned this component.
      * @param array $properties The properties set by the Page or Layout.
@@ -199,14 +269,7 @@ class ComponentManager
     {
         $className = $this->resolve($name);
         if (!$className) {
-            // @deprecated 4 lines below
-            // v2.1 still uses strict mode by default, remove if version >= 2.2
-            $strictMode = Config::get('cms.strict_components', null);
-            if ($strictMode === null) {
-                $strictMode = true;
-            }
-            // Use 1 line below when removed
-            // $strictMode = Config::get('cms.strict_components', false);
+            $strictMode = Config::get('cms.strict_components', false);
             if ($strictMode) {
                 throw new SystemException(sprintf(
                     'Class name is not registered for the component "%s". Check the component plugin.',
@@ -232,15 +295,31 @@ class ComponentManager
     }
 
     /**
-     * Returns a parent plugin for a specific component object.
+     * findComponentOwnerDetails returns details about the component owner as an array.
+     */
+    public function findComponentOwnerDetails($component): array
+    {
+        $className = Str::normalizeClassName(get_class($component));
+
+        if (isset($this->ownerMap[$className])) {
+            $ownerClass = $this->ownerMap[$className];
+            return $this->ownerDetailsMap[$ownerClass]['details'] ?? [];
+        }
+
+        return [];
+    }
+
+    /**
+     * findComponentPlugin returns a parent plugin for a specific component object.
      * @param mixed $component A component to find the plugin for.
      * @return mixed Returns the plugin object or null.
+     * @deprecated use findComponentOwnerDetails instead
      */
     public function findComponentPlugin($component)
     {
         $className = Str::normalizeClassName(get_class($component));
-        if (isset($this->pluginMap[$className])) {
-            return $this->pluginMap[$className];
+        if (isset($this->ownerMap[$className])) {
+            return PluginManager::instance()->findByNamespace($this->ownerMap[$className]);
         }
 
         return null;

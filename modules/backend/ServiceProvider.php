@@ -18,9 +18,7 @@ use October\Rain\Support\ModuleServiceProvider;
 class ServiceProvider extends ModuleServiceProvider
 {
     /**
-     * Register the service provider.
-     *
-     * @return void
+     * register the service provider.
      */
     public function register()
     {
@@ -42,9 +40,7 @@ class ServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * Bootstrap the module events.
-     *
-     * @return void
+     * boot the module events.
      */
     public function boot()
     {
@@ -58,7 +54,7 @@ class ServiceProvider extends ModuleServiceProvider
      */
     protected function bootAuth(): void
     {
-        AuthException::setDefaultErrorMessage(__('backend::lang.auth.invalid_login'));
+        AuthException::setDefaultErrorMessage('backend::lang.auth.invalid_login');
     }
 
     /**
@@ -82,11 +78,9 @@ class ServiceProvider extends ModuleServiceProvider
         CombineAssets::registerCallback(function ($combiner) {
             $combiner->registerBundle('~/modules/backend/widgets/table/assets/js/build.js');
             $combiner->registerBundle('~/modules/backend/formwidgets/codeeditor/assets/less/codeeditor.less');
-            $combiner->registerBundle('~/modules/backend/formwidgets/repeater/assets/less/repeater.less');
             $combiner->registerBundle('~/modules/backend/formwidgets/codeeditor/assets/js/build.js');
             $combiner->registerBundle('~/modules/backend/formwidgets/nestedform/assets/less/nestedform.less');
             $combiner->registerBundle('~/modules/backend/formwidgets/richeditor/assets/js/build-plugins.js');
-            $combiner->registerBundle('~/modules/backend/formwidgets/permissioneditor/assets/less/permissioneditor.less');
             $combiner->registerBundle('~/modules/backend/formwidgets/sensitive/assets/less/sensitive.less');
 
             /*

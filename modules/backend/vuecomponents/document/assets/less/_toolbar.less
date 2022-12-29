@@ -9,6 +9,10 @@
         }
     }
 
+    &.no-toolbar-elements .document-toolbar-container {
+        display: none;
+    }
+
     .document-toolbar-scrollable {
         width: 100%;
         overflow: hidden;
@@ -97,7 +101,8 @@
                     content: @octo-icon-angle-down;
                     font-size: 16px;
                     vertical-align: middle;
-                    margin-left: -2px;
+                    position: relative;
+                    top: -1px;
                 }
             }
 
@@ -143,7 +148,7 @@
         position: absolute;
         display: block;
         width: 5px;
-        height: 45px;
+        height: 39px;
         opacity: 0;
         transition: opacity 0.3s;
     }

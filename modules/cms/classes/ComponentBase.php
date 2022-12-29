@@ -4,6 +4,7 @@ use Str;
 use Lang;
 use Config;
 use October\Rain\Extension\Extendable;
+use October\Contracts\Twig\CallsAnyMethod;
 use BadMethodCallException;
 
 /**
@@ -12,10 +13,11 @@ use BadMethodCallException;
  * @package october\cms
  * @author Alexey Bobkov, Samuel Georges
  */
-abstract class ComponentBase extends Extendable
+abstract class ComponentBase extends Extendable implements CallsAnyMethod
 {
     use \System\Traits\AssetMaker;
     use \System\Traits\EventEmitter;
+    use \System\Traits\DependencyMaker;
     use \System\Traits\PropertyContainer;
 
     /**
@@ -104,6 +106,14 @@ abstract class ComponentBase extends Extendable
     abstract public function componentDetails();
 
     /**
+     * makePrimaryAccessor returns the PHP object variable for the Twig view layer.
+     */
+    public function makePrimaryAccessor()
+    {
+        return $this;
+    }
+
+    /**
      * getPath returns the absolute component path
      */
     public function getPath()
@@ -184,7 +194,7 @@ abstract class ComponentBase extends Extendable
             return $event;
         }
 
-        $result = $this->$handler();
+        $result = $this->makeCallMethod($this, $handler);
 
         /**
          * @event cms.component.runAjaxHandler
@@ -256,11 +266,11 @@ abstract class ComponentBase extends Extendable
      * Sets an external property name.
      * @param string $name Property name
      * @param string $extName External property name
-     * @return string
+     * @return void
      */
     public function setExternalPropertyName($name, $extName)
     {
-        return $this->externalPropertyNames[$name] = $extName;
+        array_set($this->externalPropertyNames, $name, $extName);
     }
 
     /**

@@ -44,6 +44,7 @@
         v-bind:tabindex="disabled ? -1 : 0"
         v-bind:disabled="disabled"
         v-bind:aria-disabled="disabled"
+        v-bind:aria-checked="itemIsChecked ? 'true' : 'false'"
         v-bind:role="itemRole"
         :style="itemStyle"
         @click="onClick($event)"
@@ -51,6 +52,10 @@
         data-menuitem
     >
         <i :class="icon" v-if="icon"></i>
+        <i
+            class="backend-icon-background-pseudo"
+            v-if="type == 'checkbox' || type == 'radiobutton'"
+        ></i>
         <span v-text="label"></span>
     </a>
 

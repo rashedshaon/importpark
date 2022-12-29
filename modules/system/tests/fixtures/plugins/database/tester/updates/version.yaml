@@ -11,4 +11,5 @@
     - create_meta_table.php
     - create_countries_table.php
     - create_tags_table.php
+    - create_double_join_table.php
     - create_products_table.php

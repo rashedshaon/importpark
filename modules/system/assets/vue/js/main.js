@@ -1,9 +1,8 @@
-
 // Configure bluebird
-$(document).ready(function () {
+(function() {
     Promise.config({
         cancellation: true
     });
 
     Queue.configure(Promise);
-});
+})();

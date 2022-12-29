@@ -51,6 +51,8 @@
         if (this.$copy.length) {
             this.$copy.on('click', this.proxy(this.onCopy));
         }
+
+        this.$el.one('dispose-control', this.proxy(this.dispose));
     }
 
     Sensitive.prototype.dispose = function () {
@@ -65,7 +67,13 @@
             this.$copy.off('click', this.proxy(this.onCopy));
         }
 
-        this.$input = this.$toggle = this.$icon = this.$loader = null;
+        this.$el.off('dispose-control', this.proxy(this.dispose));
+        this.$el.removeData('oc.sensitive');
+
+        this.$input = null;
+        this.$toggle = null;
+        this.$icon = null;
+        this.$loader = null;
         this.$el = null;
 
         BaseProto.dispose.call(this);

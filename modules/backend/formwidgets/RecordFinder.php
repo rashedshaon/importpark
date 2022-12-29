@@ -3,6 +3,7 @@
 use Lang;
 use ApplicationException;
 use Backend\Classes\FormWidgetBase;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * RecordFinder renders a record finder field
@@ -174,38 +175,6 @@ class RecordFinder extends FormWidgetBase
         return $this->makePartial('container');
     }
 
-    public function onRefresh()
-    {
-        $value = post($this->getFieldName());
-
-        if ($this->useRelation) {
-            [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
-            $model->{$attribute} = $value;
-        }
-        else {
-            $this->formField->value = $value;
-        }
-
-        $this->prepareVars();
-
-        return ['#'.$this->getId('container') => $this->makePartial('recordfinder')];
-    }
-
-    public function onClearRecord()
-    {
-        if ($this->useRelation) {
-            [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
-            $model->{$attribute} = null;
-        }
-        else {
-            $this->formField->value = null;
-        }
-
-        $this->prepareVars();
-
-        return ['#'.$this->getId('container') => $this->makePartial('recordfinder')];
-    }
-
     /**
      * prepareVars for display
      */
@@ -225,6 +194,62 @@ class RecordFinder extends FormWidgetBase
         $this->vars['searchWidget'] = $this->searchWidget;
         $this->vars['title'] = $this->title;
         $this->vars['prompt'] = str_replace('%s', '<i class="icon-th-list"></i>', e(trans($this->prompt)));
+    }
+
+    /**
+     * onRefresh AJAX handler
+     */
+    public function onRefresh()
+    {
+        $value = post($this->getFieldName());
+
+        if ($this->useRelation) {
+            [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
+            $model->{$attribute} = $value;
+        }
+        else {
+            $this->formField->value = $value;
+        }
+
+        $this->prepareVars();
+
+        return ['#'.$this->getId('container') => $this->makePartial('recordfinder')];
+    }
+
+    /**
+     * onClearRecord AJAX handler
+     */
+    public function onClearRecord()
+    {
+        if ($this->useRelation) {
+            [$model, $attribute] = $this->resolveModelAttribute($this->valueFrom);
+            $model->{$attribute} = null;
+        }
+        else {
+            $this->formField->value = null;
+        }
+
+        $this->prepareVars();
+
+        return ['#'.$this->getId('container') => $this->makePartial('recordfinder')];
+    }
+
+    /**
+     * onFindRecord AJAX handler
+     */
+    public function onFindRecord()
+    {
+        $this->prepareVars();
+
+        /*
+         * Purge the search term stored in session
+         */
+        if ($this->searchWidget) {
+            $this->listWidget->setSearchTerm(null);
+            $this->searchWidget->setActiveTerm(null);
+        }
+
+        return $this->makePartial('recordfinder_form');
     }
 
     /**
@@ -255,6 +280,11 @@ class RecordFinder extends FormWidgetBase
             if ($model !== null) {
                 $value = $model->{$attribute};
             }
+
+            // Multi support
+            if ($value instanceof Collection) {
+                $value = $value->first();
+            }
         }
         else {
             $value = $this->modelClass::find(parent::getLoadValue());
@@ -263,6 +293,9 @@ class RecordFinder extends FormWidgetBase
         return $value;
     }
 
+    /**
+     * getKeyValue
+     */
     public function getKeyValue()
     {
         if (!$this->relationModel) {
@@ -274,6 +307,9 @@ class RecordFinder extends FormWidgetBase
             : $this->formField->value;
     }
 
+    /**
+     * getNameValue
+     */
     public function getNameValue()
     {
         if (!$this->relationModel || !$this->nameFrom) {
@@ -283,6 +319,9 @@ class RecordFinder extends FormWidgetBase
         return $this->relationModel->{$this->nameFrom};
     }
 
+    /**
+     * getDescriptionValue
+     */
     public function getDescriptionValue()
     {
         if (!$this->relationModel || !$this->descriptionFrom) {
@@ -292,28 +331,17 @@ class RecordFinder extends FormWidgetBase
         return $this->relationModel->{$this->descriptionFrom};
     }
 
-    public function onFindRecord()
-    {
-        $this->prepareVars();
-
-        /*
-         * Purge the search term stored in session
-         */
-        if ($this->searchWidget) {
-            $this->listWidget->setSearchTerm(null);
-            $this->searchWidget->setActiveTerm(null);
-        }
-
-        return $this->makePartial('recordfinder_form');
-    }
-
+    /**
+     * makeListWidget
+     */
     protected function makeListWidget()
     {
         $config = $this->makeConfig($this->getConfig('list'));
 
         if ($this->useRelation) {
             $config->model = $this->getRelationModel();
-        } else {
+        }
+        else {
             $config->model = new $this->modelClass;
         }
 
@@ -322,7 +350,7 @@ class RecordFinder extends FormWidgetBase
         $config->showCheckboxes = false;
         $config->recordsPerPage = $this->recordsPerPage;
         $config->recordOnClick = sprintf("$('#%s').recordFinder('updateRecord', this, ':" . $this->keyFrom . "')", $this->getId());
-        $widget = $this->makeWidget('Backend\Widgets\Lists', $config);
+        $widget = $this->makeWidget(\Backend\Widgets\Lists::class, $config);
 
         $widget->setSearchOptions([
             'mode' => $this->searchMode,
@@ -350,13 +378,16 @@ class RecordFinder extends FormWidgetBase
         return $widget;
     }
 
+    /**
+     * makeSearchWidget
+     */
     protected function makeSearchWidget()
     {
         $config = $this->makeConfig();
         $config->alias = $this->alias . 'Search';
         $config->growable = false;
         $config->prompt = 'backend::lang.list.search_prompt';
-        $widget = $this->makeWidget('Backend\Widgets\Search', $config);
+        $widget = $this->makeWidget(\Backend\Widgets\Search::class, $config);
         $widget->cssClasses[] = 'recordfinder-search';
         return $widget;
     }

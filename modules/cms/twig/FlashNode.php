@@ -4,22 +4,23 @@ use Twig\Node\Node as TwigNode;
 use Twig\Compiler as TwigCompiler;
 
 /**
- * Represents a flash node
+ * FlashNode represents a "flash" node
  *
  * @package october\cms
  * @author Alexey Bobkov, Samuel Georges
  */
 class FlashNode extends TwigNode
 {
+    /**
+     * __construct
+     */
     public function __construct($name, TwigNode $body, $lineno, $tag = 'flash')
     {
         parent::__construct(['body' => $body], ['name' => $name], $lineno, $tag);
     }
 
     /**
-     * Compiles the node to PHP.
-     *
-     * @param TwigCompiler $compiler A TwigCompiler instance
+     * compile the node to PHP.
      */
     public function compile(TwigCompiler $compiler)
     {

@@ -1,6 +1,5 @@
 <?php namespace Backend\Behaviors;
 
-use Db;
 use Str;
 use Lang;
 use Flash;
@@ -9,8 +8,8 @@ use Redirect;
 use Backend;
 use Backend\Classes\ControllerBehavior;
 use October\Rain\Router\Helper as RouterHelper;
-use October\Rain\Exception\ValidationException;
 use ApplicationException;
+use SystemException;
 use Exception;
 
 /**
@@ -113,8 +112,7 @@ class FormController extends ControllerBehavior
         /*
          * Build configuration
          */
-        $this->config = $this->makeConfig($controller->formConfig, $this->requiredConfig);
-        $this->config->modelClass = Str::normalizeClassName($this->config->modelClass);
+        $this->setConfig($controller->formConfig, $this->requiredConfig);
     }
 
     /**
@@ -136,21 +134,18 @@ class FormController extends ControllerBehavior
         }
 
         $context = $this->formGetContext();
+        $formConfig = $this->config = $this->controller->formGetConfig();
 
-        /*
-         * Each page can supply a unique form definition, if desired
-         */
-        $formFields = $this->getConfig("{$context}[form]", $this->config->form);
+        // Each page can supply a unique form definition, if desired
+        $formFields = $this->getConfig("{$context}[form]", $formConfig->form);
 
         $config = $this->makeConfig($formFields);
         $config->model = $model;
         $config->arrayName = class_basename($model);
         $config->context = $context;
 
-        /*
-         * Form Widget with extensibility
-         */
-        $this->formWidget = $this->makeWidget('Backend\Widgets\Form', $config);
+        // Make Form Widget and apply extensions
+        $this->formWidget = $this->makeWidget(\Backend\Widgets\Form::class, $config);
 
         // Setup the default preview mode on form initialization if the context is preview
         if ($config->context === 'preview') {
@@ -182,10 +177,8 @@ class FormController extends ControllerBehavior
 
         $this->formWidget->bindToController();
 
-        /*
-         * Detected Relation controller behavior
-         */
-        if ($this->controller->isClassExtendedWith('Backend.Behaviors.RelationController')) {
+        // Detected Relation controller behavior
+        if ($this->controller->isClassExtendedWith(\Backend\Behaviors\RelationController::class)) {
             $this->controller->initRelation($model);
         }
 
@@ -253,18 +246,7 @@ class FormController extends ControllerBehavior
         $this->controller->formBeforeSave($model);
         $this->controller->formBeforeCreate($model);
 
-        $modelsToSave = $this->prepareModelsToSave($model, $this->formWidget->getSaveData());
-        Db::transaction(function () use ($modelsToSave) {
-            foreach ($modelsToSave as $attrChain => $modelToSave) {
-                try {
-                    $modelToSave->save(null, $this->formWidget->getSessionKey());
-                }
-                catch (ValidationException $ve) {
-                    $ve->setFieldPrefix(explode('.', $attrChain));
-                    throw $ve;
-                }
-            }
-        });
+        $this->performSaveOnModel($model, $this->formWidget->getSaveData(), $this->formWidget->getSessionKey());
 
         $this->controller->formAfterSave($model);
         $this->controller->formAfterCreate($model);
@@ -324,18 +306,7 @@ class FormController extends ControllerBehavior
         $this->controller->formBeforeSave($model);
         $this->controller->formBeforeUpdate($model);
 
-        $modelsToSave = $this->prepareModelsToSave($model, $this->formWidget->getSaveData());
-        Db::transaction(function () use ($modelsToSave) {
-            foreach ($modelsToSave as $attrChain => $modelToSave) {
-                try {
-                    $modelToSave->save(null, $this->formWidget->getSessionKey());
-                }
-                catch (ValidationException $ve) {
-                    $ve->setFieldPrefix(explode('.', $attrChain));
-                    throw $ve;
-                }
-            }
-        });
+        $this->performSaveOnModel($model, $this->formWidget->getSaveData(), $this->formWidget->getSessionKey());
 
         $this->controller->formAfterSave($model);
         $this->controller->formAfterUpdate($model);
@@ -597,7 +568,7 @@ class FormController extends ControllerBehavior
     //
 
     /**
-     * View helper to render a single form field.
+     * formRenderField is a view helper to render a single form field.
      *
      *     <?= $this->formRenderField('field_name') ?>
      *
@@ -611,7 +582,29 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * View helper to render the form in preview mode.
+     * formRefreshField
+     */
+    public function formRefreshFields($names): array
+    {
+        if (!$this->formWidget) {
+            $this->controller->pageAction();
+        }
+
+        $result = [];
+
+        foreach ((array) $names as $name) {
+            if (!$fieldObject = $this->formWidget->getField($name)) {
+                throw new SystemException("Field {$name} was not found in the form definitions.");
+            }
+
+            $result['#' . $fieldObject->getId('group')] = $this->formRenderField($name, ['useContainer' => false]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * formRenderPreview is a view helper to render the form in preview mode.
      *
      *     <?= $this->formRenderPreview() ?>
      *
@@ -623,7 +616,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * View helper to check if a form tab has fields in the
+     * formHasOutsideFields is a view helper to check if a form tab has fields in the
      * non-tabbed section (outside fields).
      *
      *     <?php if ($this->formHasOutsideFields()): ?>
@@ -638,7 +631,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * View helper to render the form fields belonging to the
+     * formRenderOutsideFields is a view helper to render the form fields belonging to the
      * non-tabbed section (outside form fields).
      *
      *     <?= $this->formRenderOutsideFields() ?>
@@ -651,7 +644,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * View helper to check if a form tab has fields in the
+     * formHasPrimaryTabs is a view helper to check if a form tab has fields in the
      * primary tab section.
      *
      *     <?php if ($this->formHasPrimaryTabs()): ?>
@@ -666,7 +659,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * View helper to render the form fields belonging to the
+     * formRenderPrimaryTabs is a view helper to render the form fields belonging to the
      * primary tabs section.
      *
      *     <?= $this->formRenderPrimaryTabs() ?>
@@ -679,7 +672,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * View helper to check if a form tab has fields in the
+     * formHasSecondaryTabs is a view helper to check if a form tab has fields in the
      * secondary tab section.
      *
      *     <?php if ($this->formHasSecondaryTabs()): ?>
@@ -694,7 +687,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * View helper to render the form fields belonging to the
+     * formRenderSecondaryTabs is a view helper to render the form fields belonging to the
      * secondary tabs section.
      *
      *     <?= $this->formRenderPrimaryTabs() ?>
@@ -707,7 +700,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Returns the form widget used by this behavior.
+     * formGetWidget returns the form widget used by this behavior.
      *
      * @return Backend\Widgets\Form
      */
@@ -717,7 +710,7 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Returns a unique ID for the form widget used by this behavior.
+     * formGetId returns a unique ID for the form widget used by this behavior.
      * This is useful for dealing with identifiers in the markup.
      *
      *     <div id="<?= $this->formGetId()">...</div>
@@ -736,13 +729,26 @@ class FormController extends ControllerBehavior
     }
 
     /**
-     * Helper to get the form session key.
-     *
+     * formGetSessionKey is a helper to get the form session key.
      * @return string
      */
     public function formGetSessionKey()
     {
         return $this->formWidget->getSessionKey();
+    }
+
+    /**
+     * formGetConfig returns the configuration used by this behavior. You may override this
+     * method in your controller as an alternative to defining a formConfig property.
+     * @return object
+     */
+    public function formGetConfig()
+    {
+        $config = $this->makeConfig($this->controller->formConfig, $this->requiredConfig);
+
+        $config->modelClass = Str::normalizeClassName($config->modelClass);
+
+        return $config;
     }
 
     //

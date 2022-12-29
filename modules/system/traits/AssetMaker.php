@@ -1,5 +1,6 @@
 <?php namespace System\Traits;
 
+use App;
 use Url;
 use Html;
 use File;
@@ -28,9 +29,14 @@ trait AssetMaker
     protected $assetBundles = ['js' => [], 'css' => []];
 
     /**
-     * @var string assetPath specifies a pulic or relative path to the asset directory.
+     * @var string assetPath specifies a public or relative path to the asset directory.
      */
     public $assetPath;
+
+    /**
+     * @var string assetLocalPath specifies a local path to the asset directory for the combiner.
+     */
+    public $assetLocalPath;
 
     /**
      * flushAssets disables the use, and subequent broadcast, of assets. This is useful
@@ -220,7 +226,7 @@ trait AssetMaker
             return '';
         }
 
-        $assetPath = $localPath ?: $this->assetPath;
+        $assetPath = $localPath ?: $this->assetLocalPath;
 
         return Url::to(CombineAssets::combine($assets, $assetPath));
     }
@@ -296,14 +302,22 @@ trait AssetMaker
         if (isset($asset['attributes']['build'])) {
             $build = $asset['attributes']['build'];
 
-            if ($build === 'core') {
+            if (!App::runningInBackend()) {
+                $build = '';
+            }
+            elseif ($build === 'core') {
                 $build = 'v' . Backend::assetVersion();
             }
             elseif ($pluginVersion = PluginVersion::getVersion($build)) {
                 $build = 'v' . $pluginVersion;
             }
+            else {
+                $build = '';
+            }
 
-            $path .= '?' . $build;
+            if (strlen($build)) {
+                $path .= '?' . $build;
+            }
         }
 
         return $path;

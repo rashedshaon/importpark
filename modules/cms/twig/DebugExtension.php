@@ -3,17 +3,17 @@
 use Cms\Classes\Controller;
 use Cms\Classes\ComponentBase;
 use Twig\Template as TwigTemplate;
-use Twig\Extension\AbstractExtension as TwigExtension;
 use Twig\Environment as TwigEnvironment;
 use Twig\TwigFunction as TwigSimpleFunction;
-use Illuminate\Pagination\Paginator;
+use Twig\Extension\AbstractExtension as TwigExtension;
 use Illuminate\Support\Collection;
+use Illuminate\Pagination\Paginator;
 use October\Rain\Support\Debug\HtmlDumper;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use October\Rain\Database\Model;
 
 /**
- * DebugExtension for twig
+ * DebugExtension for Twig
  *
  * @package october\cms
  * @author Alexey Bobkov, Samuel Georges
@@ -26,27 +26,27 @@ class DebugExtension extends TwigExtension
     const COMPONENT_CAPTION = 'Component variables';
 
     /**
-     * @var \Cms\Classes\Controller A reference to the CMS controller.
+     * @var \Cms\Classes\Controller controller reference.
      */
     protected $controller;
 
     /**
-     * @var integer Helper for rendering table row styles.
+     * @var integer zebra is a helper for rendering table row styles.
      */
     protected $zebra = 1;
 
     /**
-     * @var boolean If no variable is passed, true.
+     * @var boolean variablePrefix is true if no variable is passed.
      */
     protected $variablePrefix = false;
 
     /**
-     * @var array Collection of method/property comments.
+     * @var array commentMap of method/property comments.
      */
     protected $commentMap = [];
 
     /**
-     * @var array Blocked object methods that should not be included in the dump.
+     * @var array blockMethods that should not be included in the dump.
      */
     protected $blockMethods = [
         'componentDetails',
@@ -59,8 +59,7 @@ class DebugExtension extends TwigExtension
     ];
 
     /**
-     * Creates the extension instance.
-     * @param \Cms\Classes\Controller $controller The CMS controller object.
+     * __construct the extension instance.
      */
     public function __construct(Controller $controller = null)
     {
@@ -68,7 +67,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Returns a list of global functions to add to the existing list.
+     * getFunctions returns a list of global functions to add to the existing list.
      * @return array An array of global functions
      */
     public function getFunctions()
@@ -83,7 +82,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Processes the dump variables, if none is supplied, all the twig
+     * runDump processes the dump variables, if none is supplied, all the twig
      * template variables are used
      * @param  TwigEnvironment $env
      * @param  array            $context
@@ -134,7 +133,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Dump information about a variable
+     * dump information about a variable
      * @param mixed $variables Variable to dump
      * @param mixed $caption Caption [and subcaption] of the dump
      * @return void
@@ -173,11 +172,11 @@ class DebugExtension extends TwigExtension
 
         $html = implode(PHP_EOL, $output);
 
-        return '<pre style="' . $this->getContainerCss() . '">' . $html . '</pre>';
+        return '<pre class="twig-dump-container" style="' . $this->getContainerCss() . '">' . $html . '</pre>';
     }
 
     /**
-     * Builds the HTML used for the table header.
+     * makeTableHeader builds the HTML used for the table header.
      * @param mixed $caption Caption [and subcaption] of the dump
      * @return string
      */
@@ -204,7 +203,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Builds the HTML used for each table row.
+     * makeTableRow builds the HTML used for each table row.
      * @param  mixed $key
      * @param  mixed $variable
      * @return string
@@ -226,7 +225,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Builds JavaScript for toggling the dump container
+     * evalToggleDumpOnClick builds JavaScript for toggling the dump container
      * @return string
      */
     protected function evalToggleDumpOnClick()
@@ -237,7 +236,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Dumps a variable using HTML Dumper, wrapped in a hidden DIV element.
+     * evalVarDump dumps a variable using HTML Dumper, wrapped in a hidden DIV element.
      * @param  mixed $variable
      * @return string
      */
@@ -254,7 +253,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Returns a variable name as HTML friendly.
+     * evalKeyLabel returns a variable name as HTML friendly.
      * @param  string $key
      * @return string
      */
@@ -278,7 +277,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Evaluate the variable description
+     * evalVarLabel evaluates the variable description
      * @param  mixed $variable
      * @return string
      */
@@ -298,14 +297,14 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Evaluate an object type for label
-     * @param  object $variable
+     * getType evaluates an object type for label
+     * @param  mixed $variable
      * @return string
      */
     protected function getType($variable)
     {
         $type = gettype($variable);
-        if ($type == 'string' && substr($variable, 0, 12) == '___METHOD___') {
+        if ($type === 'string' && substr($variable, 0, 12) === '___METHOD___') {
             return 'method';
         }
 
@@ -313,7 +312,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Evaluate an object type for label
+     * evalObjLabel evaluates an object type for label
      * @param  object $variable
      * @return string
      */
@@ -339,7 +338,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Evaluate the variable description
+     * evalVarDesc evaluates the variable description
      * @param  mixed $variable
      * @return string
      */
@@ -367,7 +366,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Evaluate an method type for description
+     * evalMethodDesc evaluates an method type for description
      * @param  object $variable
      * @return string
      */
@@ -383,7 +382,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Evaluate an array type for description
+     * evalArrDesc evaluates an array type for description
      * @param  array $variable
      * @return string
      */
@@ -398,7 +397,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Evaluate an object type for description
+     * evalObjDesc evaluates an object type for description
      * @param  array $variable
      * @return string
      */
@@ -420,21 +419,21 @@ class DebugExtension extends TwigExtension
     //
 
     /**
-     * Returns default comment information for a paginator object.
+     * paginatorToArray returns default comment information for a paginator object.
      * @param  Illuminate\Pagination\Paginator $paginator
      * @return array
      */
     protected function paginatorToArray(Paginator $paginator)
     {
         $this->commentMap = [
-            'links()'       => 'Renders links for navigating the collection',
-            'currentPage'   => 'Get the current page for the request.',
-            'lastPage'      => 'Get the last page that should be available.',
-            'perPage'       => 'Get the number of items to be displayed per page.',
-            'total'         => 'Get the total number of items in the complete collection.',
-            'from'          => 'Get the number of the first item on the paginator.',
-            'to'            => 'Get the number of the last item on the paginator.',
-            'count'         => 'Returns the number of items in this collection',
+            'links()' => 'Renders links for navigating the collection',
+            'currentPage' => 'Get the current page for the request.',
+            'lastPage' => 'Get the last page that should be available.',
+            'perPage' => 'Get the number of items to be displayed per page.',
+            'total' => 'Get the total number of items in the complete collection.',
+            'from' => 'Get the number of the first item on the paginator.',
+            'to' => 'Get the number of the last item on the paginator.',
+            'count' => 'Returns the number of items in this collection',
         ];
 
         return [
@@ -450,7 +449,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Returns a map of an object as an array, containing methods and properties.
+     * objectToArray returns a map of an object as an array, containing methods and properties.
      * @param  mixed $object
      * @return array
      */
@@ -507,7 +506,7 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Extracts the comment from a DocBlock
+     * evalDocBlock extracts the comment from a DocBlock
      * @param  ReflectionClass $reflectionObj
      * @return string
      */
@@ -529,16 +528,16 @@ class DebugExtension extends TwigExtension
     //
 
     /**
-     * Get the CSS string for the output data
+     * getDataCss gets the CSS string for the output data
      * @param  mixed $variable
      * @return string
      */
     protected function getDataCss($variable)
     {
         $css = [
-            'padding'               => '7px',
-            'background-color'      => $this->zebra ? '#D8D9DB' : '#FFF',
-            'color'                 => '#405261',
+            'padding' => '7px',
+            'background-color' => $this->zebra ? '#D8D9DB' : '#FFF',
+            'color' => '#405261',
         ];
 
         $type = gettype($variable);
@@ -550,58 +549,58 @@ class DebugExtension extends TwigExtension
     }
 
     /**
-     * Get the CSS string for the output container
+     * getContainerCss gets the CSS string for the output container
      * @return string
      */
     protected function getContainerCss()
     {
         return $this->arrayToCss([
-            'background-color'      => '#F3F3F3',
-            'border'                => '1px solid #bbb',
-            'border-radius'         => '4px',
-            'font-size'             => '12px',
-            'line-height'           => '18px',
-            'margin'                => '20px',
-            'padding'               => '7px',
-            'display'               => 'inline-block',
+            'background-color' => '#F3F3F3',
+            'border' => '1px solid #bbb',
+            'border-radius' => '4px',
+            'font-size' => '12px',
+            'line-height' => '18px',
+            'margin' => '20px',
+            'padding' => '7px',
+            'display' => 'inline-block',
         ]);
     }
 
     /**
-     * Get the CSS string for the output header
+     * getHeaderCss gets the CSS string for the output header
      * @return string
      */
     protected function getHeaderCss()
     {
         return $this->arrayToCss([
-            'font-size'        => '18px',
-            'font-weight'      => 'normal',
-            'margin'           => '0',
-            'padding'          => '10px',
+            'font-size' => '18px',
+            'font-weight' => 'normal',
+            'margin' => '0',
+            'padding' => '10px',
             'background-color' => '#7B8892',
-            'color'            => '#FFF',
+            'color' => '#FFF',
         ]);
     }
 
     /**
-     * Get the CSS string for the output subheader
+     * getSubheaderCss gets the CSS string for the output subheader
      * @return string
      */
     protected function getSubheaderCss()
     {
         return $this->arrayToCss([
-            'font-size'        => '12px',
-            'font-weight'      => 'normal',
-            'font-style'       => 'italic',
-            'margin'           => '0',
-            'padding'          => '0',
+            'font-size' => '12px',
+            'font-weight' => 'normal',
+            'font-style' => 'italic',
+            'margin' => '0',
+            'padding' => '0',
             'background-color' => '#7B8892',
-            'color'            => '#FFF',
+            'color' => '#FFF',
         ]);
     }
 
     /**
-     * Convert a key/value pair array into a CSS string
+     * arrayToCss converts a key/value pair array into a CSS string
      * @param array $rules List of rules to process
      * @return string
      */

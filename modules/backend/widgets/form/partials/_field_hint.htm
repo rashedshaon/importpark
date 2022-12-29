@@ -9,36 +9,36 @@
     ]) ?>
 <?php else: ?>
     <?php
+        $callout = BackendUi::callout();
+
+        if ($field->label) {
+            $callout->label(e(trans($field->label)));
+        }
+
+        if ($field->comment) {
+            $callout->comment(
+                $field->commentHtml
+                    ? trans($field->comment)
+                    : Markdown::parse(e(trans($field->comment)))
+            );
+        }
+
         switch ($field->getConfig('mode')) {
             case 'success':
-                $hintType = 'success';
-                $hintIcon = 'icon-check';
+                $callout->success();
                 break;
             case 'danger':
-                $hintType = 'danger';
-                $hintIcon = 'icon-exclamation';
+                $callout->danger();
                 break;
             case 'warning':
-                $hintType = 'warning';
-                $hintIcon = 'icon-flag';
+                $callout->warning();
                 break;
             case 'tip':
             case 'info':
             default:
-                $hintType = 'info';
-                $hintIcon = 'icon-info';
+                $callout->tip();
                 break;
         }
     ?>
-    <div class="callout fade in callout-<?= $hintType ?> <?= !$field->label ? 'no-title' : '' ?> <?= !$field->comment ? 'no-subheader' : '' ?>">
-        <div class="header">
-            <i class="<?= $hintIcon ?>"></i>
-            <?php if ($field->label): ?>
-                <h3><?= e(trans($field->label)) ?></h3>
-            <?php endif ?>
-            <?php if ($field->comment): ?>
-                <p><?= $field->commentHtml ? trans($field->comment) : Markdown::parse(e(trans($field->comment))) ?></p>
-            <?php endif ?>
-        </div>
-    </div>
+    <?= $callout ?>
 <?php endif ?>

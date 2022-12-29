@@ -3,8 +3,7 @@
 use Cms\Classes\ComponentBase;
 
 /**
- * The view bag stores custom template properties.
- * This is a hidden component ignored by the back-end UI.
+ * ViewBag stores custom template properties, hidden in the backend.
  *
  * @package october\cms
  * @author Alexey Bobkov, Samuel Georges
@@ -22,7 +21,7 @@ class ViewBag extends ComponentBase
     public function componentDetails()
     {
         return [
-            'name'        => 'viewBag',
+            'name' => 'View Bag',
             'description' => 'Stores custom template properties.'
         ];
     }

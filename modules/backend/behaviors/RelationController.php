@@ -15,7 +15,7 @@ use ApplicationException;
  * This behavior is implemented in the controller like so:
  *
  *     public $implement = [
- *         'Backend.Behaviors.RelationController',
+ *         \Backend\Behaviors\RelationController::class,
  *     ];
  *
  *     public $relationConfig = 'config_relation.yaml';
@@ -315,7 +315,7 @@ class RelationController extends ControllerBehavior
             ]));
         }
 
-        if (!$this->getConfig($field)) {
+        if (!$this->relationHasField($field)) {
             throw new ApplicationException(Lang::get('backend::lang.relation.missing_definition', compact('field')));
         }
 
@@ -397,6 +397,14 @@ class RelationController extends ControllerBehavior
             $this->controller->relationExtendPivotWidget($this->pivotWidget, $this->field, $this->model);
             $this->pivotWidget->bindToController();
         }
+    }
+
+    /**
+     * relationHasField
+     */
+    public function relationHasField(string $field): bool
+    {
+        return (bool) $this->getConfig($field);
     }
 
     /**
@@ -786,6 +794,8 @@ class RelationController extends ControllerBehavior
         switch ($this->relationType) {
             case 'hasMany':
             case 'morphMany':
+                return ['create', 'delete'];
+
             case 'morphToMany':
             case 'morphedByMany':
             case 'belongsToMany':

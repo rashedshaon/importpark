@@ -82,7 +82,7 @@ class Extension extends TwigExtension
     }
 
     /**
-     * Converts supplied URL to one relative to the website root.
+     * appFilter converts supplied URL to one relative to the website root.
      * @param mixed $url Specifies the application-relative URL
      * @return string
      */

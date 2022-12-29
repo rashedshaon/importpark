@@ -4,7 +4,7 @@
     :full-screen="fullScreen"
     ref="document"
 >
-    <template v-slot:toolbar>
+    <template v-slot:toolbar v-if="!hasExternalToolbar">
         <backend-component-document-toolbar
             :elements="toolbarElements"
             :disabled="readOnly"
@@ -17,8 +17,9 @@
         <div class="flex-layout-column fill-container" ref="contentContainer">
             <div class="flex-layout-item stretch editor-panel relative">
                 <backend-component-richeditor-document-connector
-                    :allow-resizing="false"
-                    :toolbar-container="toolbarExtensionPoint"
+                    :allow-resizing="resizable"
+                    :toolbar-container="toolbarExtensionPointProxy"
+                    :external-toolbar-event-bus="externalToolbarEventBus"
                     :use-media-manager="useMediaManager"
                     :built-in-mode="true"
                     unique-key="html-editor-form-widget"

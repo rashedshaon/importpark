@@ -4,7 +4,7 @@ use Twig\Node\Node as TwigNode;
 use Twig\Compiler as TwigCompiler;
 
 /**
- * PartialNode
+ * PartialNode represents a "partial" node
  *
  * @package october\cms
  * @author Alexey Bobkov, Samuel Georges
@@ -26,9 +26,7 @@ class PartialNode extends TwigNode
     }
 
     /**
-     * Compiles the node to PHP.
-     *
-     * @param TwigCompiler $compiler A TwigCompiler instance
+     * compile the node to PHP.
      */
     public function compile(TwigCompiler $compiler)
     {
@@ -51,7 +49,7 @@ class PartialNode extends TwigNode
         }
 
         $compiler
-            ->write("echo \$this->env->getExtension('Cms\Twig\Extension')->partialFunction(")
+            ->write("echo \$this->env->getExtension(\Cms\Twig\Extension::class)->partialFunction(")
             ->subcompile($this->getNode('nodes')->getNode(0))
             ->write(", \$context['__cms_partial_params']")
             ->write(", true")

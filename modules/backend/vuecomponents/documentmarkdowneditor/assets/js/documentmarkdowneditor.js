@@ -1,4 +1,4 @@
-(function () {
+$.oc.module.register('backend.component.documentmarkdowneditor', function () {
     var utils = $.oc.module.import('backend.vuecomponents.documentmarkdowneditor.utils');
     var octoberCommands = $.oc.module.import('backend.vuecomponents.documentmarkdowneditor.octobercommands');
 
@@ -21,7 +21,8 @@
                 type: Boolean,
                 default: false
             },
-            value: String
+            value: String,
+            externalToolbarEventBus: String
         },
         data: function data() {
             var imageDropdownItems = [{
@@ -133,6 +134,25 @@
                 }
 
                 return this.config;
+            },
+
+            externalToolbarEventBusObj: function computeExternalToolbarEventBusObj() {
+                if (!this.externalToolbarEventBus) {
+                    return null;
+                }
+
+                // Expected format: tailor.app::eventBus
+                var parts = this.externalToolbarEventBus.split('::');
+                if (parts.length !== 2) {
+                    throw new Error('Invalid externalToolbarEventBus format. Expected format: module.name::stateElementName');
+                }
+
+                var module = $.oc.module.import(parts[0]);
+                return module.state[parts[1]];
+            },
+
+            hasExternalToolbar: function computeHasExternalToolbar() {
+                return !!this.externalToolbarEventBusObj;
             }
         },
         methods: {
@@ -144,7 +164,7 @@
                 this.toolbarContainer.splice(0, this.toolbarContainer.length);
                 var that = this;
 
-                if (!this.builtInMode) {
+                if (!this.builtInMode || this.hasExternalToolbar) {
                     utils.addSeparator(that);
                 }
 
@@ -172,6 +192,12 @@
                 var lastIndex = this.toolbarContainer.length - 1;
                 if (this.toolbarContainer[lastIndex].type === 'separator') {
                     this.toolbarContainer.pop();
+                }
+            },
+
+            extendExternalToolbar: function extendExternalToolbar() {
+                if ($(this.$el).is(":visible")) {
+                    this.extendToolbar();
                 }
             },
 
@@ -206,6 +232,30 @@
             clearHistory: function clearHistory() {
                 if (this.editor) {
                     this.editor.codemirror.doc.clearHistory();
+                }
+            },
+
+            mountEventBus: function mountEventBus() {
+                if (!this.externalToolbarEventBusObj) {
+                    return;
+                }
+
+                this.externalToolbarEventBusObj.$on('toolbarcmd', this.onToolbarExternalCommand);
+                this.externalToolbarEventBusObj.$on('extendapptoolbar', this.extendExternalToolbar);
+            },
+
+            unmountEventBus: function unmountEventBus() {
+                if (!this.externalToolbarEventBusObj) {
+                    return;
+                }
+
+                this.externalToolbarEventBusObj.$off('toolbarcmd', this.onToolbarExternalCommand);
+                this.externalToolbarEventBusObj.$off('extendapptoolbar', this.extendExternalToolbar);
+            },
+
+            onToolbarExternalCommand: function onToolbarExternalCommand(command) {
+                if ($(this.$el).is(":visible")) {
+                    this.onToolbarCommand(command);
                 }
             },
 
@@ -274,7 +324,13 @@
             this.editor.codemirror.on('focus', this.onFocus);
             this.editor.codemirror.on('blur', this.onBlur);
 
-            this.extendToolbar();
+            if (!this.hasExternalToolbar) {
+                this.extendToolbar();
+            } else {
+                this.extendExternalToolbar();
+            }
+
+            this.mountEventBus();
             this.enableSideBySide();
 
             this.editor.value(this.value);
@@ -287,6 +343,8 @@
                 this.editor.codemirror.off('focus', this.onFocus);
                 this.editor.codemirror.off('blur', this.onBlur);
             }
+
+            this.unmountEventBus();
 
             this.editor = null;
             this.$buttons = null;
@@ -308,4 +366,4 @@
         },
         template: '#backend_vuecomponents_documentmarkdowneditor'
     });
-})();
+});

@@ -28,10 +28,15 @@
     $.oc.confirm = function confirm(message, callback, title) {
         var messageTitle = typeof title !== 'string' ?  $.oc.lang.get('alert.confirm') : title;
 
-        $.oc.vueComponentHelpers.modalUtils.showConfirm(messageTitle, message, {})
-            .then(function () {
-                callback(true)
-            }, function () {})
+        $.oc.confirmPromise(message, title).then(function () {
+            callback(true)
+        }, function () { });
+    }
+
+    $.oc.confirmPromise = function confirm(message, title) {
+        var messageTitle = typeof title !== 'string' ?  $.oc.lang.get('alert.confirm') : title;
+
+        return $.oc.vueComponentHelpers.modalUtils.showConfirm(messageTitle, message, {});
     }
 
 })(jQuery);

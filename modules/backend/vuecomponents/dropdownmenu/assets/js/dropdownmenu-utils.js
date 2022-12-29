@@ -1,5 +1,6 @@
-+(function($) {
+$.oc.module.register('backend.component.dropdownmenu.utils', function () {
     'use strict';
+
     var DropdownmenuUtils = function() {
         this.alignToTriggerElement = function(triggerElementOrEvent, positionContainer, isSubmenu, preferablePosition) {
             var calculatedLeft = 0,
@@ -29,6 +30,9 @@
                 else if (preferablePosition === 'right') {
                     calculatedLeft += $triggerElement.outerWidth() + 12;
                     calculatedTop -= $triggerElement.outerHeight();
+                }
+                else if (preferablePosition === 'bottom-right') {
+                    calculatedLeft -= $positionContainer.outerWidth() - $triggerElement.outerWidth();
                 }
             }
 
@@ -95,5 +99,5 @@
         $.oc.vueComponentHelpers = {};
     }
 
-    $.oc.vueComponentHelpers.dropdownmenuUtils = new DropdownmenuUtils();
-})(window.jQuery);
+    return new DropdownmenuUtils();
+});

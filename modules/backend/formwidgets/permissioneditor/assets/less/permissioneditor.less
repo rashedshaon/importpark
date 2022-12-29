@@ -1,12 +1,13 @@
 @import "../../../../assets/less/core/boot.less";
 
-@color-permissioneditor-section-border:         #DBE1E3;
-@color-permissioneditor-permission-border:      #ECF0F1;
+@color-permissioneditor-section-border: #DBE1E3;
+@color-permissioneditor-permission-border: #ECF0F1;
 
 .permissioneditor {
     position: relative;
-
-    margin: 0 -(@padding-standard);
+    border-radius: @border-radius-base;
+    background: @color-form-checkboxlist-background;
+    border: 1px solid @color-form-checkboxlist-border;
 
     &.control-disabled {
         .permissions-overlay {
@@ -28,19 +29,29 @@
         width: 100%;
 
         th {
-            padding: 30px 4px 8px 4px;
+            padding: 0 4px 0 4px;
             color: @color-label;
             font-weight: normal;
             border-bottom: 1px solid @color-permissioneditor-section-border;
 
             &.tab {
-                font-size: @font-size-base - 1;
-            }
+                .tab-inner {
+                    display: flex;
 
-            &.permission-type {
-                text-transform: uppercase;
-                font-size: @font-size-base - 3;
-                text-align: center;
+                    .tab-title {
+                        font-size: @font-size-base;
+                        font-weight: 500;
+                        padding: 7px 0;
+                    }
+
+                    .tab-controls {
+                        padding: 3px;
+                        font-size: 0;
+                        white-space: nowrap;
+                        text-align: right;
+                        flex-grow: 1;
+                    }
+                }
             }
         }
 
@@ -50,7 +61,7 @@
             border-bottom: 1px solid @color-permissioneditor-permission-border;
             .user-select(none);
 
-            &.permission-value{
+            &.permission-value {
                 text-align: center;
             }
 
@@ -58,6 +69,7 @@
                 font-size: @font-size-base - 1;
                 cursor: pointer;
                 color: @color-help-block-text;
+                width: 100%;
             }
 
             p.comment {
@@ -82,7 +94,7 @@
 
         th, td {
             &:first-child {
-                padding-left: @padding-standard;
+                padding-left: 20px;
             }
 
             &:last-child {
@@ -93,7 +105,7 @@
         .custom-radio,
         .custom-checkbox,
         .custom-switch {
-            display: inline-block;;
+            display: inline-block;
             padding-left: 0;
 
             &, label {

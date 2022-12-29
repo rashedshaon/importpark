@@ -55,6 +55,7 @@ return [
     'Cms' => Cms\Facades\Cms::class,
     'System' => System\Facades\System::class,
     'Backend' => Backend\Facades\Backend::class,
+    'BackendUi' => Backend\Facades\BackendUi::class,
     'BackendMenu' => Backend\Facades\BackendMenu::class,
     'BackendAuth' => Backend\Facades\BackendAuth::class,
     'AjaxException' => October\Rain\Exception\AjaxException::class,

@@ -4,7 +4,7 @@
     :full-screen="fullScreen"
     ref="document"
 >
-    <template v-slot:toolbar>
+    <template v-slot:toolbar v-if="!hasExternalToolbar">
         <backend-component-document-toolbar
             :elements="toolbarElements"
             @command="onToolbarCommand"
@@ -20,7 +20,8 @@
                     ref="markdownEditor"
                     container-css-class="fill-container"
                     :built-in-mode="true"
-                    :toolbar-container="toolbarExtensionPoint"
+                    :toolbar-container="toolbarExtensionPointProxy"
+                    :external-toolbar-event-bus="externalToolbarEventBus"
                     :use-media-manager="useMediaManager"
                     @focus="onFocus"
                     @blur="onBlur"

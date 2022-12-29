@@ -1,5 +1,6 @@
 <?php namespace Backend\Classes;
 
+use October\Rain\Element\Navigation\ItemDefinition;
 use October\Rain\Exception\SystemException;
 
 /**
@@ -8,27 +9,12 @@ use October\Rain\Exception\SystemException;
  * @package october\backend
  * @author Alexey Bobkov, Samuel Georges
  */
-class MainMenuItem
+class MainMenuItem extends ItemDefinition
 {
-    /**
-     * @var string code
-     */
-    public $code;
-
     /**
      * @var string owner
      */
     public $owner;
-
-    /**
-     * @var string label
-     */
-    public $label;
-
-    /**
-     * @var null|string icon
-     */
-    public $icon;
 
     /**
      * @var null|string iconSvg
@@ -46,19 +32,9 @@ class MainMenuItem
     public $counterLabel;
 
     /**
-     * @var string url
-     */
-    public $url;
-
-    /**
      * @var array permissions
      */
     public $permissions = [];
-
-    /**
-     * @var int order
-     */
-    public $order = 500;
 
     /**
      * @var SideMenuItem[] sideMenu
@@ -66,28 +42,18 @@ class MainMenuItem
     public $sideMenu = [];
 
     /**
-     * @var array customData
+     * evalConfig
      */
-    public $customData = [];
-
-    /**
-     * useConfig
-     */
-    public function useConfig(array $data): MainMenuItem
+    protected function evalConfig($config): void
     {
-        $this->code = $data['code'] ?? $this->code;
-        $this->owner = $data['owner'] ?? $this->owner;
-        $this->label = $data['label'] ?? $this->label;
-        $this->url = $data['url'] ?? $this->url;
-        $this->icon = $data['icon'] ?? $this->icon;
-        $this->iconSvg = $data['iconSvg'] ?? $this->iconSvg;
-        $this->counter = $data['counter'] ?? $this->counter;
-        $this->counterLabel = $data['counterLabel'] ?? $this->counterLabel;
-        $this->permissions = $data['permissions'] ?? $this->permissions;
-        $this->order = $data['order'] ?? $this->order;
-        $this->customData = $data['customData'] ?? $this->customData;
+        parent::evalConfig($config);
 
-        return $this;
+        $this->owner = $config['owner'] ?? $this->owner;
+        $this->iconSvg = $config['iconSvg'] ?? $this->iconSvg;
+        $this->counter = $config['counter'] ?? $this->counter;
+        $this->counterLabel = $config['counterLabel'] ?? $this->counterLabel;
+        $this->permissions = $config['permissions'] ?? $this->permissions;
+        $this->order = $config['order'] ?? 500;
     }
 
     /**

@@ -4,6 +4,7 @@ use Db;
 use DbDongle;
 use Backend\Classes\FormField;
 use Backend\Classes\FormWidgetBase;
+use SystemException;
 
 /**
  * Relation renders a field prepopulated with a belongsTo and belongsToHasMany relation
@@ -18,6 +19,11 @@ class Relation extends FormWidgetBase
     //
     // Configurable properties
     //
+
+    /**
+     * @var bool useController to completely replace this widget the `RelationController` behavior.
+     */
+    public $useController;
 
     /**
      * @var string nameFrom is the model column to use for the name reference
@@ -73,6 +79,9 @@ class Relation extends FormWidgetBase
         if (isset($this->config->select)) {
             $this->sqlSelect = $this->config->select;
         }
+
+        // @deprecated the default value should be true
+        $this->useController = $this->evalUseController($this->config->useController ?? false);
     }
 
     /**
@@ -81,6 +90,7 @@ class Relation extends FormWidgetBase
     public function render()
     {
         $this->prepareVars();
+
         return $this->makePartial('relation');
     }
 
@@ -89,7 +99,32 @@ class Relation extends FormWidgetBase
      */
     public function prepareVars()
     {
+        if ($this->useController) {
+            return;
+        }
+
         $this->vars['field'] = $this->makeRenderFormField();
+    }
+
+    /**
+     * evalUseController determines if the relation controller is usable and returns the default
+     * preference if it can be used.
+     */
+    protected function evalUseController(bool $defaultPref): bool
+    {
+        if (!$this->controller->isClassExtendedWith(\Backend\Behaviors\RelationController::class)) {
+            return false;
+        }
+
+        if (!is_string($this->valueFrom)) {
+            return false;
+        }
+
+        if (!$this->controller->relationHasField($this->valueFrom)) {
+            return false;
+        }
+
+        return $defaultPref;
     }
 
     /**
@@ -108,8 +143,11 @@ class Relation extends FormWidgetBase
         if (in_array($relationType, ['belongsToMany', 'morphToMany', 'morphedByMany', 'hasMany'])) {
             $field->type = 'checkboxlist';
         }
-        elseif (in_array($relationType, ['belongsTo', 'hasOne'])) {
+        elseif (in_array($relationType, ['belongsTo', 'hasOne', 'morphOne'])) {
             $field->type = 'dropdown';
+        }
+        else {
+            throw new SystemException("Could not translate relation type '${relationType}' to a valid field type");
         }
 
         // Order query by the configured option.
@@ -132,8 +170,7 @@ class Relation extends FormWidgetBase
         }
 
         // Determine if the model uses a tree trait
-        $treeTraits = ['October\Rain\Database\Traits\NestedTree', 'October\Rain\Database\Traits\SimpleTree'];
-        $usesTree = count(array_intersect($treeTraits, class_uses($relationModel))) > 0;
+        $usesTree = $relationModel->isClassInstanceOf(\October\Contracts\Database\TreeInterface::class);
 
         // The "sqlSelect" config takes precedence over "nameFrom".
         // A virtual column called "selection" will contain the result.

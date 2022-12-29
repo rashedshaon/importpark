@@ -45,6 +45,11 @@ class Toolbar extends WidgetBase
     public $cssClasses = [];
 
     /**
+     * @var string listWidgetId
+     */
+    public $listWidgetId;
+
+    /**
      * Initialize the widget, called by the constructor and free from its parameters.
      */
     public function init()
@@ -66,7 +71,7 @@ class Toolbar extends WidgetBase
             }
 
             $searchConfig->alias = $this->alias . 'Search';
-            $this->searchWidget = $this->makeWidget('Backend\Widgets\Search', $searchConfig);
+            $this->searchWidget = $this->makeWidget(\Backend\Widgets\Search::class, $searchConfig);
             $this->searchWidget->bindToController();
         }
     }

@@ -35,6 +35,9 @@ class SettingsManager
     const CATEGORY_MYSETTINGS = 'system::lang.system.categories.my_settings';
     const CATEGORY_NOTIFICATIONS = 'system::lang.system.categories.notifications';
 
+    const CATEGORY_GLOBALS = 'Globals';
+    const CATEGORY_COLLECTIONS = 'Collections';
+
     /**
      * @var array callbacks for registration
      */

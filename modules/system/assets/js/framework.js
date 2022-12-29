@@ -146,7 +146,7 @@ if (window.jQuery.request !== undefined) {
                 /*
                  * Halt here if beforeUpdate() or data-request-before-update returns false
                  */
-                if (this.options.beforeUpdate.apply(this, [data, textStatus, jqXHR]) === false) {
+                if (options.beforeUpdate.apply(context, [data, textStatus, jqXHR]) === false) {
                     return;
                 }
 
@@ -175,12 +175,14 @@ if (window.jQuery.request !== undefined) {
                 updatePromise.done(function() {
                     $triggerEl.trigger('ajaxSuccess', [context, data, textStatus, jqXHR]);
                     options.evalSuccess && $.proxy(new Function('data', options.evalSuccess), $el.get(0))(data);
+                    options.afterUpdate.apply(context, [data, textStatus, jqXHR]);
                 })
 
                 return updatePromise;
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                var errorMsg,
+                var data = {},
+                    errorMsg,
                     updatePromise = $.Deferred();
 
                 if ((window.ocUnloading !== undefined && window.ocUnloading) || errorThrown == 'abort') {
@@ -198,8 +200,9 @@ if (window.jQuery.request !== undefined) {
                  * processed in the same fashion as a successful response.
                  */
                 if (jqXHR.status == 406 && jqXHR.responseJSON) {
+                    data = jqXHR.responseJSON;
                     errorMsg = jqXHR.responseJSON['X_OCTOBER_ERROR_MESSAGE'];
-                    updatePromise = requestOptions.handleUpdateResponse(jqXHR.responseJSON, textStatus, jqXHR);
+                    updatePromise = requestOptions.handleUpdateResponse(data, textStatus, jqXHR);
                 }
                 /*
                  * Standard error with standard response text
@@ -222,7 +225,7 @@ if (window.jQuery.request !== undefined) {
                     /*
                      * Halt here if the data-request-error attribute returns false
                      */
-                    if (options.evalError && $.proxy(new Function(options.evalError), $el.get(0))() === false) {
+                    if (options.evalError && $.proxy(new Function('data', options.evalError), $el.get(0))(data) === false) {
                         return;
                     }
 
@@ -429,6 +432,7 @@ if (window.jQuery.request !== undefined) {
         update: {},
         type : 'POST',
         beforeUpdate: function(data, textStatus, jqXHR) {},
+        afterUpdate: function(data, textStatus, jqXHR) {},
         evalBeforeUpdate: null,
         evalSuccess: null,
         evalError: null,

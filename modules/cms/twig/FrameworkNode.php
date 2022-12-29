@@ -4,22 +4,23 @@ use Twig\Node\Node as TwigNode;
 use Twig\Compiler as TwigCompiler;
 
 /**
- * Represents a "framework" node
+ * FrameworkNode represents a "framework" node
  *
  * @package october\cms
  * @author Alexey Bobkov, Samuel Georges
  */
 class FrameworkNode extends TwigNode
 {
+    /**
+     * __construct
+     */
     public function __construct($name, $lineno, $tag = 'framework')
     {
         parent::__construct([], ['name' => $name], $lineno, $tag);
     }
 
     /**
-     * Compiles the node to PHP.
-     *
-     * @param TwigCompiler $compiler A TwigCompiler instance
+     * compile the node to PHP.
      */
     public function compile(TwigCompiler $compiler)
     {
@@ -28,7 +29,7 @@ class FrameworkNode extends TwigNode
 
         $compiler
             ->addDebugInfo($this)
-            ->write("\$_minify = ".\System\Classes\CombineAssets::class."::instance()->useMinify;" . PHP_EOL);
+            ->write("\$_minify = System\Classes\CombineAssets::instance()->useMinify;" . PHP_EOL);
 
         if ($includeExtras) {
             $compiler

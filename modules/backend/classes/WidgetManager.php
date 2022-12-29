@@ -49,7 +49,7 @@ class WidgetManager
     protected $pluginManager;
 
     /**
-     * Initialize this singleton.
+     * init initializes this singleton.
      */
     protected function init()
     {

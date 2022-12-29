@@ -31,14 +31,19 @@
     SearchWidget.prototype.init = function() {
         this.$triggerEl.on('ajaxComplete', this.proxy(this.toggleClearButton));
         this.$clearBtn.on('click', this.proxy(this.clearInput));
+        this.$el.on('ajaxSetup', this.proxy(this.linkToListWidget));
+
+        this.$el.one('dispose-control', this.proxy(this.dispose));
 
         this.toggleClearButton();
     }
 
     SearchWidget.prototype.dispose = function() {
         this.$triggerEl.off('ajaxComplete', this.proxy(this.toggleClearButton));
-        this.$el.off('ajaxSetup');
+        this.$clearBtn.off('click', this.proxy(this.clearInput));
+        this.$el.off('ajaxSetup', this.proxy(this.linkToListWidget));
 
+        this.$el.off('dispose-control', this.proxy(this.dispose));
         this.$el.removeData('oc.searchwidget');
 
         this.$el = null;
@@ -63,15 +68,18 @@
         }
     }
 
-    SearchWidget.prototype.linkToListWidget = function(elId) {
-        this.$el.on('ajaxSetup', function (evt, data) {
-            var $widget = $('#'+elId+' > .control-list:first');
-            if (!$widget.data('oc.listwidget')) {
-                return;
-            }
+    SearchWidget.prototype.linkToListWidget = function(evt, context) {
+        var listId = this.$el.closest('[data-list-linkage]').data('list-linkage');
+        if (!listId) {
+            return;
+        }
 
-            data.options.data.allChecked = $widget.listWidget('getAllChecked');
-        });
+        var $widget = $('#'+listId+' > .control-list:first');
+        if (!$widget.data('oc.listwidget')) {
+            return;
+        }
+
+        context.options.data.allChecked = $widget.listWidget('getAllChecked');
     }
 
     // SEARCH WIDGET PLUGIN DEFINITION

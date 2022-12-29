@@ -1,26 +1,24 @@
 <?php namespace RainLab\Pages\Controllers;
 
 use Url;
+use Cms;
+use Site;
 use Lang;
 use Flash;
 use Event;
 use Config;
 use Request;
-use Response;
 use BackendMenu;
-use Cms\Classes\Layout;
 use Cms\Classes\Theme;
 use Cms\Classes\CmsObject;
 use Cms\Classes\CmsCompoundObject;
-use Cms\Widgets\TemplateList;
 use System\Helpers\DateTime;
 use Backend\Classes\Controller;
 use RainLab\Pages\Widgets\PageList;
 use RainLab\Pages\Widgets\MenuList;
 use RainLab\Pages\Widgets\SnippetList;
-use RainLab\Pages\Classes\Snippet;
+use RainLab\Pages\Widgets\TemplateList;
 use RainLab\Pages\Classes\Page as StaticPage;
-use RainLab\Pages\Classes\Router;
 use RainLab\Pages\Classes\Content;
 use RainLab\Pages\Classes\MenuItem;
 use RainLab\Pages\Plugin as PagesPlugin;
@@ -41,6 +39,11 @@ class Index extends Controller
     protected $theme;
 
     public $requiredPermissions = ['rainlab.pages.*'];
+
+    /**
+     * @var bool turboVisitControl
+     */
+    public $turboVisitControl = 'reload';
 
     /**
      * Constructor.
@@ -98,10 +101,11 @@ class Index extends Controller
 
     public function index()
     {
-        $this->addJs('/modules/backend/assets/js/october.treeview.js', 'core');
+        $this->addJs('/plugins/rainlab/pages/assets/js/october.treeview.js', 'RainLab.Pages');
         $this->addJs('/plugins/rainlab/pages/assets/js/pages-page.js', 'RainLab.Pages');
         $this->addJs('/plugins/rainlab/pages/assets/js/pages-snippets.js', 'RainLab.Pages');
         $this->addCss('/plugins/rainlab/pages/assets/css/pages.css', 'RainLab.Pages');
+        $this->addCss('/plugins/rainlab/pages/assets/css/treeview.css', 'RainLab.Pages');
 
         // Preload the code editor class as it could be needed
         // before it loads dynamically.
@@ -116,6 +120,9 @@ class Index extends Controller
         }
     }
 
+    /**
+     * index_onOpen
+     */
     public function index_onOpen()
     {
         $this->validateRequestTheme();
@@ -123,9 +130,18 @@ class Index extends Controller
         $type = Request::input('type');
         $object = $this->loadObject($type, Request::input('path'));
 
+        /*
+         * Extensibility
+         */
+        Event::fire('pages.object.load', [$this, $object, $type]);
+        $this->fireEvent('object.load', [$object, $type]);
+
         return $this->pushObjectForm($type, $object);
     }
 
+    /**
+     * onSave
+     */
     public function onSave()
     {
         $this->validateRequestTheme();
@@ -181,13 +197,13 @@ class Index extends Controller
 
         $result = [
             'tabTitle' => $this->getTabTitle($type, $object),
-            'tab'      => $this->makePartial('form_page', [
-                'form'         => $widget,
-                'objectType'   => $type,
-                'objectTheme'  => $this->theme->getDirName(),
-                'objectMtime'  => null,
+            'tab' => $this->makePartial('form_page', [
+                'form' => $widget,
+                'objectType' => $type,
+                'objectTheme' => $this->theme->getDirName(),
+                'objectMtime' => null,
                 'objectParent' => $parent,
-                'parentPage'   => $parentPage
+                'parentPage' => $parentPage
             ])
         ];
 
@@ -426,7 +442,7 @@ class Index extends Controller
         ];
 
         if ($type == 'page') {
-            $result['pageUrl'] = Url::to($object->getViewBag()->property('url'));
+            $result['pageUrl'] = $this->getPreviewPageUrl($object);
             PagesPlugin::clearCache();
         }
 
@@ -508,6 +524,9 @@ class Index extends Controller
         return $result;
     }
 
+    /**
+     * validateRequestTheme
+     */
     protected function validateRequestTheme()
     {
         if ($this->theme->getDirName() != Request::input('theme')) {
@@ -515,6 +534,9 @@ class Index extends Controller
         }
     }
 
+    /**
+     * loadObject
+     */
     protected function loadObject($type, $path, $ignoreNotFound = false)
     {
         $class = $this->resolveTypeClassName($type);
@@ -544,9 +566,9 @@ class Index extends Controller
     protected function resolveTypeClassName($type)
     {
         $types = [
-            'page'    => 'RainLab\Pages\Classes\Page',
-            'menu'    => 'RainLab\Pages\Classes\Menu',
-            'content' => 'RainLab\Pages\Classes\Content'
+            'page' => \RainLab\Pages\Classes\Page::class,
+            'menu' => \RainLab\Pages\Classes\Menu::class,
+            'content' => \RainLab\Pages\Classes\Content::class
         ];
 
         if (!array_key_exists($type, $types)) {
@@ -556,7 +578,8 @@ class Index extends Controller
         $allowed = false;
         if ($type === 'content') {
             $allowed = $this->user->hasAccess('rainlab.pages.manage_content');
-        } else {
+        }
+        else {
             $allowed = $this->user->hasAccess("rainlab.pages.manage_{$type}s");
         }
 
@@ -641,7 +664,7 @@ class Index extends Controller
                 continue;
             }
 
-            if ($fieldConfig['type'] === 'repeater') {
+            if (in_array($fieldConfig['type'], ['repeater', 'nestedform'])) {
                 if (empty($fieldConfig['form']) || !is_string($fieldConfig['form'])) {
                     $repeaterFields = array_get($fieldConfig, 'fields', []);
                     $repeaterFields = $this->modLegacyModeFields($repeaterFields);
@@ -669,7 +692,7 @@ class Index extends Controller
             /*
              * Translation support
              */
-            $translatableTypes = ['text', 'textarea', 'richeditor', 'repeater', 'markdown', 'mediafinder'];
+            $translatableTypes = ['text', 'textarea', 'richeditor', 'repeater', 'markdown', 'mediafinder', 'nestedform'];
             if (in_array($fieldConfig['type'], $translatableTypes) && array_get($fieldConfig, 'translatable', true)) {
                 $page->translatable[] = 'viewBag['.$fieldCode.']';
             }
@@ -751,6 +774,9 @@ class Index extends Controller
         return $object->getFileName();
     }
 
+    /**
+     * fillObjectFromPost
+     */
     protected function fillObjectFromPost($type)
     {
         $objectPath = trim(Request::input('objectPath'));
@@ -828,6 +854,12 @@ class Index extends Controller
             $objectData['markup'] = $this->convertLineEndings($objectData['markup']);
         }
 
+        /*
+         * Extensibility
+         */
+        Event::fire('pages.object.fillObject', [$this, $object, &$objectData, $type]);
+        $this->fireEvent('object.fillObject', [$object, &$objectData, $type]);
+
         if (!Request::input('objectForceSave') && $object->mtime) {
             if (Request::input('objectMtime') != $object->mtime) {
                 throw new ApplicationException('mtime-mismatch');
@@ -846,6 +878,9 @@ class Index extends Controller
         return $object;
     }
 
+    /**
+     * pushObjectForm
+     */
     protected function pushObjectForm($type, $object, $alias = null)
     {
         $widget = $this->makeObjectFormWidget($type, $object, $alias);
@@ -856,7 +891,7 @@ class Index extends Controller
         $this->vars['lastModified'] = DateTime::makeCarbon($object->mtime);
 
         if ($type == 'page') {
-            $this->vars['pageUrl'] = Url::to($object->getViewBag()->property('url'));
+            $this->vars['pageUrl'] = $this->getPreviewPageUrl($object);
         }
 
         return [
@@ -871,6 +906,39 @@ class Index extends Controller
         ];
     }
 
+    /**
+     * getPreviewPageUrl
+     */
+    protected function getPreviewPageUrl($object)
+    {
+        $pageUrl = $object->getViewBag()->property('url');
+
+        // Support for October CMS 3.0 and below
+        if (!class_exists('Site')) {
+            return Url::to($pageUrl);
+        }
+
+        /**
+         * Hook the site picker to determine preview
+         * @see \Cms\Components\SitePicker
+         */
+        $eventPattern = Event::fire('cms.sitePicker.overridePattern', [
+            $object,
+            $pageUrl,
+            Site::getEditSite(),
+            Site::getEditSite()
+        ], true);
+
+        if ($eventPattern) {
+            $pageUrl = $eventPattern;
+        }
+
+        return Cms::fullUrl($pageUrl);
+    }
+
+    /**
+     * bindFormWidgetToController
+     */
     protected function bindFormWidgetToController()
     {
         $alias = Request::input('formWidgetAlias');

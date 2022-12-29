@@ -1,10 +1,10 @@
 <?php namespace System\Traits;
 
-use Html;
 use File;
 use Lang;
 use Block;
 use Config;
+use System;
 use SystemException;
 use Throwable;
 
@@ -83,7 +83,7 @@ trait ViewMaker
         $notRealPath = realpath($partial) === false || is_dir($partial) === true;
         if (!File::isPathSymbol($partial) && $notRealPath) {
             $folder = strpos($partial, '/') !== false ? dirname($partial) . '/' : '';
-            $partial = $folder . '_' . strtolower(basename($partial)).'.htm';
+            $partial = $folder . '_' . strtolower(basename($partial));
         }
 
         $partialPath = $this->getViewPath($partial);
@@ -102,13 +102,13 @@ trait ViewMaker
     /**
      * makeView loads a view with the name specified. Applies layout if its name is provided
      * by the parent object. The view file must be situated in the views directory, and has
-     * the extension "htm"
+     * the extension "htm" or "php"
      * @param string $view Specifies the view name, without extension. Eg: "index".
      * @return string
      */
     public function makeView($view)
     {
-        $viewPath = $this->getViewPath(strtolower($view) . '.htm');
+        $viewPath = $this->getViewPath(strtolower($view));
 
         $contents = $this->makeFileContents($viewPath);
 
@@ -149,7 +149,7 @@ trait ViewMaker
             return '';
         }
 
-        $layoutPath = $this->getViewPath($layout . '.htm', $this->layoutPath);
+        $layoutPath = $this->getViewPath($layout, $this->layoutPath);
 
         if (!File::exists($layoutPath)) {
             if ($throwException) {
@@ -182,12 +182,14 @@ trait ViewMaker
      * getViewPath locates a file based on its definition. The file name can be prefixed
      * with a symbol (~|$) to return in context of the application or plugin base path,
      * otherwise it will be returned in context of this object view path.
-     * @param string $fileName File to load.
-     * @param mixed $viewPath Explicitly define a view path.
-     * @return string Full path to the view file.
+     * @param string $fileName
+     * @param mixed $viewPath
+     * @return string
      */
     public function getViewPath($fileName, $viewPath = null)
     {
+        $viewExtensions = ['php', 'htm'];
+
         if (!isset($this->viewPath)) {
             $this->viewPath = $this->guessViewPath();
         }
@@ -196,25 +198,43 @@ trait ViewMaker
             $viewPath = $this->viewPath;
         }
 
-        $fileName = File::symbolizePath($fileName);
-
-        if (File::isLocalPath($fileName) ||
-            (!Config::get('system.restrict_base_dir', true) && realpath($fileName) !== false)
-        ) {
-            return $fileName;
-        }
-
+        // Check in view paths
         if (!is_array($viewPath)) {
             $viewPath = [$viewPath];
         }
 
+        // Remove extension from path
+        $fileNameNe = File::anyname($fileName);
+
+        // Check in view paths
         foreach ($viewPath as $path) {
-            $_fileName = File::symbolizePath($path) . '/' . $fileName;
-            if (File::isFile($_fileName)) {
-                return $_fileName;
+            $fullPath = File::symbolizePath($path);
+
+            foreach ($viewExtensions as $extension) {
+                $_fileName = $fullPath . '/' . $fileNameNe . '.' . $extension;
+                if (File::isFile($_fileName)) {
+                    return $_fileName;
+                }
             }
         }
 
+        // Check in absolute (exact lookup)
+        $fileName = File::symbolizePath($fileName);
+        if (strpos($fileName, '/') !== false && System::checkBaseDir($fileName)) {
+            return $fileName;
+        }
+
+        // Check with extension applied (v2.2 patch)
+        if (strpos($fileName, '/') !== false) {
+            foreach ($viewExtensions as $extension) {
+                $_fileName = $fileNameNe . '.' . $extension;
+                if (System::checkBaseDir($_fileName)) {
+                    return $_fileName;
+                }
+            }
+        }
+
+        // Returns the closest guess, although invalid
         return $fileName;
     }
 
@@ -226,10 +246,7 @@ trait ViewMaker
      */
     public function makeFileContents($filePath, $extraParams = [])
     {
-        if (!strlen($filePath) ||
-            !File::isFile($filePath) ||
-            (!File::isLocalPath($filePath) && Config::get('system.restrict_base_dir', true))
-        ) {
+        if (!strlen($filePath) || !File::isFile($filePath) || !System::checkBaseDir($filePath)) {
             return '';
         }
 

@@ -2,9 +2,12 @@
 
 use Request;
 use October\Rain\Database\Model;
+use Backend\Widgets\Form as FormWidget;
+use Backend\Widgets\Lists as ListWidget;
+use Backend\Widgets\ListStructure as ListStructureWidget;
 
 /**
- * HasViewMode
+ * HasViewMode contains logic for viewing related records
  */
 trait HasViewMode
 {
@@ -43,153 +46,206 @@ trait HasViewMode
     }
 
     /**
-     * makeViewWidget
+     * makeViewWidget returns a form or list widget based on configuration
      */
     protected function makeViewWidget()
     {
-        $widget = null;
-
-        /*
-         * Multiple (has many, belongs to many)
-         */
+        // Multiple (has many, belongs to many)
         if ($this->viewMode === 'multi') {
-            $isPivot = in_array($this->relationType, ['belongsToMany', 'morphToMany', 'morphedByMany']);
+            return $this->makeViewWidgetAsList();
+        }
+        // Single (belongs to, has one)
+        elseif ($this->viewMode === 'single') {
+            return $this->makeViewWidgetAsForm();
+        }
 
-            $config = $this->makeConfigForMode('view', 'list');
-            $config->model = $this->relationModel;
-            $config->alias = $this->alias . 'ViewList';
-            $config->showSorting = $this->getConfig('view[showSorting]', true);
-            $config->defaultSort = $this->getConfig('view[defaultSort]');
-            $config->recordsPerPage = $this->getConfig('view[recordsPerPage]');
-            $config->showCheckboxes = $this->getConfig('view[showCheckboxes]', !$this->readOnly);
-            $config->recordUrl = $this->getConfig('view[recordUrl]', null);
-            $config->customViewPath = $this->getConfig('view[customViewPath]', null);
+        return null;
+    }
 
-            $defaultOnClick = sprintf(
-                "$.oc.relationBehavior.clickViewListRecord(':%s', '%s', '%s')",
-                $this->relationModel->getKeyName(),
-                $this->relationGetId(),
-                $this->relationGetSessionKey()
-            );
+    /**
+     * makeViewWidgetAsList prepares the list widget for viewing
+     */
+    protected function makeViewWidgetAsList(): ?ListWidget
+    {
+        $isPivot = in_array($this->relationType, ['belongsToMany', 'morphToMany', 'morphedByMany']);
 
-            if ($config->recordUrl) {
-                $defaultOnClick = null;
-            }
-            elseif (
-                !$this->makeConfigForMode('manage', 'form', false) &&
-                !$this->makeConfigForMode('pivot', 'form', false)
-            ) {
-                $defaultOnClick = null;
-            }
+        $config = $this->makeConfigForMode('view', 'list');
+        $config->model = $this->relationModel;
+        $config->alias = $this->alias . 'ViewList';
+        $config->showSorting = $this->getConfig('view[showSorting]', true);
+        $config->defaultSort = $this->getConfig('view[defaultSort]');
+        $config->recordsPerPage = $this->getConfig('view[recordsPerPage]');
+        $config->showCheckboxes = $this->getConfig('view[showCheckboxes]', !$this->readOnly);
+        $config->recordUrl = $this->getConfig('view[recordUrl]', null);
+        $config->customViewPath = $this->getConfig('view[customViewPath]', null);
 
-            $config->recordOnClick = $this->getConfig('view[recordOnClick]', $defaultOnClick);
+        $defaultOnClick = sprintf(
+            "$.oc.relationBehavior.clickViewListRecord(':%s', '%s', '%s')",
+            $this->relationModel->getKeyName(),
+            $this->relationGetId(),
+            $this->relationGetSessionKey()
+        );
 
-            if ($emptyMessage = $this->getConfig('emptyMessage')) {
-                $config->noRecordsMessage = $emptyMessage;
-            }
+        if ($config->recordUrl) {
+            $defaultOnClick = null;
+        }
+        elseif (
+            !$this->makeConfigForMode('manage', 'form', false) &&
+            !$this->makeConfigForMode('pivot', 'form', false)
+        ) {
+            $defaultOnClick = null;
+        }
 
-            if ($isPivot) {
-                $config->model->setRelation('pivot', $this->relationObject->newPivot());
-            }
+        $config->recordOnClick = $this->getConfig('view[recordOnClick]', $defaultOnClick);
 
-            $widget = $this->makeWidget(\Backend\Widgets\Lists::class, $config);
+        if ($emptyMessage = $this->getConfig('emptyMessage')) {
+            $config->noRecordsMessage = $emptyMessage;
+        }
 
-            /*
-             * Apply defined constraints
-             */
-            if ($sqlConditions = $this->getConfig('view[conditions]')) {
-                $widget->bindEvent('list.extendQueryBefore', function ($query) use ($sqlConditions) {
-                    $query->whereRaw($sqlConditions);
-                });
-            }
-            elseif ($scopeMethod = $this->getConfig('view[scope]')) {
-                $widget->bindEvent('list.extendQueryBefore', function ($query) use ($scopeMethod) {
-                    $query->$scopeMethod($this->model);
-                });
-            }
-            else {
-                $widget->bindEvent('list.extendQueryBefore', function ($query) {
-                    $this->relationObject->addDefinedConstraintsToQuery($query);
-                });
-            }
+        if ($isPivot) {
+            $config->model->setRelation('pivot', $this->relationObject->newPivot());
+        }
 
-            /*
-             * Constrain the query by the relationship and deferred items
-             */
-            $widget->bindEvent('list.extendQuery', function ($query) use ($isPivot) {
-                $this->relationObject->setQuery($query);
+        // Make structure enabled widget
+        $structureConfig = $this->makeListStructureConfig($config);
+        if ($structureConfig) {
+            $widget = $this->makeWidget(ListStructureWidget::class, $structureConfig);
+        }
+        else {
+            $widget = $this->makeWidget(ListWidget::class, $config);
+        }
 
-                $sessionKey = $this->deferredBinding ? $this->relationGetSessionKey() : null;
+        // Custom structure reordering logic
+        if (
+            $this->model->isClassInstanceOf(\October\Contracts\Database\SortableRelationInterface::class) &&
+            $this->model->isSortableRelation($this->field)
+        ) {
+            $widget->bindEvent('list.reorderStructure', function () {
+                $this->model->setSortableRelationOrder($this->field, post('sort_orders'), array_keys((array) post('sort_orders')));
+            });
+        }
 
-                if ($sessionKey) {
-                    $this->relationObject->withDeferred($sessionKey);
-                }
-                elseif ($this->model->exists) {
-                    $this->relationObject->addConstraints();
-                }
+        // Apply defined constraints
+        if ($sqlConditions = $this->getConfig('view[conditions]')) {
+            $widget->bindEvent('list.extendQueryBefore', function ($query) use ($sqlConditions) {
+                $query->whereRaw($sqlConditions);
+            });
+        }
+        elseif ($scopeMethod = $this->getConfig('view[scope]')) {
+            $widget->bindEvent('list.extendQueryBefore', function ($query) use ($scopeMethod) {
+                $query->$scopeMethod($this->model);
+            });
+        }
+        else {
+            $widget->bindEvent('list.extendQueryBefore', function ($query) {
+                $this->relationObject->addDefinedConstraintsToQuery($query);
 
-                /*
-                 * Allows pivot data to enter the fray
-                 */
-                if ($isPivot) {
-                    $this->relationObject->setQuery($query->getQuery());
-                    return $this->relationObject;
+                // Reset any orders that may have come from the definition
+                // because it has a tendency to break things
+                if (!$this->model->exists) {
+                    $query->getQuery()->orders = [];
                 }
             });
+        }
 
-            /*
-             * Constrain the list by the search widget, if available
-             */
-            if ($this->toolbarWidget && $this->getConfig('view[showSearch]')
-                && $searchWidget = $this->toolbarWidget->getSearchWidget()
-            ) {
-                $searchWidget->bindEvent('search.submit', function () use ($widget, $searchWidget) {
-                    $widget->setSearchTerm($searchWidget->getActiveTerm());
-                    return $widget->onRefresh();
-                });
+        // Constrain the query by the relationship and deferred items
+        $widget->bindEvent('list.extendQuery', function ($query) use ($isPivot) {
+            $this->relationObject->setQuery($query);
 
-                // Linkage for JS plugins
-                $searchWidget->listWidgetId = $widget->getId();
+            $sessionKey = $this->deferredBinding ? $this->relationGetSessionKey() : null;
 
-                // Persist the search term across AJAX requests only
-                if (Request::ajax()) {
-                    $widget->setSearchTerm($searchWidget->getActiveTerm());
-                }
-                else {
-                    $searchWidget->setActiveTerm(null);
-                }
+            if ($sessionKey) {
+                $this->relationObject->withDeferred($sessionKey);
+            }
+            elseif ($this->model->exists) {
+                $this->relationObject->addConstraints();
             }
 
-            /*
-             * Link the Filter Widget to the List Widget
-             */
-            if ($this->viewFilterWidget) {
-                $this->viewFilterWidget->bindEvent('filter.update', function () use ($widget) {
-                    return $widget->onFilter();
-                });
+            // Allows pivot data to enter the fray
+            if ($isPivot) {
+                $this->relationObject->setQuery($query->getQuery());
+                return $this->relationObject;
+            }
+        });
 
-                // Apply predefined filter values
-                $widget->addFilter([$this->viewFilterWidget, 'applyAllScopesToQuery']);
+        // Constrain the list by the search widget, if available
+        if ($this->toolbarWidget && $this->getConfig('view[showSearch]')
+            && $searchWidget = $this->toolbarWidget->getSearchWidget()
+        ) {
+            $searchWidget->bindEvent('search.submit', function () use ($widget, $searchWidget) {
+                $widget->setSearchTerm($searchWidget->getActiveTerm());
+                return $widget->onRefresh();
+            });
+
+            // Linkage for JS plugins
+            $searchWidget->listWidgetId = $widget->getId();
+
+            // Pass search options
+            $widget->setSearchOptions([
+                'mode' => $this->getConfig('view[searchMode]'),
+                'scope' => $this->getConfig('view[searchScope]'),
+            ]);
+
+            // Persist the search term across AJAX requests only
+            if (Request::ajax()) {
+                $widget->setSearchTerm($searchWidget->getActiveTerm());
+            }
+            else {
+                $searchWidget->setActiveTerm(null);
             }
         }
-        /*
-         * Single (belongs to, has one)
-         */
-        elseif ($this->viewMode === 'single') {
-            $this->viewModel = $this->relationObject->getResults()
-                ?: $this->relationModel;
 
-            $config = $this->makeConfigForMode('view', 'form');
-            $config->model = $this->viewModel;
-            $config->arrayName = class_basename($this->relationModel);
-            $config->context = 'relation';
-            $config->alias = $this->alias . 'ViewForm';
+        // Link the Filter Widget to the List Widget
+        if ($this->viewFilterWidget) {
+            $this->viewFilterWidget->bindEvent('filter.update', function () use ($widget) {
+                return $widget->onFilter();
+            });
 
-            $widget = $this->makeWidget(\Backend\Widgets\Form::class, $config);
-            $widget->previewMode = true;
+            // Apply predefined filter values
+            $widget->addFilter([$this->viewFilterWidget, 'applyAllScopesToQuery']);
         }
 
         return $widget;
+    }
+
+    /**
+     * makeViewWidgetAsForm prepares the form widget for viewing
+     */
+    protected function makeViewWidgetAsForm(): ?FormWidget
+    {
+        $this->viewModel = $this->relationObject->getResults()
+            ?: $this->relationModel;
+
+        $config = $this->makeConfigForMode('view', 'form');
+        $config->model = $this->viewModel;
+        $config->arrayName = class_basename($this->relationModel);
+        $config->context = 'relation';
+        $config->alias = $this->alias . 'ViewForm';
+
+        $widget = $this->makeWidget(FormWidget::class, $config);
+        $widget->previewMode = true;
+
+        return $widget;
+    }
+
+    /**
+     * makeListStructureConfig
+     */
+    protected function makeListStructureConfig(object $config): ?object
+    {
+        $structureConfig = $this->getConfig('structure');
+        if (!$structureConfig) {
+            return null;
+        }
+
+        if (
+            $this->model->isClassInstanceOf(\October\Contracts\Database\SortableRelationInterface::class) &&
+            $this->model->isSortableRelation($this->field)
+        ) {
+            $structureConfig['includeSortOrders'] = true;
+        }
+
+        return $this->mergeConfig($config, $structureConfig);
     }
 
     //

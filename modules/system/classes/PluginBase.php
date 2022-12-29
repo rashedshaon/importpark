@@ -164,7 +164,7 @@ class PluginBase extends ServiceProviderBase
     /**
      * registerSchedule registers scheduled tasks that are executed on a regular basis.
      *
-     * @param Illuminate\Console\Scheduling\Schedule $schedule
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
      * @return void
      */
     public function registerSchedule($schedule)

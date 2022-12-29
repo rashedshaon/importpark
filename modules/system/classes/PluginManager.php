@@ -110,6 +110,14 @@ class PluginManager
     }
 
     /**
+     * unloadPlugins unloads all plugins: the negative of loadPlugins()
+     */
+    public function unloadPlugins()
+    {
+        $this->plugins = [];
+    }
+
+    /**
      * loadPlugin loads a single plugin in to the manager where a namespace is Acme\Blog
      * and the path is somewhere on the disk
      */
@@ -223,8 +231,6 @@ class PluginManager
             ComposerManager::instance()->autoload($pluginPath . '/vendor');
         }
 
-        $plugin->register();
-
         /*
          * Register configuration path
          */
@@ -240,6 +246,11 @@ class PluginManager
         if (File::isDirectory($viewsPath)) {
             View::addNamespace($pluginNamespace, $viewsPath);
         }
+
+        /*
+         * Run the plugin's register() method
+         */
+        $plugin->register();
 
         /*
          * Add init, if available

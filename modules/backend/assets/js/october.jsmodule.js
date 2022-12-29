@@ -6,7 +6,8 @@
 
         this.register = function(namespace, registrationFn) {
             if (this.modules.has(namespace)) {
-                throw new Error('Module namespace is already registered: ' + namespace);
+                console.info('Module namespace is already registered: ' + namespace);
+                return;
             }
 
             this.modules.set(namespace, registrationFn());

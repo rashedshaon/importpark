@@ -186,9 +186,9 @@ trait UrlMaker
         $filePath = $page->getFilePath();
 
         $cached = [
-            'path'     => $filePath,
+            'path' => $filePath,
             'fileName' => $baseFileName,
-            'mtime'    => @File::lastModified($filePath)
+            'mtime' => @File::lastModified($filePath)
         ];
 
         $expiresAt = now()->addMinutes(Config::get('cms.template_cache_ttl', 1440));

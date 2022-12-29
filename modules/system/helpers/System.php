@@ -3,7 +3,7 @@
 use App;
 use File;
 use Config;
-use Illuminate\Support\Facades\Schema;
+use Schema;
 
 /**
  * System Helper
@@ -104,7 +104,7 @@ class System
     }
 
     /**
-     * checkBaseDir checks if a file path is inside the base directory
+     * checkBaseDir returns true if a file path is inside the base directory
      */
     public function checkBaseDir($filePath): bool
     {

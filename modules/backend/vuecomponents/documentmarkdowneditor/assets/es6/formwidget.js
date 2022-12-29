@@ -11,6 +11,7 @@ $.oc.module.register('backend.vuecomponents.documentmarkdowneditor.formwidget', 
                 propsData: {
                     textarea: element,
                     useMediaManager: options.useMediaManager,
+                    options: options,
                     lang: $(element).closest('.field-markdowneditor').data()
                 }
             });

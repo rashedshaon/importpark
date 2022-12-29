@@ -7,8 +7,7 @@ use October\Rain\Halcyon\Processors\SectionParser;
 use Exception;
 
 /**
- * The CMS exception class.
- * The exception class handles CMS related errors. Allows the masking of other exception types which
+ * CmsException handles CMS related errors. Allows the masking of other exception types which
  * uses actual source CMS files -- instead of cached files -- for their error content.
  *
  * @package october\cms
@@ -17,12 +16,12 @@ use Exception;
 class CmsException extends ApplicationException
 {
     /**
-     * @var \Cms\Classes\CmsCompoundObject A reference to a CMS object used for masking errors.
+     * @var \Cms\Classes\CmsCompoundObject compoundObject used for masking errors.
      */
     protected $compoundObject;
 
     /**
-     * @var array Collection of error codes for each error distinction.
+     * @var array errorCodes for each error distinction.
      */
     protected static $errorCodes = [
         100 => 'General',
@@ -32,7 +31,7 @@ class CmsException extends ApplicationException
     ];
 
     /**
-     * Creates the CMS exception object.
+     * __construct the CMS exception object.
      * @param mixed $message The message to display as a string, or a CmsCompoundObject that is used
      * for using this exception as a mask for another exception type.
      * @param int $code Error code to specify the exception type:
@@ -57,7 +56,7 @@ class CmsException extends ApplicationException
     }
 
     /**
-     * Checks some conditions to confirm error has actually occurred
+     * processCompoundObject checks some conditions to confirm error has actually occurred
      * due to the CMS template code, not some external code. If the error
      * has occurred in external code, the function will return false. Otherwise return
      * true and modify the exception by overriding it's content, line and message values
@@ -92,7 +91,7 @@ class CmsException extends ApplicationException
     }
 
     /**
-     * Override properties of an exception specific to the INI section
+     * processIni overrides properties of an exception specific to the INI section
      * of a CMS object.
      * @param \Exception $exception The exception to modify.
      * @return bool
@@ -120,7 +119,7 @@ class CmsException extends ApplicationException
          */
         $parts = explode(' ', $message);
         $line = array_pop($parts);
-        $this->line = (int)$line;
+        $this->line = (int) $line;
 
         // Find where the ini settings section begins
         $offsetArray = SectionParser::parseOffset($this->compoundObject->getContent());
@@ -135,7 +134,7 @@ class CmsException extends ApplicationException
     }
 
     /**
-     * Override properties of an exception specific to the PHP section
+     * processPhp override properties of an exception specific to the PHP section
      * of a CMS object.
      * @param \Exception $exception The exception to modify.
      * @return bool
@@ -145,7 +144,7 @@ class CmsException extends ApplicationException
         /*
          * Fatal Error
          */
-        if ($exception instanceof \Symfony\Component\Debug\Exception\FatalErrorException) {
+        if ($exception instanceof \ErrorException) {
             $check = false;
 
             // Expected: */modules/cms/classes/CodeParser.php(165) : eval()'d code line 7
@@ -161,14 +160,14 @@ class CmsException extends ApplicationException
             if (!$check) {
                 return false;
             }
+        }
         /*
          * Errors occurring the PHP code base class (Cms\Classes\CodeBase)
          */
-        }
         else {
             $trace = $exception->getTrace();
-            if (isset($trace[1]['class'])) {
-                $class = $trace[1]['class'];
+            if (isset($trace[0]['class'])) {
+                $class = $trace[0]['class'];
                 if (!is_subclass_of($class, CodeBase::class)) {
                     return false;
                 }
@@ -191,7 +190,7 @@ class CmsException extends ApplicationException
     }
 
     /**
-     * Override properties of an exception specific to the Twig section
+     * processTwig overrides properties of an exception specific to the Twig section
      * of a CMS object.
      * @param \Exception $exception The exception to modify.
      * @return bool
@@ -217,7 +216,7 @@ class CmsException extends ApplicationException
     }
 
     /**
-     * Masks this exception with the details of the supplied. The error code for
+     * applyMask masks this exception with the details of the supplied. The error code for
      * this exception object will determine how the supplied exception is used.
      * Error 100: A general exception. Inherits \System\Classes\ExceptionBase::applyMask()
      * Error 200: Mask the exception as INI content.

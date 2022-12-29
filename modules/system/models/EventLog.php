@@ -28,6 +28,10 @@ class EventLog extends Model
      */
     public static function useLogging(): bool
     {
+        if (defined('OCTOBER_TRACING_SQL') || defined('OCTOBER_NO_EVENT_LOGGING')) {
+            return false;
+        }
+
         try {
             return (
                 !defined('OCTOBER_NO_EVENT_LOGGING') &&

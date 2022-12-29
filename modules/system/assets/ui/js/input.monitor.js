@@ -29,7 +29,8 @@
         this.$el.on('unchange.oc.changeMonitor', this.proxy(this.unchange));
         this.$el.on('pause.oc.changeMonitor', this.proxy(this.pause));
         this.$el.on('resume.oc.changeMonitor', this.proxy(this.resume));
-
+        this.$el.on('pauseUnloadListener.oc.changeMonitor', this.proxy(this.pauseUnloadListener));
+        this.$el.on('resumeUnloadListener.oc.changeMonitor', this.proxy(this.resumeUnloadListener));
         this.$el.on('keyup input paste', 'input:not(.ace_search_field), textarea:not(.ace_text-input)', this.proxy(this.onInputChange));
 
         $('input:not([type=hidden]):not(.ace_search_field), textarea:not(.ace_text-input)', this.$el).each(function() {
@@ -123,9 +124,17 @@
     ChangeMonitor.prototype.resume = function() {
         this.paused = false;
     }
+    
+    ChangeMonitor.prototype.pauseUnloadListener = function() {
+        this.unloadListenerPaused = true;
+    }
+
+    ChangeMonitor.prototype.resumeUnloadListener = function() {
+        this.unloadListenerPaused = false;
+    }
 
     ChangeMonitor.prototype.onBeforeUnload = function() {
-        if ($.contains(document.documentElement, this.$el.get(0)) && this.$el.hasClass('oc-data-changed')) {
+        if ($.contains(document.documentElement, this.$el.get(0)) && this.$el.hasClass('oc-data-changed') && !this.unloadListenerPaused) {
             return this.options.windowCloseConfirm;
         }
     }

@@ -14,25 +14,30 @@
     $(document).render(function(){
         var formatSelectOption = function(state) {
             // Escape HTML
-            var text = $('<span>').text(state.text).html()
+            var text = $('<span>').text(state.text).html();
 
             if (!state.id) {
-                return text // optgroup
+                return text; // optgroup
             }
 
             var $option = $(state.element),
+                statusColor = state.status ? state.status : $option.data('status'),
                 iconClass = state.icon ? state.icon : $option.data('icon'),
-                imageSrc = state.image ? state.image : $option.data('image')
+                imageSrc = state.image ? state.image : $option.data('image');
+
+            if (statusColor) {
+                return '<span class="select-status status-indicator" style="background:'+statusColor+'"></span> ' + text;
+            }
 
             if (iconClass) {
-                return '<i class="select-icon '+iconClass+'"></i> ' + text
+                return '<i class="select-icon '+iconClass+'"></i> ' + text;
             }
 
             if (imageSrc) {
-                return '<img class="select-image" src="'+imageSrc+'" alt="" /> ' + text
+                return '<img class="select-image" src="'+imageSrc+'" alt="" /> ' + text;
             }
 
-            return text
+            return text;
         }
 
         var selectOptions = {
@@ -164,6 +169,13 @@
             }
 
             $element.select2($.extend({}, selectOptions, extraOptions))
+
+            // Workaround for search not auto focusing (https://github.com/select2/select2/issues/5993)
+            $element.on('select2:open', function() {
+                setTimeout(function() {
+                    document.querySelector('.select2-container--open .select2-search__field').focus();
+                }, 100);
+            });
         })
     })
 

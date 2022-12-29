@@ -6,20 +6,8 @@ use ApplicationException;
 use Backend\Classes\ControllerBehavior;
 
 /**
- * Used for reordering and sorting records.
- *
- * This behavior is implemented in the controller like so:
- *
- *     public $implement = [
- *         'Backend.Behaviors.ReorderController',
- *     ];
- *
- *     public $reorderConfig = 'config_reorder.yaml';
- *
- * The `$reorderConfig` property makes reference to the configuration
- * values as either a YAML file, located in the controller view directory,
- * or directly as a PHP array.
- *
+ * ReorderController is deprecated
+ * @deprecated see ListController with structure config
  * @package october\backend
  * @author Alexey Bobkov, Samuel Georges
  */
@@ -277,7 +265,7 @@ class ReorderController extends ControllerBehavior
     {
         if ($toolbarConfig = $this->getConfig('toolbar')) {
             $toolbarConfig = $this->makeConfig($toolbarConfig);
-            $toolbarWidget = $this->makeWidget('Backend\Widgets\Toolbar', $toolbarConfig);
+            $toolbarWidget = $this->makeWidget(\Backend\Widgets\Toolbar::class, $toolbarConfig);
         }
         else {
             $toolbarWidget = null;

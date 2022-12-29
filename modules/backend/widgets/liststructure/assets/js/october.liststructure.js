@@ -21,14 +21,21 @@
     ListStructureWidget.DEFAULTS = {
         reorderHandler: 'onReorder',
         toggleHandler: 'onToggleTreeNode',
+        includeSortOrders: false,
         useReorder: true,
         useTree: true,
-        includeSortOrders: false,
-        indentSize: 24,
-        maxDepth: null
+        indentSize: 18,
+        maxDepth: null,
+        dragRow: true
     }
 
     ListStructureWidget.prototype.init = function() {
+        this.$tableBody = $('table > tbody', this.$el);
+
+        if ($.oc.isTouchEnabled()) {
+            this.options.dragRow = false;
+        }
+
         if (this.options.useReorder) {
             this.initReorder();
         }
@@ -36,6 +43,8 @@
         if (this.options.useTree) {
             this.initTree();
         }
+
+        this.$el.one('dispose-control', this.proxy(this.dispose));
     }
 
     ListStructureWidget.prototype.initTree = function() {
@@ -60,7 +69,6 @@
 
     ListStructureWidget.prototype.initReorder = function() {
         this.dragging = false;
-        this.$tableBody = $('table > tbody', this.$el);
 
         this.dragBoundary = {};
         this.dragStartX = 0;
@@ -70,15 +78,31 @@
         this.activeChildren = null;
         this.lastChildDiff = null;
 
-        this.sortable = Sortable.create(this.$tableBody.get(0), {
+        var that = this;
+
+        var sortableOptions = {
             // forceFallback: true,
             animation: 150,
-            handle: 'a.tree-reorder-handle',
+            setData: function setData(dataTransfer, dragEl) {
+                var hoverElement = $(document.documentElement).hasClass('gecko') ? 'div' : 'canvas';
+                that.blankHoverImage = document.createElement(hoverElement);
+
+                document.body.appendChild(that.blankHoverImage);
+                dataTransfer.setDragImage(that.blankHoverImage, 0, 0);
+                dataTransfer.setData('Text', dragEl.textContent);
+            },
+
             onStart: $.proxy(this.onDragStart, this),
             onChange: $.proxy(this.onChange, this),
             onEnd: $.proxy(this.onDragStop, this),
             onMove: $.proxy(this.onDragMove, this)
-        });
+        };
+
+        if (!this.options.dragRow) {
+            sortableOptions.handle = '.list-reorder-handle';
+        }
+
+        this.sortable = Sortable.create(this.$tableBody.get(0), sortableOptions);
 
         this.$el.on('drag', $.proxy(this.onDragging, this));
         this.$el.on('mousemove', $.proxy(this.onDragging, this));
@@ -102,8 +126,10 @@
             this.destroyTree();
         }
 
+        this.$el.off('dispose-control', this.proxy(this.dispose));
         this.$el.removeData('oc.liststructurewidget');
 
+        this.$tableBody = null;
         this.$el = null;
 
         // In some cases options could contain callbacks,
@@ -133,7 +159,8 @@
         this.activeClone = evt.clone;
         this.activeAncestors = this.getAncestors($item);
         this.activeChildren = this.getChildren($item);
-        this.dragStartX = evt.originalEvent.pageX;
+        this.dragStartX = this.getEventPageX(evt.originalEvent);
+        this.$tableBody.addClass('tree-drag-mode');
 
         var currentDepth = $item.data('tree-level'),
             lastChildDiff = 0;
@@ -162,7 +189,15 @@
         this.activeItem = null;
         this.dragging = false;
         var $item = $(evt.item),
-            self = this;
+            self = this,
+            $tableBody = this.$tableBody;
+
+        $tableBody.addClass('tree-drag-updated').removeClass('tree-drag-mode');
+
+        if (this.blankHoverImage) {
+            $(this.blankHoverImage).remove();
+            this.blankHoverImage = null;
+        }
 
         var currentLevel = $item.data('tree-level'),
             proposedLevel = $item.data('tree-level-proposed'),
@@ -188,6 +223,8 @@
 
         this.$el.request(this.options.reorderHandler, {
             data: postData
+        }).always(function () {
+            $tableBody.removeClass('tree-drag-updated');
         });
     }
 
@@ -261,7 +298,7 @@
             return;
         }
 
-        this.draggingX = evt.pageX;
+        this.draggingX = this.getEventPageX(evt);
 
         this.setIndent();
 
@@ -409,11 +446,17 @@
             $(item).data('tree-level', indentLevel);
         }
 
-        $('> .list-cell-tree:first', item).css('padding-left', this.getIndentSize(indentLevel));
+        $('> .list-cell-tree:first', item).css('padding-left', this.getIndentStartSize(indentLevel));
     }
 
-    ListStructureWidget.prototype.getIndentSize = function(indentLevel) {
-        return ((indentLevel+2) * this.options.indentSize) + (this.options.useReorder ? 20 : 15);
+    ListStructureWidget.prototype.getIndentStartSize = function(treeLevel) {
+        return (treeLevel * this.options.indentSize) +
+            (this.options.useTree ? 15 : 0) +
+            (this.options.useReorder ? 0 : 15);
+    }
+
+    ListStructureWidget.prototype.getEventPageX = function(evt) {
+        return evt.pageX || evt.touches[0].pageX;
     }
 
     // LISTREE WIDGET PLUGIN DEFINITION

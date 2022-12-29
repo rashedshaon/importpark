@@ -10,12 +10,13 @@ use System\Classes\MarkupManager;
 use Backend\Classes\WidgetManager;
 use October\Rain\Support\ModuleServiceProvider;
 
+/**
+ * ServiceProvider for Media module
+ */
 class ServiceProvider extends ModuleServiceProvider
 {
     /**
-     * Register the service provider.
-     *
-     * @return void
+     * register the service provider.
      */
     public function register()
     {
@@ -36,9 +37,7 @@ class ServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * Bootstrap the module events.
-     *
-     * @return void
+     * boot the module events.
      */
     public function boot()
     {
@@ -46,7 +45,7 @@ class ServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * Register asset bundles
+     * registerAssetBundles
      */
     protected function registerAssetBundles()
     {
@@ -63,12 +62,12 @@ class ServiceProvider extends ModuleServiceProvider
         BackendMenu::registerCallback(function ($manager) {
             $manager->registerMenuItems('October.Media', [
                 'media' => [
-                    'label'       => 'backend::lang.media.menu_label',
-                    'icon'        => 'icon-folder',
-                    'iconSvg'     => 'modules/media/assets/images/media-icon.svg',
-                    'url'         => Backend::url('media'),
+                    'label' => 'backend::lang.media.menu_label',
+                    'icon' => 'icon-folder',
+                    'iconSvg' => 'modules/media/assets/images/media-icon.svg',
+                    'url' => Backend::url('media'),
                     'permissions' => ['media.*'],
-                    'order'       => 200
+                    'order' => 200
                 ]
             ]);
         });
@@ -95,7 +94,7 @@ class ServiceProvider extends ModuleServiceProvider
     protected function registerBackendWidgets()
     {
         WidgetManager::instance()->registerFormWidgets(function ($manager) {
-            $manager->registerFormWidget('Media\FormWidgets\MediaFinder', 'mediafinder');
+            $manager->registerFormWidget(\Media\FormWidgets\MediaFinder::class, 'mediafinder');
         });
     }
 

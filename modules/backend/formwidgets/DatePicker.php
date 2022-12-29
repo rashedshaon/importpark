@@ -62,6 +62,12 @@ class DatePicker extends FormWidgetBase
      */
     public $useTimezone = true;
 
+    /**
+     * @var bool defaultTimeMidnight If the time picker is enabled but the time value is not provided fallback to 00:00.
+     * If this option is disabled, the default time is the current time.
+     */
+    public $defaultTimeMidnight = false;
+
     //
     // Object properties
     //
@@ -85,6 +91,7 @@ class DatePicker extends FormWidgetBase
             'firstDay',
             'showWeekNumber',
             'useTimezone',
+            'defaultTimeMidnight'
         ]);
 
         $this->mode = strtolower($this->mode);
@@ -143,6 +150,7 @@ class DatePicker extends FormWidgetBase
         $this->vars['format'] = $this->format;
         $this->vars['formatMoment'] = $this->getDateFormatMoment();
         $this->vars['formatAlias'] = $this->getDateFormatAlias();
+        $this->vars['defaultTimeMidnight'] = $this->defaultTimeMidnight;
     }
 
     /**

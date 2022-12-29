@@ -1,15 +1,14 @@
 <?php namespace Backend\Classes;
 
-use IteratorAggregate;
-use ArrayIterator;
+use October\Rain\Element\Form\FieldsetDefinition;
 
 /**
- * FormTabs is a translation of the form field tab configuration
+ * FormTabs is a fieldset definition for backend tabs
  *
  * @package october\backend
  * @author Alexey Bobkov, Samuel Georges
  */
-class FormTabs implements IteratorAggregate
+class FormTabs extends FieldsetDefinition
 {
     const SECTION_OUTSIDE = 'outside';
     const SECTION_PRIMARY = 'primary';
@@ -25,9 +24,14 @@ class FormTabs implements IteratorAggregate
     public $section = 'outside';
 
     /**
-     * @var array lazy is the n Names of tabs to lazy load
+     * @var array lazy is the names of tabs to lazy load
      */
     public $lazy = [];
+
+    /**
+     * @var array adaptive is the names of tabs that use the entire screen space
+     */
+    public $adaptive = [];
 
     /**
      * @var string defaultTab is default tab label to use when none is specified
@@ -50,11 +54,6 @@ class FormTabs implements IteratorAggregate
     public $stretch;
 
     /**
-     * @var boolean suppressTabs if set to TRUE, fields will not be displayed in tabs
-     */
-    public $suppressTabs = false;
-
-    /**
      * @var string cssClass cpecifies a CSS class to attach to the tab container
      */
     public $cssClass;
@@ -69,15 +68,6 @@ class FormTabs implements IteratorAggregate
      */
     public $linkable = true;
 
-    //
-    // Object properties
-    //
-
-    /**
-     * @var array fields is a collection of panes fields to these tabs
-     */
-    protected $fields = [];
-
     /**
      * __construct specifies a tabs rendering section. Supported sections are:
      * - outside - stores a section of "tabless" fields.
@@ -89,7 +79,10 @@ class FormTabs implements IteratorAggregate
     public function __construct($section, $config = [])
     {
         $this->section = strtolower($section) ?: $this->section;
-        $this->config = $this->evalConfig($config);
+
+        if ($config && is_array($config)) {
+            $this->useConfig($config);
+        }
 
         if ($this->section === self::SECTION_OUTSIDE) {
             $this->suppressTabs = true;
@@ -99,11 +92,9 @@ class FormTabs implements IteratorAggregate
     /**
      * evalConfig process options and apply them to this object
      */
-    protected function evalConfig($config)
+    protected function evalConfig(array $config): void
     {
-        if (array_key_exists('defaultTab', $config)) {
-            $this->defaultTab = $config['defaultTab'];
-        }
+        parent::evalConfig($config);
 
         if (array_key_exists('activeTab', $config)) {
             $this->activeTab = $config['activeTab'];
@@ -117,10 +108,6 @@ class FormTabs implements IteratorAggregate
             $this->stretch = $config['stretch'];
         }
 
-        if (array_key_exists('suppressTabs', $config)) {
-            $this->suppressTabs = $config['suppressTabs'];
-        }
-
         if (array_key_exists('cssClass', $config)) {
             $this->cssClass = $config['cssClass'];
         }
@@ -131,6 +118,10 @@ class FormTabs implements IteratorAggregate
 
         if (array_key_exists('lazy', $config)) {
             $this->lazy = $config['lazy'];
+        }
+
+        if (array_key_exists('adaptive', $config)) {
+            $this->adaptive = $config['adaptive'];
         }
 
         if (array_key_exists('linkable', $config)) {
@@ -147,64 +138,27 @@ class FormTabs implements IteratorAggregate
     }
 
     /**
-     * addField to the collection of tabs
-     * @param string    $name
-     * @param FormField $field
-     * @param string    $tab
+     * addLazy flags a tab to be lazy loaded
      */
-    public function addField($name, FormField $field)
+    public function addLazy($tabName)
     {
-        $this->fields[$name] = $field;
+        $this->lazy = array_merge((array) $this->lazy, (array) $tabName);
     }
 
     /**
-     * removeField from all tabs by name
-     * @param string $name
-     * @return boolean
+     * isAdaptive checks if a tab uses adaptive sizing
      */
-    public function removeField($name)
+    public function isAdaptive($tabName): bool
     {
-        if (isset($this->fields[$name])) {
-            unset($this->fields[$name]);
-            return true;
-        }
-
-        return false;
+        return in_array($tabName, $this->adaptive);
     }
 
     /**
-     * hasFields returns true if any fields have been registered for these tabs
-     * @return bool
+     * addAdaptive flags a tab to use adaptive sizing
      */
-    public function hasFields()
+    public function addAdaptive($tabName)
     {
-        return count($this->fields) > 0;
-    }
-
-    /**
-     * getFields returns an array of the registered fields, includes tabs in format
-     * array[tab][field]
-     * @return array
-     */
-    public function getFields()
-    {
-        $fieldsTabbed = [];
-
-        foreach ($this->fields as $name => $field) {
-            $tabName = $field->tab ?: $this->defaultTab;
-            $fieldsTabbed[$tabName][$name] = $field;
-        }
-
-        return $fieldsTabbed;
-    }
-
-    /**
-     * getAllFields returns an array of the registered fields, without tabs
-     * @return array
-     */
-    public function getAllFields()
-    {
-        return $this->fields;
+        $this->adaptive = array_merge((array) $this->adaptive, (array) $tabName);
     }
 
     /**
@@ -238,6 +192,26 @@ class FormTabs implements IteratorAggregate
         if ($label !== null && isset($this->paneCssClass[$label])) {
             return $this->paneCssClass[$label];
         }
+
+        return $this->paneCssClass['*'] ?? '';
+    }
+
+    /**
+     * setPaneCssClass appends a CSS class to the tab pane
+     */
+    public function setPaneCssClass($tabNameOrIndex, string $cssClass, bool $overwrite = false)
+    {
+        if (is_string($this->paneCssClass)) {
+            $this->paneCssClass = ['*' => $this->paneCssClass];
+        }
+
+        if ($overwrite) {
+            $this->paneCssClass[$tabNameOrIndex] = $cssClass;
+        }
+        else {
+            $currentValue = $this->paneCssClass[$tabNameOrIndex] ?? '';
+            $this->paneCssClass[$tabNameOrIndex] = trim($currentValue . ' ' . $cssClass);
+        }
     }
 
     /**
@@ -258,18 +232,5 @@ class FormTabs implements IteratorAggregate
         }
 
         return false;
-    }
-
-    /**
-     * getIterator gets an iterator for the items
-     * @return ArrayIterator
-     */
-    public function getIterator()
-    {
-        return new ArrayIterator(
-            $this->suppressTabs
-                ? $this->getAllFields()
-                : $this->getFields()
-        );
     }
 }

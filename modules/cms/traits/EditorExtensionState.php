@@ -1,6 +1,5 @@
 <?php namespace Cms\Traits;
 
-use App;
 use Lang;
 use Cms\Classes\Page;
 use Cms\Classes\Partial;
@@ -9,7 +8,6 @@ use Cms\Classes\Layout;
 use Cms\Classes\EditorExtension;
 use Cms\Classes\ComponentHelpers;
 use Cms\Classes\ComponentManager;
-use System\Classes\PluginManager;
 use Backend\VueComponents\TreeView\NodeDefinition;
 use Backend\VueComponents\DropdownMenu\ItemDefinition;
 use Editor\Classes\NewDocumentDescription;
@@ -19,6 +17,9 @@ use Editor\Classes\NewDocumentDescription;
  */
 trait EditorExtensionState
 {
+    /**
+     * getCmsPageNewDocumentData
+     */
     private function getCmsPageNewDocumentData()
     {
         $description = new NewDocumentDescription(
@@ -47,6 +48,9 @@ trait EditorExtensionState
         return $description;
     }
 
+    /**
+     * getCmsPartialNewDocumentData
+     */
     private function getCmsPartialNewDocumentData()
     {
         $description = new NewDocumentDescription(
@@ -67,6 +71,9 @@ trait EditorExtensionState
         return $description;
     }
 
+    /**
+     * getCmsLayoutNewDocumentData
+     */
     private function getCmsLayoutNewDocumentData()
     {
         $description = new NewDocumentDescription(
@@ -85,6 +92,9 @@ trait EditorExtensionState
         return $description;
     }
 
+    /**
+     * getCmsContentNewDocumentData
+     */
     private function getCmsContentNewDocumentData()
     {
         $description = new NewDocumentDescription(
@@ -102,6 +112,9 @@ trait EditorExtensionState
         return $description;
     }
 
+    /**
+     * addPagesNavigatorNodes
+     */
     private function addPagesNavigatorNodes($theme, $section)
     {
         $pages = Page::listInTheme($theme, true);
@@ -166,6 +179,9 @@ trait EditorExtensionState
         }
     }
 
+    /**
+     * addLayoutsNavigatorNodes
+     */
     private function addLayoutsNavigatorNodes($theme, $section)
     {
         $layouts = Layout::listInTheme($theme, true);
@@ -198,6 +214,9 @@ trait EditorExtensionState
         }
     }
 
+    /**
+     * addPartialsNavigatorNodes
+     */
     private function addPartialsNavigatorNodes($theme, $section)
     {
         $partials = Partial::listInTheme($theme, true);
@@ -229,6 +248,9 @@ trait EditorExtensionState
         }
     }
 
+    /**
+     * addContentNavigatorNodes
+     */
     private function addContentNavigatorNodes($theme, $section)
     {
         $contents = Content::listInTheme($theme, true);
@@ -259,6 +281,9 @@ trait EditorExtensionState
         }
     }
 
+    /**
+     * loadLayoutsForUiLists
+     */
     private function loadLayoutsForUiLists($theme, $user)
     {
         if ($user->hasAnyAccess(['cms.manage_layouts'])) {
@@ -276,6 +301,9 @@ trait EditorExtensionState
         return $result;
     }
 
+    /**
+     * loadPartialsForUiLists
+     */
     private function loadPartialsForUiLists($theme, $user)
     {
         if ($user->hasAnyAccess(['cms.manage_partials'])) {
@@ -293,6 +321,9 @@ trait EditorExtensionState
         return $result;
     }
 
+    /**
+     * loadContentForUiLists
+     */
     private function loadContentForUiLists($theme, $user)
     {
         if ($user->hasAnyAccess(['cms.manage_content'])) {
@@ -310,6 +341,9 @@ trait EditorExtensionState
         return $result;
     }
 
+    /**
+     * loadPagesForUiLists
+     */
     private function loadPagesForUiLists($theme, $user)
     {
         if ($user->hasAnyAccess(['cms.manage_pages'])) {
@@ -327,56 +361,56 @@ trait EditorExtensionState
         return $result;
     }
 
+    /**
+     * loadComponentsForUiLists
+     */
     private function loadComponentsForUiLists()
     {
         $rootNode = new NodeDefinition('Components', 'cms-components');
-        $rootNode->setGroupBy('plugin');
+        $rootNode->setGroupBy('owner');
 
-        $pluginManager = PluginManager::instance();
-        $plugins = $pluginManager->getPlugins();
-
+        $componentManager = ComponentManager::instance();
         $knownAliases = [];
-        foreach ($plugins as $plugin) {
-            $components = $plugin->registerComponents();
-            if (!is_array($components) || !count($components)) {
-                continue;
-            }
 
-            $pluginDetails = $plugin->pluginDetails();
-            $pluginName = trans($pluginDetails['name']) ?? trans('system::lang.plugin.unnamed');
-            $pluginClass = get_class($plugin);
-            $pluginIcon = $pluginDetails['icon'] ?? 'icon-puzzle-piece';
+        foreach ($componentManager->listComponentOwnerDetails() as $owner) {
+            $detailsArr = $owner['details'] ?? [];
+            $components = $owner['components'] ?? [];
 
-            $pluginNode = $rootNode->addNode($pluginName, $pluginClass);
-            $pluginNode
+            $ownerName = trans($detailsArr['name']) ?? trans('system::lang.plugin.unnamed');
+            $ownerIcon = $detailsArr['icon'] ?? 'icon-puzzle-piece';
+
+            $ownerNode = $rootNode->addNode($ownerName, $ownerIcon);
+            $ownerNode
                 ->setSelectable(false)
                 ->setDisplayMode(NodeDefinition::DISPLAY_MODE_LIST)
                 ->setDragAndDropMode([NodeDefinition::DND_CUSTOM]);
 
-            foreach ($components as $className => $alias) {
-                $component = App::make($className);
+            foreach ($components as $alias => $componentArr) {
 
-                $componentName = trans(ComponentHelpers::getComponentName($component));
-                $componentDescription = trans(ComponentHelpers::getComponentDescription($component));
-                $componentNode = $pluginNode->addNode($componentName, $className);
+                $componentName = trans($componentArr['name'] ?? '');
+                $componentDescription = trans($componentArr['description'] ?? '');
+                $componentClassName = $componentArr['className'];
+
+                $componentNode = $ownerNode->addNode($componentName, $componentClassName);
                 $componentNode
                     ->setDescription($componentDescription)
                     ->setSelectable(false);
 
+                $component = $componentManager->makeComponent($componentClassName);
                 $duplicateAlias = array_key_exists($alias, $knownAliases);
                 $userData = [
-                    'plugin' => $pluginName,
-                    'nodeSearchData'     => $componentName.' '.$pluginName.' '.$componentDescription,
+                    'owner' => $ownerName,
+                    'nodeSearchData' => $componentName.' '.$ownerName.' '.$componentDescription,
                     'componentData' => [
-                        'alias'            => $alias,
-                        'className'        => $className,
-                        'description'      => $componentDescription,
-                        'icon'             => $pluginIcon,
+                        'alias' => $alias,
+                        'className' => $componentClassName,
+                        'description' => $componentDescription,
+                        'icon' => $ownerIcon,
                         'inspectorEnabled' => true,
-                        'name'             => $duplicateAlias ? $className : $alias,
-                        'propertyConfig'   => ComponentHelpers::getComponentsPropertyConfig($component),
-                        'propertyValues'   => ComponentHelpers::getComponentPropertyValues($component, true),
-                        'title'            => $componentName
+                        'name' => $duplicateAlias ? $componentClassName : $alias,
+                        'propertyConfig' => ComponentHelpers::getComponentsPropertyConfig($component),
+                        'propertyValues' => ComponentHelpers::getComponentPropertyValues($component, true),
+                        'title' => $componentName
                     ]
                 ];
 

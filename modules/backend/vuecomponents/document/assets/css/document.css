@@ -94,6 +94,9 @@
 .component-backend-document .document-header-fade-leave-to {
   opacity: 0;
 }
+.component-backend-document.no-header-elements .document-header-container {
+  padding: 0;
+}
 html:not(.user-touch) .component-backend-document .document-header-container input.header-title:not([disabled]):hover,
 html:not(.user-touch) .component-backend-document .document-header-container input.header-subtitle:not([disabled]):hover {
   border: 1px solid #d7e1eA;
@@ -138,6 +141,9 @@ html:not(.user-touch) .component-backend-document .document-header-container inp
   font-size: 0;
   white-space: nowrap;
   padding: 3px 0;
+}
+.component-backend-document.no-toolbar-elements .document-toolbar-container {
+  display: none;
 }
 .component-backend-document .document-toolbar-scrollable {
   width: 100%;
@@ -225,7 +231,8 @@ html:not(.user-touch) .component-backend-document .document-header-container inp
   content: "\e90a";
   font-size: 16px;
   vertical-align: middle;
-  margin-left: -2px;
+  position: relative;
+  top: -1px;
 }
 .component-backend-document .document-toolbar-element .backend-toolbar-button.pressed {
   background: rgba(107, 196, 141, 0.2) !important;
@@ -255,7 +262,7 @@ html:not(.user-touch) .component-backend-document .document-header-container inp
   position: absolute;
   display: block;
   width: 5px;
-  height: 45px;
+  height: 39px;
   opacity: 0;
   transition: opacity 0.3s;
 }

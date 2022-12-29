@@ -9,7 +9,7 @@ use File;
 use Lang;
 
 /**
- * Base class for models that store data in YAML files.
+ * YamlModel base class for models that store data in YAML files.
  *
  * @package rainlab\builder
  * @author Alexey Bobkov, Samuel Georges
@@ -17,15 +17,29 @@ use Lang;
 abstract class YamlModel extends BaseModel
 {
     /**
-     * @var string Section in the YAML file to save the data into.
+     * @var string yamlSection in the file to save the data into.
      * If empty, the model contents uses the entire file.
      */
     protected $yamlSection;
 
+    /**
+     * @var string originalFilePath
+     */
     protected $originalFilePath;
 
+    /**
+     * @var array originalFileData
+     */
     protected $originalFileData = [];
 
+    /**
+     * @var bool preserveOriginal values
+     */
+    protected $preserveOriginal = true;
+
+    /**
+     * save the file
+     */
     public function save()
     {
         $this->validate();
@@ -39,15 +53,17 @@ abstract class YamlModel extends BaseModel
         if ($this->yamlSection) {
             $fileData = $this->originalFileData;
 
+            // Save the section data only if the section is not empty.
             if ($data) {
-                // Save the section data only if the section
-                // is not empty.
-                $fileData[$this->yamlSection] = $data;
-            } else {
+                $originalData = $this->preserveOriginal === true ? ($fileData[$this->yamlSection] ?? []) : [];
+                $fileData[$this->yamlSection] = $this->arrayMergeMany($originalData, $data);
+            }
+            else {
                 if (array_key_exists($this->yamlSection, $fileData)) {
                     unset($fileData[$this->yamlSection]);
                 }
             }
+
             $data = $fileData;
         }
 
@@ -97,6 +113,9 @@ abstract class YamlModel extends BaseModel
         $this->originalFilePath = $filePath;
     }
 
+    /**
+     * load
+     */
     protected function load($filePath)
     {
         $filePath = File::symbolizePath($filePath);
@@ -131,6 +150,9 @@ abstract class YamlModel extends BaseModel
         $this->yamlArrayToModel($data);
     }
 
+    /**
+     * deleteModel
+     */
     public function deleteModel()
     {
         if (!File::isFile($this->originalFilePath)) {
@@ -144,26 +166,70 @@ abstract class YamlModel extends BaseModel
         File::delete($this->originalFilePath);
     }
 
+    /**
+     * initDefaults
+     */
     public function initDefaults()
     {
     }
 
+    /**
+     * isNewModel
+     */
     public function isNewModel()
     {
         return !strlen($this->originalFilePath);
     }
 
+    /**
+     * beforeCreate
+     */
     protected function beforeCreate()
     {
     }
 
+    /**
+     * afterCreate
+     */
     protected function afterCreate()
     {
     }
 
+    /**
+     * getArrayKeySafe
+     */
     protected function getArrayKeySafe($array, $key, $default = null)
     {
         return array_key_exists($key, $array) ? $array[$key] : $default;
+    }
+
+    /**
+     * arrayMergeMany is a deep array merge function used to preserve existing
+     * YAML properties and splicing in new ones from builder.
+     */
+    protected function arrayMergeMany($arr1, $arr2)
+    {
+        $arrMerge = array_merge($arr1, $arr2);
+
+        foreach ($arrMerge as $key => $val) {
+            if (!is_array($val) || !$this->isArrayAssociative($val)) {
+                continue;
+            }
+
+            if (isset($arr1[$key]) && isset($arr2[$key])) {
+               $arrMerge[$key] = $this->arrayMergeMany($arr1[$key], $arr2[$key]);
+            }
+        }
+
+        return $arrMerge;
+    }
+
+    /**
+     * isArrayAssociative retruns true if the array is associative
+     */
+    protected function isArrayAssociative($arr)
+    {
+        return is_array($arr) && array_keys($arr) !== range(0, count($arr) - 1);
     }
 
     /**

@@ -32,6 +32,7 @@ class BelongsToModelTest extends PluginTestCase
         // Set by primary key
         $post->author = $author2->id;
         $this->assertEquals($author2->id, $post->author_id);
+        $this->assertEquals($author2->id, $post->author->id);
         $this->assertEquals('Louie', $post->author->name);
 
         // Nullify

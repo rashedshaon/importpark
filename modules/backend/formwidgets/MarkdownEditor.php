@@ -32,6 +32,22 @@ class MarkdownEditor extends FormWidgetBase
      */
     public $legacyMode = false;
 
+    /**
+     * @var string Defines a mount point for the editor toolbar.
+     * Must include a module name that exports the Vue application and a state element name.
+     * Format: module.name::stateElementName
+     * Only works in Vue applications and form document layouts.
+     */
+    public $externalToolbarAppState = null;
+
+    /**
+     * @var string Defines an event bus for an external toolbar.
+     * Must include a module name that exports the Vue application and a state element name.
+     * Format: module.name::eventBus
+     * Only works in Vue applications and form document layouts.
+     */
+    public $externalToolbarEventBus = null;
+
     //
     // Object properties
     //
@@ -49,7 +65,9 @@ class MarkdownEditor extends FormWidgetBase
         $this->fillFromConfig([
             'mode',
             'safe',
-            'legacyMode'
+            'legacyMode',
+            'externalToolbarAppState',
+            'externalToolbarEventBus'
         ]);
 
         if (!$this->legacyMode) {
@@ -77,7 +95,9 @@ class MarkdownEditor extends FormWidgetBase
         $this->vars['size'] = $this->formField->size;
         $this->vars['name'] = $this->getFieldName();
         $this->vars['value'] = $this->getLoadValue();
-        $this->vars['useMediaManager'] = BackendAuth::getUser()->hasAccess('media.manage_media');
+        $this->vars['useMediaManager'] = BackendAuth::userHasAccess('media.manage_media');
+        $this->vars['externalToolbarAppState'] = $this->externalToolbarAppState;
+        $this->vars['externalToolbarEventBus'] = $this->externalToolbarEventBus;
 
         $this->vars['isAjax'] = Request::ajax();
     }

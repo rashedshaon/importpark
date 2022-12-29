@@ -48,6 +48,7 @@ class BelongsToManyModelTest extends PluginTestCase
         // Set by primary key
         $author->roles = $role2->id;
         $this->assertEquals(1, $author->roles->count());
+        $this->assertEquals([$role2->id], $author->getRelationValue('roles'));
         $this->assertEquals('Programmer', $author->roles->first()->name);
 
         $author->roles = [$role2->id, $role3->id];

@@ -1,13 +1,15 @@
 <?php namespace Cms\Classes;
 
 /**
- * The CMS layout class.
+ * Layout template class
  *
  * @package october\cms
  * @author Alexey Bobkov, Samuel Georges
  */
 class Layout extends CmsCompoundObject
 {
+    use \Cms\Traits\ParsableAttributes;
+
     /**
      * Fallback layout name.
      */
@@ -17,6 +19,11 @@ class Layout extends CmsCompoundObject
      * @var string The container name associated with the model, eg: pages.
      */
     protected $dirName = 'layouts';
+
+    /**
+     * @var array parsable attributes support using parsed variables.
+     */
+    protected $parsable = [];
 
     /**
      * Initializes the fallback layout.

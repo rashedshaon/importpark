@@ -1,4 +1,4 @@
-(function() {
+$.oc.module.register('backend.component.richeditor.document.connector', function () {
     const utils = $.oc.module.import('backend.vuecomponents.richeditordocumentconnector.utils');
     const octoberCommands = $.oc.module.import('backend.vuecomponents.richeditordocumentconnector.octobercommands');
 
@@ -24,7 +24,8 @@
             builtInMode: {
                 type: Boolean,
                 default: false
-            }
+            },
+            externalToolbarEventBus: String
         },
         data: function() {
             const imageDropdownItems = [
@@ -222,6 +223,9 @@
                 if (this.allowResizing) {
                     result += ' resizing-ui';
                 }
+                else {
+                    result += ' no-resizing-ui';
+                }
 
                 if (this.codeEditingMode) {
                     result += ' code-editing-mode';
@@ -252,6 +256,25 @@
 
             storageKey: function computeStorageKey() {
                 return this.uniqueKey + '-splitter';
+            },
+
+            externalToolbarEventBusObj: function computeExternalToolbarEventBusObj() {
+                if (!this.externalToolbarEventBus) {
+                    return null;
+                }
+
+                // Expected format: tailor.app::eventBus
+                const parts = this.externalToolbarEventBus.split('::');
+                if (parts.length !== 2) {
+                    throw new Error('Invalid externalToolbarEventBus format. Expected format: module.name::stateElementName');
+                }
+    
+                const module = $.oc.module.import(parts[0]);
+                return module.state[parts[1]];
+            },
+
+            hasExternalToolbar: function computeHasExternalToolbar() {
+                return !!this.externalToolbarEventBusObj;
             }
         },
         methods: {
@@ -305,12 +328,36 @@
                 this.updateDebounceTimeoutId = null;
             },
 
+            extendExternalToolbar: function extendExternalToolbar() {
+                if ($(this.$el).is(":visible")) {
+                    this.extendToolbar(null);
+                }
+            },
+
             trans: function trans(key) {
                 if (this.configuration.lang[key] === undefined) {
                     return key;
                 }
 
                 return this.configuration.lang[key];
+            },
+
+            mountEventBus: function mountEventBus() {
+                if (!this.externalToolbarEventBusObj) {
+                    return;
+                }
+
+                this.externalToolbarEventBusObj.$on('toolbarcmd', this.onToolbarExternalCommand);
+                this.externalToolbarEventBusObj.$on('extendapptoolbar', this.extendExternalToolbar);
+            },
+
+            unmountEventBus: function unmountEventBus() {
+                if (!this.externalToolbarEventBusObj) {
+                    return;
+                }
+
+                this.externalToolbarEventBusObj.$off('toolbarcmd', this.onToolbarExternalCommand);
+                this.externalToolbarEventBusObj.$off('extendapptoolbar', this.extendExternalToolbar);
             },
 
             updateSize: function updateSize() {
@@ -472,6 +519,12 @@
                 this.updateUi();
             },
 
+            onToolbarExternalCommand: function (command) {
+                if ($(this.$el).is(":visible")) {
+                    this.onToolbarCommand(command);
+                }
+            },
+
             onToolbarCommand: function(commandData) {
                 const command = utils.parseCommandString(commandData.command);
                 if (command === null) {
@@ -517,7 +570,14 @@
                     this.size = size;
                 }
 
-                this.extendToolbar();
+                if (!this.hasExternalToolbar) {
+                    this.extendToolbar();
+                }
+                else {
+                    this.extendExternalToolbar();
+                }
+
+                this.mountEventBus();
                 this.initListeners();
                 this.$on('toolbarcmd', this.onToolbarCommand);
                 this.updateSize();
@@ -527,6 +587,7 @@
             this.$textarea.off('.connector');
             this.$textarea = null;
             this.$buttons = null;
+            this.unmountEventBus();
         },
         watch: {
             size: function watchSize() {
@@ -538,4 +599,4 @@
         },
         template: '#backend_vuecomponents_richeditordocumentconnector'
     });
-})();
+});

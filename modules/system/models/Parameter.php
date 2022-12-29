@@ -16,21 +16,27 @@ class Parameter extends Model
     use \October\Rain\Support\Traits\KeyParser;
 
     /**
-     * @var string The database table used by the model.
+     * @var string table associated with the model
      */
     protected $table = 'system_parameters';
 
+    /**
+     * @var bool timestamps enabled
+     */
     public $timestamps = false;
 
+    /**
+     * @var array cache
+     */
     protected static $cache = [];
 
     /**
-     * @var array List of attribute names which are json encoded and decoded from the database.
+     * @var array jsonable attribute names that are json encoded and decoded from the database
      */
     protected $jsonable = ['value'];
 
     /**
-     * Clear the cache after saving.
+     * afterSave clears the cache after saving.
      */
     public function afterSave()
     {

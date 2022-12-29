@@ -1,6 +1,5 @@
 <?php namespace RainLab\Pages\FormWidgets;
 
-use Request;
 use Backend\Classes\FormWidgetBase;
 use RainLab\Pages\Classes\MenuItem;
 
@@ -171,5 +170,18 @@ class MenuItems extends FormWidgetBase
         }
 
         return strlen($itemInfo) ? $itemInfo : trans('rainlab.pages::lang.menuitem.unnamed');
+    }
+
+    public function makeEditorTemplate()
+    {
+        $regEx = '#<script(.*?)</script>#is';
+        $partial = $this->makePartial('editorTemplate');
+
+        preg_match_all($regEx, $partial, $matches);
+
+        $scripts = implode('', $matches[0]);
+        $template = preg_replace($regEx, '', $partial);
+
+        return [$template, $scripts];
     }
 }

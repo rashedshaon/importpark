@@ -21,6 +21,12 @@
             }
         }
 
+        &.size-adaptive {
+            .editor-write {
+                border: none!important;
+            }
+        }
+
         &.size-tiny .editor-write {
             min-height: @size-tiny + @richeditor-toolbar-height;
         }
@@ -52,9 +58,11 @@
             display: none;
         }
 
-        .component-backend-richeditor {
-            .fr-box.fr-basic .fr-element.fr-view {
-                padding: 10px;
+        div.no-resizing-ui {
+            .component-backend-richeditor {
+                .fr-box.fr-basic .fr-element.fr-view {
+                    padding: 10px;
+                }
             }
         }
 

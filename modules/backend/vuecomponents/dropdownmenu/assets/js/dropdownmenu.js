@@ -1,83 +1,85 @@
-Vue.component('backend-component-dropdownmenu', {
-    props: {
-        items: Array,
-        menuId: String,
-        labeledById: String,
-        managedTriggerSelector: String,
-        preferablePosition: {
-            type: String,
-            validator: function(value) {
-                return ['right'].indexOf(value) !== -1;
-            }
-        }
-    },
-    data: function() {
-        return {
-            visible: false
-        };
-    },
-    computed: {},
-    methods: {
-        showMenu: function showMenu(triggerElementOrEvent) {
-            this.visible = true;
-            this.$refs.sheet.show(triggerElementOrEvent);
-            $(document.body).on('keydown.backenddropdownmenu', this.onKeyDown);
-
-            var that = this;
-            Vue.nextTick(function() {
-                that.$emit('shown');
-
-                if (that.managedTriggerSelector) {
-                    $(that.managedTriggerSelector).attr('aria-expanded', 'true');
+$.oc.module.register('backend.component.dropdownmenu', function () {
+    Vue.component('backend-component-dropdownmenu', {
+        props: {
+            items: Array,
+            menuId: String,
+            labeledById: String,
+            managedTriggerSelector: String,
+            preferablePosition: {
+                type: String,
+                validator: function (value) {
+                    return ['right', 'bottom-right'].indexOf(value) !== -1;
                 }
-            });
-        },
-
-        hideMenu: function hideMenu(sheetHidden) {
-            $(document.body).off('.backenddropdownmenu');
-
-            if (!sheetHidden) {
-                this.$refs.sheet.hide();
             }
+        },
+        data: function () {
+            return {
+                visible: false
+            };
+        },
+        computed: {},
+        methods: {
+            showMenu: function showMenu(triggerElementOrEvent) {
+                this.visible = true;
+                this.$refs.sheet.show(triggerElementOrEvent);
+                $(document.body).on('keydown.backenddropdownmenu', this.onKeyDown);
 
-            this.visible = false;
-            var that = this;
-            Vue.nextTick(function() {
-                that.$emit('hidden');
+                var that = this;
+                Vue.nextTick(function () {
+                    that.$emit('shown');
 
-                if (that.managedTriggerSelector) {
-                    $(that.managedTriggerSelector).removeAttr('aria-expanded', 'true');
+                    if (that.managedTriggerSelector) {
+                        $(that.managedTriggerSelector).attr('aria-expanded', 'true');
+                    }
+                });
+            },
+
+            hideMenu: function hideMenu(sheetHidden) {
+                $(document.body).off('.backenddropdownmenu');
+
+                if (!sheetHidden) {
+                    this.$refs.sheet.hide();
                 }
-            });
-        },
 
-        onOverlayClick: function onOverlayClick() {
-            this.hideMenu();
-        },
+                this.visible = false;
+                var that = this;
+                Vue.nextTick(function () {
+                    that.$emit('hidden');
 
-        onSheetHidden: function onMenuHidden(ev) {
-            this.hideMenu(true);
-        },
+                    if (that.managedTriggerSelector) {
+                        $(that.managedTriggerSelector).removeAttr('aria-expanded', 'true');
+                    }
+                });
+            },
 
-        onKeyDown: function onKeyDown(ev) {
-            if (ev.keyCode == 27) {
+            onOverlayClick: function onOverlayClick() {
                 this.hideMenu();
-                this.$emit('closedwithesc');
+            },
 
-                if (this.managedTriggerSelector) {
-                    var that = this;
-                    Vue.nextTick(function() {
-                        $(that.managedTriggerSelector).focus();
-                    });
+            onSheetHidden: function onMenuHidden(ev) {
+                this.hideMenu(true);
+            },
+
+            onKeyDown: function onKeyDown(ev) {
+                if (ev.keyCode == 27) {
+                    this.hideMenu();
+                    this.$emit('closedwithesc');
+
+                    if (this.managedTriggerSelector) {
+                        var that = this;
+                        Vue.nextTick(function () {
+                            $(that.managedTriggerSelector).focus();
+                        });
+                    }
+
+                    return;
                 }
 
-                return;
-            }
+                return this.$refs.sheet.onKeyDown(ev);
+            },
 
-            return this.$refs.sheet.onKeyDown(ev);
+            onOverlayContextMenu: function onOverlayContextMenu(ev) { }
         },
-
-        onOverlayContextMenu: function onOverlayContextMenu(ev) {}
-    },
-    template: '#backend_vuecomponents_dropdownmenu'
+        template: '#backend_vuecomponents_dropdownmenu'
+    });
 });

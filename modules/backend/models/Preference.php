@@ -56,7 +56,7 @@ class Preference extends Model
         $this->timezone = $config->get('backend.timezone', $config->get('app.timezone'));
 
         $this->editor_theme = $config->get('editor.theme', static::DEFAULT_THEME);
-        $this->editor_word_wrap = $config->get('editor.word_wrap', 'fluid');
+        $this->editor_word_wrap = $config->get('editor.word_wrap', 'off');
         $this->editor_font_size = $config->get('editor.font_size', 12);
         $this->editor_tab_size = $config->get('editor.tab_size', 4);
         $this->editor_code_folding = $config->get('editor.code_folding', 'manual');

@@ -1,8 +1,10 @@
 <?php namespace Backend\Traits;
 
+use Db;
 use Str;
 use Backend\Classes\FormField;
 use October\Rain\Database\Model as DatabaseModel;
+use October\Rain\Exception\ValidationException;
 
 /**
  * FormModelSaver implements special logic for processing form data, typically
@@ -18,6 +20,26 @@ trait FormModelSaver
      * @var array modelsToSave are models that require saving
      */
     protected $modelsToSave = [];
+
+    /**
+     * performSaveOnModel saves complex data against a model inside
+     * a database transaction.
+     */
+    protected function performSaveOnModel($model, $data, $sessionKey = null)
+    {
+        $modelsToSave = $this->prepareModelsToSave($model, $data);
+        Db::transaction(function () use ($modelsToSave, $sessionKey) {
+            foreach ($modelsToSave as $attrChain => $modelToSave) {
+                try {
+                    $modelToSave->save(null, $sessionKey);
+                }
+                catch (ValidationException $ve) {
+                    $ve->setFieldPrefix(explode('.', $attrChain));
+                    throw $ve;
+                }
+            }
+        });
+    }
 
     /**
      * prepareModelsToSave takes a model and fills it with data from a

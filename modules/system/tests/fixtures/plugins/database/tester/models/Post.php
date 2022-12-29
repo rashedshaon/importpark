@@ -47,6 +47,14 @@ class Post extends Model
             Category::class,
             'table' => 'database_tester_categories_posts',
             'pivot' => ['category_name', 'post_name']
+        ],
+        'double_categories' => [
+            Category::class,
+            'table' => 'database_tester_double_joins',
+            'key' => 'host_id',
+            'otherKey' => 'entity_id',
+            'scope' => [self::class, 'applyDoubleJoinClassNames'],
+            'pivot' => ['host_type', 'entity_type']
         ]
     ];
 
@@ -58,6 +66,12 @@ class Post extends Model
             'pivot' => ['added_by']
         ],
     ];
+
+    public static function applyDoubleJoinClassNames($query, $parent, $related)
+    {
+        $query->where('host_type', get_class($parent));
+        $query->where('entity_type', get_class($related));
+    }
 }
 
 class NullablePost extends Post

@@ -27,8 +27,7 @@ class Loader extends LoaderBase implements TwigLoaderInterface
     protected $fallbackCache = [];
 
     /**
-     * Sets a CMS object to load the template from.
-     * @param \Cms\Contracts\CmsObject $obj Specifies the CMS object.
+     * setObject sets a CMS object to load the template from.
      */
     public function setObject(CmsObject $obj)
     {

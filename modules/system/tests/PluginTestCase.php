@@ -3,6 +3,7 @@
 use Backend\Classes\AuthManager;
 use System\Classes\UpdateManager;
 use System\Classes\PluginManager;
+use System\Classes\VersionManager;
 use October\Rain\Database\Model as ActiveRecord;
 use October\Tests\Concerns\InteractsWithAuthentication;
 
@@ -45,6 +46,7 @@ abstract class PluginTestCase extends TestCase
          */
         PluginManager::forgetInstance();
         UpdateManager::forgetInstance();
+        VersionManager::forgetInstance();
 
         /*
          * Create application instance
@@ -84,11 +86,13 @@ abstract class PluginTestCase extends TestCase
     }
 
     /**
-     * runOctoberMigrateCommand migrates database using october:migrate command
+     * runOctoberMigrateCommand migrates database (modules only)
      */
     protected function runOctoberMigrateCommand()
     {
-        Artisan::call('october:migrate');
+        PluginManager::instance()->unloadPlugins();
+        UpdateManager::instance()->update();
+        PluginManager::instance()->loadPlugins();
     }
 
     /**
@@ -144,7 +148,9 @@ abstract class PluginTestCase extends TestCase
         /*
          * Execute the command
          */
-        Artisan::call('plugin:refresh', ['name' => $code, '--force' => true]);
+        $manager = UpdateManager::instance();
+        $manager->rollbackPlugin($code);
+        $manager->updatePlugin($code);
     }
 
     /**

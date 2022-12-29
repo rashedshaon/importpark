@@ -47,6 +47,7 @@
         this.hasDate = !!this.$datePicker.length;
         this.hasTime = !!this.$timePicker.length;
         this.ignoreTimezone = !!this.$el.get(0).hasAttribute('data-ignore-timezone');
+        this.defaultTimeMidnight = !!this.$el.get(0).hasAttribute('data-default-time-midnight');
 
         this.initRegion();
 
@@ -148,7 +149,6 @@
             .tz(this.appTimezone);
 
         var lockerValue = momentObj.format(this.dbDateTimeFormat);
-
         this.$dataLocker.val(lockerValue);
     }
 
@@ -224,6 +224,10 @@
         var value = this.$timePicker.val();
 
         if (!this.hasTime || !value) {
+            if (this.defaultTimeMidnight) {
+                return '00:00:00';
+            }
+
             return moment.tz(this.appTimezone)
                 .tz(this.timezone)
                 .format(this.dbTimeFormat);
