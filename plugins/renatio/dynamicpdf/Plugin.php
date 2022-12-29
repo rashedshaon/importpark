@@ -90,7 +90,6 @@ class Plugin extends PluginBase
 
         return [
             'renatio.dynamicpdf::pdf.invoice',
-            'renatio.dynamicpdf::pdf.invoice2',
             'renatio.dynamicpdf::pdf.header_and_footer',
         ];
     }

@@ -5,7 +5,6 @@ name = "Default Layout"
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title>Default</title>
-        <link href="{{ 'plugins/renatio/dynamicpdf/assets/css/tailwind.css'|app }}" rel="stylesheet">
         <style>
             @font-face {
                 font-family: 'Open Sans';
@@ -32,16 +31,24 @@ name = "Default Layout"
             }
 
             @page {
-                margin: 0;
-                padding: 0;
+                margin: 0px !important;
+                padding: 0px !important;
             }
 
             body {
                 font-family: "Open Sans", sans-serif;
+                line-height: 0 !important;
+                margin: 0px !important;
+                padding: 0px !important;
+            }
+
+            html { 
+                margin: 0px !important;
+                padding: 0px !important;
             }
         </style>
     </head>
-    <body class="p-16">
+    <body style="margin: 0px; padding: 0px;">
         {{ content_html|raw }}
     </body>
 </html>

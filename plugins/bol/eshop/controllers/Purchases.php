@@ -25,9 +25,12 @@ class Purchases extends Controller
 
     public function pdf()
     {
-        $templateCode = 'renatio.dynamicpdf::pdf.header_and_footer'; // unique code of the template
+        $templateCode = 'bol.eshop::pdf.invoice'; // unique code of the template
         $data = ['name' => 'John Doe']; // optional data used in template
 
-        return PDF::loadTemplate($templateCode, $data)->stream('download.pdf');
+        return PDF::loadTemplate($templateCode, $data)
+        // ->setPaper([0,0,192,96])
+        // ->setPaper('A4')
+        ->stream('download.pdf');
     }
 }

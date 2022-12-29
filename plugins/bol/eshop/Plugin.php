@@ -169,4 +169,19 @@ class Plugin extends PluginBase
         });
     }
 
+    public function registerPDFTemplates()
+    {
+        return [
+            'bol.eshop::pdf.invoice',
+            'bol.eshop::pdf.header_and_footer',
+        ];
+    }
+
+    public function registerPDFLayouts()
+    {
+        return [
+            'bol.eshop::pdf.layouts.default',
+            'bol.eshop::pdf.layouts.header_and_footer',
+        ];
+    }
 }
