@@ -14,15 +14,14 @@
         "october/media": "^2.0",
         "october/editor": "^2.0",
         "rainlab/builder-plugin": "^1.0",
-        "lovata/toolbox-plugin": "^1.34",
         "lovata/bootstrap-shopaholic-theme": "^1.4",
         "rainlab/pages-plugin": "^1.4",
-        "lovata/ordersshopaholic-plugin": "^1.29",
         "rainlab/user-plugin": "^1.5",
         "rainlab/blog-plugin": "^1.5",
         "rainlab/translate-plugin": "^1.9",
         "flosch/slideshow-plugin": "^1.0",
-        "rainlab/deploy-plugin": "^2.0"
+        "rainlab/deploy-plugin": "^2.0",
+        "renatio/dynamicpdf-plugin": "^6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0|^9.0",
@@ -49,7 +48,10 @@
         ]
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "composer/installers": true
+        }
     },
     "autoload": {
         "psr-4": {

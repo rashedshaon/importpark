@@ -2,6 +2,7 @@
 
 use Backend\Classes\Controller;
 use BackendMenu;
+use Renatio\DynamicPDF\Classes\PDF; // import facade
 
 class Purchases extends Controller
 {
@@ -19,5 +20,14 @@ class Purchases extends Controller
     {
         parent::__construct();
         BackendMenu::setContext('Bol.Eshop', 'main-menu-item', 'side-menu-item7');
+    }
+
+
+    public function pdf()
+    {
+        $templateCode = 'renatio.dynamicpdf::pdf.header_and_footer'; // unique code of the template
+        $data = ['name' => 'John Doe']; // optional data used in template
+
+        return PDF::loadTemplate($templateCode, $data)->stream('download.pdf');
     }
 }
