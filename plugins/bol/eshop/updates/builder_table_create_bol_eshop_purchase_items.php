@@ -11,9 +11,9 @@ class BuilderTableCreateBolEshopPurchaseItems extends Migration
         {
             $table->engine = 'InnoDB';
             $table->increments('id')->unsigned();
-            $table->integer('purchase_id');
+            $table->integer('purchase_id')->nullable();
             $table->integer('product_id');
-            $table->string('price');
+            $table->string('price')->nullable();
             $table->integer('quantity');
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();

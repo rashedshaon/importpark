@@ -64,5 +64,12 @@ Route::get('regions', function()
     // dd($obj->module);
 });
 
+Route::get('clear-data', function () {
+
+    \Artisan::call('inventory:clearsystem');
+
+    dd("All is cleared");
+
+});
 
 ?>

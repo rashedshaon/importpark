@@ -3,6 +3,7 @@
 use Backend\Classes\Controller;
 use BackendMenu;
 use QrCode;
+use DNS2D;
 use Renatio\DynamicPDF\Classes\PDF; // import facade
 
 class Purchases extends Controller
@@ -26,15 +27,16 @@ class Purchases extends Controller
 
     public function pdf()
     {
-        $qr = QrCode::format('png')->size(50)->generate('Make me into an QrCode!');
-// echo base64_encode($qr);
+        //$qr = QrCode::format('png')->size(50)->generate('Make me into an QrCode!');
+        $er = '<img src="data:image/png;base64,' . DNS2D::getBarcodePNG('646564564', 'QRCODE') . '" alt="barcode"   />';
+        // echo '<img src="data:image/png;base64,' . DNS2D::getBarcodePNG('4', 'C39+',3,33) . '" alt="barcode"   />';
 // dd('r');
         $templateCode = 'bol.eshop::pdf.invoice'; // unique code of the template
-        $data = ['name' => 'John Doe', 'qr' => $qr]; // optional data used in template
+        $data = ['name' => 'John Doe']; // optional data used in template
 
         return PDF::loadTemplate($templateCode, $data)
-        ->setPaper([0,0,192,96])
-        // ->setPaper('A4')
+        // ->setPaper([0,0,192,96])
+        ->setPaper('A4')
         ->stream('download.pdf');
     }
 }

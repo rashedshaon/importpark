@@ -13,14 +13,14 @@ class BuilderTableCreateBolEshopPurchases extends Migration
             $table->increments('id')->unsigned();
             $table->integer('supplier_id');
             $table->string('paid_amount')->nullable();
-            $table->integer('tracking_id')->nullable();
+            $table->string('tracking_id')->nullable();
             $table->string('gross_weight')->nullable()->nullable();
             $table->string('dimension')->nullable();
             $table->integer('cartoon_quantity')->nullable();
             $table->boolean('has_battery')->default(0);
             $table->integer('status_id');
-            $table->integer('created_by');
-            $table->integer('updated_by');
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
         });

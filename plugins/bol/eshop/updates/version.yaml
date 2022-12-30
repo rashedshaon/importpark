@@ -153,3 +153,8 @@
 1.0.52:
     - 'Updated table users'
     - builder_table_update_users.php
+1.0.53:
+    - 'Seed Default Values'
+    - seed_table_bol_eshop_customer_types.php
+    - seed_table_bol_eshop_items_statuses.php
+    - seed_table_bol_eshop_purchase_statuses.php
