@@ -4,34 +4,6 @@ layout = "bol.eshop::pdf.layouts.default"
 ==
 
 <style>
-    @font-face {
-        font-family: 'Open Sans';
-        src: url({{ 'plugins/renatio/dynamicpdf/assets/fonts/OpenSans-Regular.ttf'|app }});
-    }
-
-    @font-face {
-        font-family: 'Open Sans';
-        font-weight: bold;
-        src: url({{ 'plugins/renatio/dynamicpdf/assets/fonts/OpenSans-Bold.ttf'|app }});
-    }
-
-    @font-face {
-        font-family: 'Open Sans';
-        font-style: italic;
-        src: url({{ 'plugins/renatio/dynamicpdf/assets/fonts/OpenSans-Italic.ttf'|app }});
-    }
-
-    @font-face {
-        font-family: 'Open Sans';
-        font-style: italic;
-        font-weight: bold;
-        src: url({{ 'plugins/renatio/dynamicpdf/assets/fonts/OpenSans-BoldItalic.ttf'|app }});
-    }
-
-    @page {
-        margin: 0px !important;
-        padding: 0px !important;
-    }
 
     body {
         font-family: "Open Sans", sans-serif;
@@ -44,11 +16,57 @@ layout = "bol.eshop::pdf.layouts.default"
         margin: 0px !important;
         padding: 0px !important;
     }
+
+    .page-break {
+        page-break-after: always;
+    }
+
+    .main-block {
+        /* padding: 10px; */
+        margin-left: 15px;
+        margin-top: 20px;
+    }
+
+    .text-center
+    {
+        text-align: center;
+    }
+
+    .right {position: relative;}
+    .right > div {position: absolute; width: 140px;}
+
+    .code{font-size: 50px;}
 </style>
 <div>
-    abc <br>
-    <!-- <div class="page-break"></div> -->
-    abc
-    <!-- <div class="page-break"></div> -->
-    c
+    <div class="main-block">
+        <table>
+            <tr>
+                <td>
+                    <img width="80px" height="80px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD8AAAA/AQMAAABtkYKcAAAABlBMVEX///8AAABVwtN+AAAAAXRSTlMAQObYZgAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAMRJREFUKJF90UEKwyAQBdAB9/EGyUWEXKvdNIVczF4gHqNbwU0CZX5HjTVN0oqLBzPgn5GAF9CD6Q88GR4MNRUBBnKniG4+oJTaYQ8u8HqP4CLkiWDXtzIkRnBrniNyQjmYKZ8MPKQEfzuDiwhMrSZlSU0bDEZZ001EB6iSUDqDI9gKuD6WZmLdj9aob2DBmBMuuDcVKTw4ocNzh1ySJfhrbP4gbT5OkfZ8Ak5oieRuAZmCf0DCp1/2mvylIu3ZrAtPzQVvITs+7MGa1DAAAAAASUVORK5CYII=" alt="barcode"   />
+                </td>
+                <td class="right text-center">
+                    <div class="code" style="top: 25px">999</div>
+                    <div style="top: 45px;">fan light black</div>
+                    <div style="top: 65px">989787</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <div class="main-block">
+        <table>
+            <tr>
+                <td>
+                    <img width="80px" height="80px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD8AAAA/AQMAAABtkYKcAAAABlBMVEX///8AAABVwtN+AAAAAXRSTlMAQObYZgAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAMRJREFUKJF90UEKwyAQBdAB9/EGyUWEXKvdNIVczF4gHqNbwU0CZX5HjTVN0oqLBzPgn5GAF9CD6Q88GR4MNRUBBnKniG4+oJTaYQ8u8HqP4CLkiWDXtzIkRnBrniNyQjmYKZ8MPKQEfzuDiwhMrSZlSU0bDEZZ001EB6iSUDqDI9gKuD6WZmLdj9aob2DBmBMuuDcVKTw4ocNzh1ySJfhrbP4gbT5OkfZ8Ak5oieRuAZmCf0DCp1/2mvylIu3ZrAtPzQVvITs+7MGa1DAAAAAASUVORK5CYII=" alt="barcode"   />
+                </td>
+                <td class="right text-center">
+                    <div class="code" style="top: 25px">999</div>
+                    <div style="top: 45px;">fan light black</div>
+                    <div style="top: 65px">989787</div>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>

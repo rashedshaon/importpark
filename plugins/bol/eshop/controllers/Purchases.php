@@ -30,13 +30,13 @@ class Purchases extends Controller
         //$qr = QrCode::format('png')->size(50)->generate('Make me into an QrCode!');
         $er = '<img src="data:image/png;base64,' . DNS2D::getBarcodePNG('646564564', 'QRCODE') . '" alt="barcode"   />';
         // echo '<img src="data:image/png;base64,' . DNS2D::getBarcodePNG('4', 'C39+',3,33) . '" alt="barcode"   />';
-// dd('r');
+        // dd($er);
         $templateCode = 'bol.eshop::pdf.invoice'; // unique code of the template
-        $data = ['name' => 'John Doe']; // optional data used in template
+        $data = ['name' => 'John Doe', 'er' => $er]; // optional data used in template
 
         return PDF::loadTemplate($templateCode, $data)
-        // ->setPaper([0,0,192,96])
-        ->setPaper('A4')
+        ->setPaper([0,0,192,96])
+        // ->setPaper('A4')
         ->stream('download.pdf');
     }
 }
