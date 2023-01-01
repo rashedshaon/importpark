@@ -1,11 +1,9 @@
 <?php namespace RainLab\Translate\FormWidgets;
 
 use Backend\Classes\FormWidgetBase;
-use RainLab\Translate\Models\Locale;
 
 /**
- * ML Text
- * Renders a multi-lingual text field.
+ * MLText renders a multi-lingual text field.
  *
  * @package rainlab\translate
  * @author Alexey Bobkov, Samuel Georges
@@ -43,7 +41,7 @@ class MLText extends FormWidgetBase
     }
 
     /**
-     * Returns an array of translated values for this field
+     * getSaveValue returns an array of translated values for this field
      * @return array
      */
     public function getSaveValue($value)

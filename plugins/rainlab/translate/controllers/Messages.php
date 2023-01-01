@@ -12,10 +12,13 @@ use System\Helpers\Cache as CacheHelper;
 use System\Classes\SettingsManager;
 
 /**
- * Messages Back-end Controller
+ * Messages Backend Controller
  */
 class Messages extends Controller
 {
+    /**
+     * implement the TranslatableModel behavior softly
+     */
     public $implement = [
         \Backend\Behaviors\ImportExportController::class,
     ];
@@ -42,7 +45,6 @@ class Messages extends Controller
 
     public function index()
     {
-        $this->bodyClass = 'slim-container breadcrumb-flush';
         $this->pageTitle = 'rainlab.translate::lang.messages.title';
         $this->prepareTable();
     }

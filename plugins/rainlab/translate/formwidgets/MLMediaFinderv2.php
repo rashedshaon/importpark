@@ -52,7 +52,7 @@ class MLMediaFinderv2 extends MediaFinder
     }
 
     /**
-     * Prepares the form widget view data
+     * prepareVars prepares the form widget view data
      */
     public function prepareVars()
     {
@@ -67,7 +67,11 @@ class MLMediaFinderv2 extends MediaFinder
      */
     public function getSaveValue($value)
     {
-        return $this->getLocaleSaveValue($value);
+        if ($this->isAvailable) {
+            return $this->getLocaleSaveValue($value);
+        }
+
+        return parent::getSaveValue($value);
     }
 
     /**
@@ -81,7 +85,7 @@ class MLMediaFinderv2 extends MediaFinder
 
         if (Locale::isAvailable()) {
             $this->loadLocaleAssets();
-            $this->addJs('../../mlmediafinder/assets/js/mlmediafinder.js');
+            $this->addJs('js/mlmediafinder.js');
             $this->addCss('../../mlmediafinder/assets/css/mlmediafinder.css');
         }
     }

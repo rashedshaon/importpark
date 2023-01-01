@@ -1,11 +1,17 @@
 <?php namespace RainLab\Blog\Controllers;
 
-use BackendMenu;
-use Flash;
 use Lang;
-use Backend\Classes\Controller;
+use Flash;
+use BackendMenu;
 use RainLab\Blog\Models\Post;
+use RainLab\Blog\Models\Settings as BlogSettings;
+use Backend\Classes\Controller;
+use Cms\Classes\Controller as CmsController;
+use Cms\Classes\Theme;
 
+/**
+ * Posts
+ */
 class Posts extends Controller
 {
     public $implement = [
@@ -18,8 +24,19 @@ class Posts extends Controller
     public $listConfig = 'config_list.yaml';
     public $importExportConfig = 'config_import_export.yaml';
 
+    /**
+     * @var array requiredPermissions
+     */
     public $requiredPermissions = ['rainlab.blog.access_other_posts', 'rainlab.blog.access_posts'];
 
+    /**
+     * @var bool turboVisitControl
+     */
+    public $turboVisitControl = 'disable';
+
+    /**
+     * __construct
+     */
     public function __construct()
     {
         parent::__construct();
@@ -53,7 +70,24 @@ class Posts extends Controller
         $this->addCss('/plugins/rainlab/blog/assets/css/rainlab.blog-preview.css');
         $this->addJs('/plugins/rainlab/blog/assets/js/post-form.js');
 
-        return $this->asExtension('FormController')->update($recordId);
+        $result = $this->asExtension('FormController')->update($recordId);
+        $this->setPreviewPageUrlVars();
+        return $result;
+    }
+
+    /**
+     * setPreviewPageUrlVars
+     */
+    protected function setPreviewPageUrlVars()
+    {
+        if (
+            ($model = $this->formGetModel()) &&
+            ($cmsPage = BlogSettings::get('preview_cms_page'))
+        ) {
+            $controller = new CmsController(Theme::getActiveTheme());
+            $model->setUrl($cmsPage, $controller);
+            $this->vars['pageUrl'] = $model->url;
+        }
     }
 
     public function export()
@@ -83,8 +117,13 @@ class Posts extends Controller
             return;
         }
 
-        if ($model instanceof Post && $model->isClassExtendedWith('RainLab.Translate.Behaviors.TranslatableModel')) {
+        // Support for October CMS 3.0 and below
+        if (!class_exists('Site') && $model instanceof Post && $model->isClassExtendedWith('RainLab.Translate.Behaviors.TranslatableModel')) {
             $widget->secondaryTabs['fields']['content']['type'] = 'RainLab\Blog\FormWidgets\MLBlogMarkdown';
+        }
+
+        if (BlogSettings::get('use_legacy_editor', false)) {
+            $widget->secondaryTabs['fields']['content']['legacyMode'] = true;
         }
     }
 

@@ -1,11 +1,9 @@
 <?php namespace RainLab\Translate\FormWidgets;
 
 use Backend\Classes\FormWidgetBase;
-use RainLab\Translate\Models\Locale;
 
 /**
- * ML Textarea
- * Renders a multi-lingual textarea field.
+ * MLTextarea renders a multi-lingual textarea field.
  *
  * @package rainlab\translate
  * @author Alexey Bobkov, Samuel Georges
@@ -48,7 +46,7 @@ class MLTextarea extends FormWidgetBase
     }
 
     /**
-     * Returns an array of translated values for this field
+     * getSaveValue returns an array of translated values for this field
      * @return array
      */
     public function getSaveValue($value)
@@ -63,5 +61,4 @@ class MLTextarea extends FormWidgetBase
     {
         $this->loadLocaleAssets();
     }
-
 }

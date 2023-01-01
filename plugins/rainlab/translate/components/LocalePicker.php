@@ -9,10 +9,13 @@ use RainLab\Translate\Classes\Translator;
 use October\Rain\Router\Router as RainRouter;
 use Cms\Classes\ComponentBase;
 
+/**
+ * LocalePicker
+ */
 class LocalePicker extends ComponentBase
 {
     /**
-     * @var RainLab\Translate\Classes\Translator Translator object.
+     * @var \RainLab\Translate\Classes\Translator Translator object.
      */
     protected $translator;
 

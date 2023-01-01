@@ -24,18 +24,23 @@ return [
         'chart_drafts' => 'Drafts',
         'chart_total' => 'Total',
         'settings_description' => 'Manage blog settings',
-        'show_all_posts_label' => 'Show all posts to backend users',
+        'show_all_posts_label' => 'Show All Posts to Backend Users',
         'show_all_posts_comment' => 'Display both published and unpublished posts on the frontend to backend users',
-        'tab_general' => 'General'
+        'use_legacy_editor_label' => 'Use the Legacy Markdown Editor',
+        'use_legacy_editor_comment' => 'Enable the older version of the markdown editor when using October CMS v2 and above',
+        'preview_cms_page_label' => 'Preview CMS Page',
+        'preview_cms_page_comment' => 'Select a page to open for the Preview button',
+        'tab_general' => 'General',
+        'preview' => 'Preview'
     ],
     'posts' => [
         'list_title' => 'Manage the blog posts',
         'filter_category' => 'Category',
         'filter_published' => 'Published',
         'filter_date' => 'Date',
-        'new_post' => 'New post',
-        'export_post' => 'Export posts',
-        'import_post' => 'Import posts'
+        'new_post' => 'New Post',
+        'export_post' => 'Export Posts',
+        'import_post' => 'Import Posts'
     ],
     'post' => [
         'title' => 'Title',
@@ -71,10 +76,11 @@ return [
         'posted_byline' => 'Posted in :categories on :date.',
         'posted_byline_no_categories' => 'Posted on :date.',
         'date_format' => 'M d, Y',
+        'dropzone' => 'Click or drop an image...'
     ],
     'categories' => [
         'list_title' => 'Manage the blog categories',
-        'new_category' => 'New category',
+        'new_category' => 'New Category',
         'uncategorized' => 'Uncategorized'
     ],
     'category' => [
