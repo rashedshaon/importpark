@@ -20,4 +20,9 @@ class Supplier extends Model
      */
     public $rules = [
     ];
+
+    public $attachOne = [
+        'wechat_qr'  => \System\Models\File::class,
+        'alipay_qr'  => \System\Models\File::class
+    ];
 }

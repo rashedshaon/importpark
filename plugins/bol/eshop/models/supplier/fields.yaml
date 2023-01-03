@@ -3,10 +3,28 @@ fields:
         label: Name
         span: auto
         type: text
+    wechat_qr:
+            label: 'Wechat QR'
+            mode: file
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
     phone:
         label: Phone
         span: auto
         type: text
+    alipay_qr:
+            label: 'Alipay QR'
+            mode: file
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
     alibaba_url:
         label: 'Alibaba url'
         span: auto

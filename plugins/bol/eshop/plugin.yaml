@@ -123,7 +123,7 @@ navigation:
                     - bol.eshop.manage_suppliers
             side-menu-item9:
                 label: 'bol.eshop::lang.menu.items_statuses'
-                url: bol/eshop/itemsstatuses
+                url: bol/eshop/itemstatuses
                 icon: icon-star
                 permissions:
                     - bol.eshop.manage_items_statuses
