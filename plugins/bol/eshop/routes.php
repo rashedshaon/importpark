@@ -2,6 +2,8 @@
 use Bol\Eshop\Models\Region;
 use Bol\Eshop\Models\City;
 use Bol\Eshop\Models\Area;
+use Bol\Eshop\Models\Customer;
+use Bol\Eshop\Models\Order;
 
 Route::get('sitemap.xml', function()
 {
@@ -69,6 +71,28 @@ Route::get('clear-data', function () {
     \Artisan::call('inventory:clearsystem');
 
     dd("All is cleared");
+
+});
+
+Route::get('update-data', function () {
+
+    $order = Order::where('user_id', '!=', 0)->get();
+
+    foreach($order as $item)
+    {
+        $area = Area::where('name', $item->delivery_address['area'])->get()->first();
+
+        Customer::where('id', $item->user_id)->update([
+            "phone" => $item->phone,
+            "region_id" => $area ? $area->city->region_id : null,
+            "city_id" => $area ? $area->city_id : null,
+            "area_id" => $area ? $area->id : null,
+            "address" => $item->delivery_address['address'],
+        ]);
+    }
+    
+
+    dd("All Updated");
 
 });
 

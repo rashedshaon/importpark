@@ -26,7 +26,7 @@ class Customers extends Controller
     public function listInjectRowClass($record, $value)
     {
         $start_of_day = Carbon::today()->startOfDay();
-        if ($record->has_followup && $record->followup_date <= $start_of_day) {
+        if ($record->has_remainder && $record->remainder_date <= $start_of_day) {
             return 'has-followup';
         }
     }

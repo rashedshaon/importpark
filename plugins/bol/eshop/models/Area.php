@@ -26,4 +26,8 @@ class Area extends Model
      */
     public $rules = [
     ];
+
+    public $hasOne = [
+        'city' => ['Bol\Eshop\Models\City', 'key' => 'id', 'otherKey' => 'city_id'],
+    ];
 }

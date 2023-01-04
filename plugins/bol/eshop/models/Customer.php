@@ -23,10 +23,10 @@ class Customer extends Model
         'name'      => 'required',
         'type_id'   => 'required',
         'phone'     => 'required|regex:/^[0-1]{2}[0-9]{9}$/|min:11|unique:users',
-        'region_id' => 'required',
-        'city_id'   => 'required',
-        'area_id'   => 'required',
-        'address'   => 'required',
+        // 'region_id' => 'required',
+        // 'city_id'   => 'required',
+        // 'area_id'   => 'required',
+        // 'address'   => 'required',
     ];
 
     public $hasOne = [

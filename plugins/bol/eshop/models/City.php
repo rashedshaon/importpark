@@ -27,6 +27,10 @@ class City extends Model
     public $rules = [
     ];
 
+    public $hasOne = [
+        'region' => ['Bol\Eshop\Models\Region', 'key' => 'id', 'otherKey' => 'region_id'],
+    ];
+
     public $hasMany = [
         'areas' => ['Bol\Eshop\Models\Area', 'key' => 'city_id', 'otherKey' => 'id'],
     ];

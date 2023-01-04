@@ -12,7 +12,7 @@ class BuilderTableUpdateUsers extends Migration
             $table->boolean('has_remainder')->default(0)->after('email');
             $table->date('remainder_date')->nullable()->after('email');
             $table->text('remarks')->nullable()->after('email');
-            $table->integer('address')->after('email')->nullable();
+            $table->text('address')->after('email')->nullable();
             $table->integer('area_id')->after('email')->nullable();
             $table->integer('city_id')->after('email')->nullable();
             $table->integer('region_id')->after('email')->nullable();
