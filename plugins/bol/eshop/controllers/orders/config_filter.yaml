@@ -1,0 +1,6 @@
+scopes:
+    status_id:
+        label: Status
+        modelClass: Bol\Eshop\Models\OrderStatus
+        conditions: status_id in (:filtered)
+        nameFrom: name
