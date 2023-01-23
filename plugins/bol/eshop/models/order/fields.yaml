@@ -97,7 +97,7 @@ tabs:
             label: Remarks
             size: large
             span: auto
-            type: textarea
+            type: richeditor
             tab: 'bol.eshop::lang.order.tab_info'
         has_remainder:
             label: 'Has remainder'
