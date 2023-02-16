@@ -301,7 +301,7 @@ class Cart extends Model
     {
         if (!Cookie::get('cart_id')) 
         {
-            $cart_id = time().rand('00000', '99999');
+            $cart_id = time().rand('00000000', '99999999');
             Cookie::queue(Cookie::forever('cart_id', $cart_id));
             return $cart_id;
         }

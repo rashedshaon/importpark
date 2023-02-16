@@ -158,3 +158,15 @@
     - seed_table_bol_eshop_customer_types.php
     - seed_table_bol_eshop_items_statuses.php
     - seed_table_bol_eshop_purchase_statuses.php
+1.0.54:
+    - 'Updated table bol_eshop_products'
+    - builder_table_update_bol_eshop_products_4.php
+1.0.55:
+    - 'Updated table bol_eshop_products'
+    - builder_table_update_bol_eshop_products_5.php
+1.0.56:
+    - 'Updated table bol_eshop_products'
+    - builder_table_update_bol_eshop_products_6.php
+1.0.57:
+    - 'Updated table bol_eshop_products'
+    - builder_table_update_bol_eshop_products_7.php

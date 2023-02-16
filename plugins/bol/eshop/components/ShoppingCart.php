@@ -33,7 +33,6 @@ class ShoppingCart extends ComponentBase
         return [];
     }
 
-
     public function onRun()
     {
         $this->refresh();

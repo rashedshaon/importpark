@@ -1,6 +1,6 @@
 columns:
     id:
-        label: 'Id'
+        label: 'ID'
         type: text
     title:
         label: 'Title'
@@ -22,6 +22,27 @@ columns:
         type: text
     unit:
         label: 'Unit'
+        type: text
+    seller_sku:
+        label: 'Seller SKU'
+        type: text
+    label_code:
+        label: 'Label Code'
+        type: text
+    cost_bdt:
+        label: 'Cost BDT'
+        type: text
+    shipping_cost:
+        label: 'Shipping Cost'
+        type: text
+    daraz_price:
+        label: 'Daraz Price'
+        type: text
+    daraz_percent:
+        label: 'Daraz Percent'
+        type: text
+    supplier_id:
+        label: 'Supplier'
         type: text
     video_url:
         label: 'Video Url'
@@ -76,5 +97,11 @@ columns:
         type: text
     photos:
         label: 'Photos'
+        type: text
+    update_image:
+        label: 'Update Photo?'
+        type: text
+    previous_id:
+        label: 'Previous Id'
         type: text
     
