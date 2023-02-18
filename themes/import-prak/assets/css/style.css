@@ -12,3 +12,31 @@
 ul#headerSidebarList li {
     padding: 5px 0px 5px 0px;
 }
+
+.cart-mobile{
+    border-top: 1px solid #dddddd;
+}
+
+.cart-mobile td{
+    display: table-cell !important;
+    padding: 0.1rem 0.2rem !important;
+    border-top: none !important;
+}
+
+.cart-mobile td::before {
+    content: "" !important;
+}
+.cart-mobile .title{
+    font-size: 0.8rem;
+}
+
+.cart-mobile .price{
+    font-size: 0.8rem;
+}
+.cart-mobile .price-strick{
+    font-size: 0.6rem;
+}
+
+.cart-total .table th, .cart-total .table td {
+    padding: 0.3rem;
+}

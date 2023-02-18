@@ -735,11 +735,11 @@ class Product extends Model
 
             if(Settings::get('currency_label') == 'symbol')
             {
-                return $currency->symbol."".$this->price;
+                return $currency->symbol."".number_format($this->price);
             }
             else
             {
-                return $this->price." ".$currency->name;
+                return number_format($this->price)." ".$currency->name;
             }
         }
 
@@ -754,11 +754,11 @@ class Product extends Model
 
             if(Settings::get('currency_label') == 'symbol')
             {
-                return $currency->symbol."".$this->main_price;
+                return $currency->symbol."".number_format($this->main_price);
             }
             else
             {
-                return $this->main_price." ".$currency->name;
+                return number_format($this->main_price)." ".$currency->name;
             }
         }
 

@@ -1,5 +1,5 @@
 title = "Shopping Cart"
-url = "/shopping-cart"
+url = "/shopping-cart/:cart_id?"
 layout = "default"
 is_hidden = 0
 
@@ -7,7 +7,7 @@ is_hidden = 0
 
 function onStart()
 {
-   
+    //dd($this->param('cart_id'));
 }
 
 ==
@@ -31,13 +31,13 @@ function onStart()
     <!-- End breadcrumb -->
 
     <div class="container">
-        <div class="mb-4">
-            <h1 class="text-center">Cart</h1>
+        <div class="mb-3">
+            <h3 class="text-center">Cart</h3>
         </div>
-        <div class="mb-10 cart-table">
+        <div class="mb-3 cart-table">           
             <table class="table" cellspacing="0">
                 <thead>
-                    <tr>
+                    <tr class="d-none d-md-table-row">
                         <th class="product-remove">&nbsp;</th>
                         <th class="product-thumbnail">&nbsp;</th>
                         <th class="product-name">Product</th>
@@ -51,7 +51,7 @@ function onStart()
                 </tbody>
                 <tbody>
                     <tr>
-                        <td colspan="6" class="border-top space-top-2 justify-content-center">
+                        <td colspan="6" class="border-top p-2 justify-content-center">
                             <div class="pt-md-3">
                                 <div class="d-block d-md-flex flex-center-between">
                                     <div class="mb-3 mb-md-0 w-xl-40">

@@ -4,6 +4,7 @@ use Model;
 use Auth;
 use Session;
 use Cookie;
+use Request;
 
 /**
  * Model
@@ -248,6 +249,7 @@ class Cart extends Model
             $cart_item             = new CartItem();
             $cart_item->cart_id    = $cart->id;
             $cart_item->product_id = $product_id;
+            $cart_item->price      = Product::find($product_id)->main_price;
             $cart_item->color      = $color;
             $cart_item->size       = $size;
             $cart_item->quantity   = $quantity;
@@ -299,6 +301,14 @@ class Cart extends Model
 
     public static function getSessionId()
     {
+        $url = explode('C283', last(request()->segments()));
+        if(count($url) == 2)
+        {
+            $cart_id = last($url);
+            Cookie::queue(Cookie::forever('cart_id', $cart_id));
+            return $cart_id;
+        }
+
         if (!Cookie::get('cart_id')) 
         {
             $cart_id = time().rand('00000000', '99999999');

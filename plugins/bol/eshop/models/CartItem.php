@@ -25,9 +25,28 @@ class CartItem extends Model
         'product' => ['Bol\Eshop\Models\Product', 'key' => 'id', 'otherKey' => 'product_id'],
     ];
 
+    public function getPriceLabelAttribute()
+    {
+        if(Settings::get('show_currency'))
+        {
+            $currency = Currency::where('is_default', 1)->where('is_active', 1)->get()->first();
+
+            if(Settings::get('currency_label') == 'symbol')
+            {
+                return $currency->symbol."".number_format($this->price);
+            }
+            else
+            {
+                return number_format($this->price)." ".$currency->name;
+            }
+        }
+
+        return $this->main_price;
+    }
+
     public function getSubtotalAttribute()
     {
-        return $this->product->main_price * $this->quantity;
+        return $this->price * $this->quantity;
     }
 
     public function getSubtotalLabelAttribute()
@@ -51,6 +70,6 @@ class CartItem extends Model
 
     public function getDiscountSubtotalAttribute()
     {
-        return $this->product->discount_amount * $this->quantity;
+        return ($this->product->price - $this->price) * $this->quantity;
     }
 }

@@ -1,5 +1,52 @@
 {% for item in cart.items %}
-<tr>
+<tr class="cart-mobile d-md-none">
+    <td>
+        <a href="#" class="text-gray-32 font-size-26"
+                data-request="onRemoveCartItem"
+                data-request-data="item_id: {{ item.id }}"
+                data-request-flash>×</a>
+    </td>
+    <td>
+        <a href="#"><img class="img-fluid max-width-100 border border-color-1" src="{{ item.product.featuredPhoto(64,76) }}" alt="Image Description"></a>
+    </td>
+    <td class="w-100">
+        <div class="title text-left"><a href="{{ url('/product-details') }}/{{ item.product.slug }}">{{ item.product.title }}</a></div>
+        <div class="d-flex flex-row mt-2">
+
+            {% if item.product.price > item.price %}
+            <div class="d-flex flex-row">
+                <div class="d-flex flex-column">
+                    <div class="price text-left">{{ item.price_label }}</div>
+                    <del class="price-strick text-left text-danger">{{ item.product.original_price_label }}</del>
+                </div>
+                <div class="align-self-center">
+                    &nbsp; x &nbsp; 
+                </div>
+            </div>
+            {% else %}
+            <div>
+                {{ item.price_label }}&nbsp; x &nbsp; 
+            </div>
+            {% endif %}
+
+            <div class="border rounded-pill py-1 width-50 px-3 border-color-1">
+                <div class="js-quantity row">
+                    <div class="col align-items-right">
+                        <form id="form-{{ item.id }}">
+                            <input name="item_id" type="hidden" value="{{ item.id }}">
+                            <input name="quantity" min="1" class="js-result form-control h-auto border-0 rounded p-0 shadow-none" 
+                                   type="number"
+                                   value="{{ item.quantity }}"
+                                   onchange="$('#form-{{ item.id }}').request('onUpdateCartItem', {flash: true})">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="ml-auto">{{ item.subtotal_label }}</div>
+        </div>
+    </td>
+</tr>
+<tr class="d-none d-md-table-row">
     <td class="text-center">
         <a href="#" class="text-gray-32 font-size-26"
         data-request="onRemoveCartItem"

@@ -155,7 +155,7 @@ class ShopCheckout extends ComponentBase
                 $order_item->unit         = $item->product->unit->name;
                 $order_item->color        = $item->color;
                 $order_item->size         = $item->size;
-                $order_item->price        = $item->product->main_price;
+                $order_item->price        = $item->price;
                 $order_item->actual_price = $item->product->price;
                 $order_item->save();
             }
