@@ -67,7 +67,18 @@
     </td>
     
     <td data-title="Price">
-        <span class="">{{ item.product.price_label }}</span>
+        {% if item.product.price > item.price %}
+        <div class="d-flex flex-row">
+            <div class="d-flex flex-column">
+                <div class="price text-left">{{ item.price_label }}</div>
+                <del class="price-strick text-left text-danger">{{ item.product.original_price_label }}</del>
+            </div>
+        </div>
+        {% else %}
+        <div>
+            {{ item.price_label }}
+        </div>
+        {% endif %}
     </td>
     
 
@@ -100,7 +111,7 @@
 
     <td>
         <div class="table-data">
-            <span class="total">{{ item.subtotal }}</span>
+            <span class="total">{{ item.subtotal_label }}</span>
         </div>
     </td>
 </tr>
