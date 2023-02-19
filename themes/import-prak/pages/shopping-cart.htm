@@ -70,11 +70,13 @@ function onStart()
                                     <div class="d-md-flex">
                                         <!-- <button type="button" class="btn btn-soft-secondary mb-3 mb-md-0 font-weight-normal px-5 px-md-4 px-lg-5 w-100 w-md-auto">Update cart</button> -->
                                         <a class="btn btn-primary-dark ml-md-2 px-5 px-md-4 px-lg-5 w-100 w-md-auto d-none d-md-inline-block"
+                                        href="{{ url('checkout') }}">Proceed to checkout</a>
+                                        <!-- <a class="btn btn-primary-dark ml-md-2 px-5 px-md-4 px-lg-5 w-100 w-md-auto d-none d-md-inline-block"
                                             onclick="this.style.display='none'; this.innerText='Processing…';" 
                                             data-request-form="#form-checkout" 
                                             data-request="onCheckout" 
                                             data-request-complete="if(data.statusText == 'Not Acceptable'){this.style.display='block'; this.innerText='Proceed to checkout';}"
-                                            data-request-flash>Proceed to checkout</a>
+                                            data-request-flash>Proceed to checkout</a> -->
                                     </div>
                                 </div>
                             </div>
@@ -97,11 +99,13 @@ function onStart()
                         </form>
                     </table>
                     <a  class="btn btn-primary-dark ml-md-2 px-5 px-md-4 px-lg-5 w-100 w-md-auto d-md-none"
+                        href="{{ url('checkout') }}">Proceed to checkout</a>
+                    <!-- <a  class="btn btn-primary-dark ml-md-2 px-5 px-md-4 px-lg-5 w-100 w-md-auto d-md-none"
                         onclick="this.style.display='none'; this.innerText='Processing…';" 
                         data-request-form="#form-checkout" 
                         data-request="onCheckout" 
                         data-request-complete="if(data.statusText == 'Not Acceptable'){this.style.display='block'; this.innerText='Proceed to checkout';}"
-                        data-request-flash>Proceed to checkout</a>
+                        data-request-flash>Proceed to checkout</a> -->
                 </div>
             </div>
         </div>

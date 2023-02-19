@@ -128,14 +128,14 @@ class ShoppingCart extends ComponentBase
         $post = post();
 
         // dd($post);
-        if(!isset($post['shipping_method_id']))
-        {
-            throw new ValidationException(['error' => 'Please select shipping method.']);
-        }
+        // if(!isset($post['shipping_method_id']))
+        // {
+        //     throw new ValidationException(['error' => 'Please select shipping method.']);
+        // }
 
-        $cart = Cart::data();
-        $cart->shipping_method_id = $post['shipping_method_id'];
-        $cart->save();
+        // $cart = Cart::data();
+        // $cart->shipping_method_id = $post['shipping_method_id'];
+        // $cart->save();
 
         return Redirect::to('checkout');
     }

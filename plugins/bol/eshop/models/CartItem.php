@@ -57,15 +57,15 @@ class CartItem extends Model
 
             if(Settings::get('currency_label') == 'symbol')
             {
-                return $currency->symbol."".$this->subtotal;
+                return $currency->symbol."".number_format($this->subtotal);
             }
             else
             {
-                return $this->subtotal." ".$currency->name;
+                return number_format($this->subtotal)." ".$currency->name;
             }
         }
 
-        return $this->subtotal;
+        return number_format($this->subtotal);
     }
 
     public function getDiscountSubtotalAttribute()

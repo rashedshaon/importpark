@@ -1,0 +1,91 @@
+<div class="col-md-6">
+    <!-- Input -->
+    <div class="js-form-message mb-2">
+        <label class="form-label">
+            {{'Full name'|_}}
+            <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" name="delivery_address[name]" placeholder="{{'Full name'|_}}" value="{{ user.name }}">
+    </div>
+    <!-- End Input -->
+</div>
+<div class="col-md-6">
+    <!-- Input -->
+    <div class="js-form-message mb-2">
+        <label class="form-label">
+            {{'Email'|_}}
+        </label>
+        <input type="text" class="form-control" name="delivery_address[email]" placeholder="{{'Email (optional)'|_}}" value="{{ user.email }}">
+    </div>
+    <!-- End Input -->
+</div>
+
+<div class="col-md-6">
+    <!-- Input -->
+    <div class="js-form-message mb-2">
+        <label class="form-label">
+            {{'Region'|_}}
+            <span class="text-danger">*</span>
+        </label>
+        <select class="form-control custom-select" name="delivery_address[region]" 
+                onchange="$.request('onChangeRegion', {data: {name: this.value}})">
+
+            <option value="">Select Regions</option>
+            {% for data in regions %}
+            <option value="{{ data.id }}" {{ data.id == user.region_id ? 'selected' : '' }}>{{ data.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <!-- End Input -->
+</div>
+
+<div class="col-md-6">
+    <!-- Input -->
+    <div class="js-form-message mb-2">
+        <label class="form-label">
+            {{'City'|_}}
+            <span class="text-danger">*</span>
+        </label>
+        <select class="form-control custom-select" name="delivery_address[city]" id="cities"
+            onchange="$.request('onChangeCity', {data: {name: this.value}})">
+            <option value="">Select City</option>
+            {% for data in cities %}
+            <option value="{{ data.id }}" {{ data.id == user.city_id ? 'selected' : '' }}>{{ data.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <!-- End Input -->
+</div>
+
+<div class="col-md-6">
+    <!-- Input -->
+    <div class="js-form-message mb-2">
+        <label class="form-label">
+            {{'Area'|_}}
+            <span class="text-danger">*</span>
+        </label>
+        <select class="form-control custom-select" name="delivery_address[area]" id="areas">
+            <option value="">Select Area</option>
+            {% for data in areas %}
+            <option value="{{ data.id }}" {{ data.id == user.area_id ? 'selected' : '' }}>{{ data.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <!-- End Input -->
+</div>
+
+<div class="w-100"></div>
+
+<div class="col-md-12">
+    <!-- Input -->
+    <div class="js-form-message mb-2">
+        <label class="form-label">
+            {{'Address'|_}}
+            <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" name="delivery_address[address]" placeholder="{{ user.address }}" value="{{ user.address }}">
+    </div>
+    <!-- End Input -->
+</div>
+
+<div class="w-100"></div>

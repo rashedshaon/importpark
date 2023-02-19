@@ -12,6 +12,10 @@ use Bol\Eshop\Models\Order;
 use Bol\Eshop\Models\OrderItem;
 use Bol\Eshop\Models\Settings;
 use Bol\Eshop\Models\PaymentMethod;
+use Bol\Eshop\Models\Region;
+use Bol\Eshop\Models\City;
+use Bol\Eshop\Models\Area;
+use RainLab\User\Models\User;
 use Validator, ValidationException;
 use Lang;
 use Flash;
@@ -54,7 +58,7 @@ class ShopCheckout extends ComponentBase
     public function onRender()
     {
         
-    }
+    }  
 
     public function onPlaceOrder()
     {
@@ -71,7 +75,7 @@ class ShopCheckout extends ComponentBase
             'delivery_address.area' => 'required',
             'delivery_address.address' => 'required',
             'payment_method' => 'required',
-            // 'terms' => 'required',
+            'terms' => 'required',
         ];
 
         $billing_address = [];
@@ -123,8 +127,20 @@ class ShopCheckout extends ComponentBase
         {
             $billing_address = post('billing_address');
         }
-    
+
         $user = Auth::getUser();  
+
+        User::where('id', $user->id)->update([
+            'region_id' => $data['delivery_address']['region'],
+            'city_id' => $data['delivery_address']['city'],
+            'area_id' => $data['delivery_address']['area'],
+        ]);
+
+        $data['delivery_address']['region'] = Region::find($data['delivery_address']['region'])->name;
+        $data['delivery_address']['city'] = City::find($data['delivery_address']['city'])->name;
+        $data['delivery_address']['area'] = Area::find($data['delivery_address']['area'])->name;
+    
+        
     
         $order = new Order();
         $order->user_id = $user ? $user->id : null;
@@ -135,6 +151,7 @@ class ShopCheckout extends ComponentBase
         $order->payment_method_id = $data['payment_method'];
         $order->shipping_method_id = $cart->shipping ? $cart->shipping_method_id : $data['shipping_method_id'];
         $order->tax_percent = Settings::get('tax_percentage') ? : 0;
+        $order->status_id = Settings::get('initial_order_status');
         $order->other_deduction = NULL;
         $order->coupon_id = NULL;
         $order->payment_status = 0;

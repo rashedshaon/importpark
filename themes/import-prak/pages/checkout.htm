@@ -19,7 +19,60 @@ is_hidden = 0
 
         <form id="form-place-order">
             <div class="row">
-                <div class="col-lg-5 order-lg-2 mb-7 mb-lg-0">
+                <div class="col-lg-7">
+                    <div class="">
+                        <!-- Title -->
+                        <div class="border-bottom border-color-1 mb-5">
+                            <h3 class="section-title mb-0 pb-2 font-size-25">{{'Shipping details'|_}}</h3>
+                        </div>
+                        <!-- End Title -->
+
+                        <!-- Billing Form -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                
+                                <!-- Input -->
+                                <div class="js-form-message mb-2">
+                                    
+                                    <label class="form-label">
+                                        {{'Phone'|_}}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                 
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="delivery_address[phone]" placeholder="01XXXXXXXXX" value="{{ user.phone }}">
+                                        <div class="input-group-append">
+                                            <button data-request="onPhoneTrack"
+                                            data-request-flash class="btn btn-block btn-dark px-4" type="button"><i class="fas fa-search"></i><span> Search</span></button>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <!-- End Input -->
+                            </div>
+                        </div>
+                        <div id="customer_details" class="row">
+
+                            {% component 'shopLocations' partial='customer-details' %}
+                            
+                        </div>
+                        <!-- End Billing Form -->
+
+                        <!-- Input -->
+                        <div class="js-form-message mb-6">
+                            <label class="form-label">
+                                {{'Order notes (optional)'|_}}
+                            </label>
+
+                            <div class="input-group">
+                                <textarea class="form-control " rows="3" name="remarks" placeholder="{{'Notes about your order, e.g. special notes for delivery.'|_}}"></textarea>
+                            </div>
+                        </div>
+                        <!-- End Input -->
+                    </div>
+                </div>
+
+                <div class="col-lg-5  mb-7 mb-lg-0">
                     <div class="pl-lg-3 ">
                         <div class="bg-gray-1 rounded-lg">
                             <!-- Order Summary -->
@@ -240,131 +293,6 @@ is_hidden = 0
                             </div>
                             <!-- End Order Summary -->
                         </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-7 order-lg-1">
-                    <div class="pb-7 mb-7">
-                        <!-- Title -->
-                        <div class="border-bottom border-color-1 mb-5">
-                            <h3 class="section-title mb-0 pb-2 font-size-25">{{'Shipping details'|_}}</h3>
-                        </div>
-                        <!-- End Title -->
-
-                        <!-- Billing Form -->
-                        <div class="row">
-                            <div class="col-md-12">
-                                <!-- Input -->
-                                <div class="js-form-message mb-6">
-                                    <label class="form-label">
-                                        {{'Full name'|_}}
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" name="delivery_address[name]" placeholder="{{ user.name }}" value="{{ user.name }}">
-                                </div>
-                                <!-- End Input -->
-                            </div>
-
-                            <div class="col-md-6">
-                                <!-- Input -->
-                                <div class="js-form-message mb-6">
-                                    <label class="form-label">
-                                        {{'Phone'|_}}
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" name="delivery_address[phone]" placeholder="{{ user.phone }}" value="{{ user.phone }}">
-                                </div>
-                                <!-- End Input -->
-                            </div>
-
-                            <div class="col-md-6">
-                                <!-- Input -->
-                                <div class="js-form-message mb-6">
-                                    <label class="form-label">
-                                        {{'Email'|_}}
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" name="delivery_address[email]" placeholder="{{ user.email }}" value="{{ user.email }}">
-                                </div>
-                                <!-- End Input -->
-                            </div>
-
-                            <div class="col-md-6">
-                                <!-- Input -->
-                                <div class="js-form-message mb-6">
-                                    <label class="form-label">
-                                        {{'Region'|_}}
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-control custom-select" name="delivery_address[region]" 
-                                            onchange="$.request('onChangeRegion', {data: {name: this.value}})">
-
-                                        <option value="">Select Regions</option>
-                                        {% for data in regions %}
-                                        <option value="{{ data.name }}">{{ data.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <!-- End Input -->
-                            </div>
-
-                            <div class="col-md-6">
-                                <!-- Input -->
-                                <div class="js-form-message mb-6">
-                                    <label class="form-label">
-                                        {{'City'|_}}
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-control custom-select" name="delivery_address[city]" id="cities"
-                                        onchange="$.request('onChangeCity', {data: {name: this.value}})">
-                                        <option value="">Select City</option>
-                                    </select>
-                                </div>
-                                <!-- End Input -->
-                            </div>
-
-                            <div class="col-md-6">
-                                <!-- Input -->
-                                <div class="js-form-message mb-6">
-                                    <label class="form-label">
-                                        {{'Area'|_}}
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <select class="form-control custom-select" name="delivery_address[area]" id="areas">
-                                        <option value="">Select Area</option>
-                                    </select>
-                                </div>
-                                <!-- End Input -->
-                            </div>
-
-                            <div class="w-100"></div>
-
-                            <div class="col-md-12">
-                                <!-- Input -->
-                                <div class="js-form-message mb-6">
-                                    <label class="form-label">
-                                        {{'Address'|_}}
-                                    </label>
-                                    <input type="text" class="form-control" name="delivery_address[address]" placeholder="{{ user.address }}" value="{{ user.address }}">
-                                </div>
-                                <!-- End Input -->
-                            </div>
-
-                            <div class="w-100"></div>
-                        </div>
-                        <!-- End Billing Form -->
-
-                        <!-- Input -->
-                        <div class="js-form-message mb-6">
-                            <label class="form-label">
-                                {{'Order notes (optional)'|_}}
-                            </label>
-
-                            <div class="input-group">
-                                <textarea class="form-control p-5" rows="4" name="remarks" placeholder="{{'Notes about your order, e.g. special notes for delivery.'|_}}"></textarea>
-                            </div>
-                        </div>
-                        <!-- End Input -->
                     </div>
                 </div>
             </div>
