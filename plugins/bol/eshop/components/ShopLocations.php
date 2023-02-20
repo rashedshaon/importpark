@@ -77,7 +77,7 @@ class ShopLocations extends ComponentBase
     {
         $post = post();
 
-        $this->page['items'] = Region::where('name', $post['name'])->get()->first()->cities()->get();
+        $this->page['items'] = Region::find($post['name'])->cities()->get();
 
         return  [
                     '#cities' => $this->renderPartial('@cities'),
@@ -88,7 +88,7 @@ class ShopLocations extends ComponentBase
     {
         $post = post();
 
-        $this->page['items'] = City::where('name', $post['name'])->get()->first()->areas()->get();
+        $this->page['items'] = City::find($post['name'])->areas()->get();
 
         return  [
                     '#areas' => $this->renderPartial('@areas'),

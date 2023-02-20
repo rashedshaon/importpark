@@ -173,3 +173,12 @@
 1.0.58:
     - 'Updated table bol_eshop_cart_items'
     - builder_table_update_bol_eshop_cart_items.php
+1.0.59:
+    - 'Updated table bol_eshop_cities'
+    - builder_table_update_bol_eshop_cities.php
+1.0.60:
+    - 'Updated table bol_eshop_areas'
+    - builder_table_update_bol_eshop_areas.php
+1.0.61:
+    - 'Updated table bol_eshop_regions'
+    - builder_table_update_bol_eshop_regions.php

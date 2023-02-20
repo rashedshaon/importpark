@@ -22,13 +22,12 @@ order_id={{:id}}
                                 <tr>
                                     <td>
                                         <div class="logo">
-                                            <a href="#" id="imageContainer"><img
-                                                    src="{{ site_logo }}" alt=""></a>
+                                            <a href="{{ url('/') }}" id="imageContainer"><img src="{{ site_logo }}" alt="" width="140px"></a>
                                         </div>
                                     </td>
                                     <td class="text-right">
-                                        <h4>Invoice</h4>
-                                        {{ site_description | raw }}
+                                       <strong>Invoice</strong> <br>
+                                        Order #{{order.order_number}}
                                     </td>
                                 </tr>
                             </table>
@@ -41,35 +40,27 @@ order_id={{:id}}
                                         <table class="table table-2">
                                             <thead>
                                                 <tr>
-                                                    <th colspan="4"><h4>Order #{{order.order_number}}</h4> 
-                                                    </th>
-                                                </tr>
-                                                <tr>
-                                                    <th class="remove-porduct">Delivery Address</th>
-                                                    <th class="product-title">Delivery Method</th>
-                                                    <th class="total">Billing Address</th>
-                                                    <th class="product-title">Payment Method</th>
+                                                    <th width="30%" class="remove-porduct">From</th>
+                                                    <th width="45%" class="product-title">To</th>
+                                                    <th width="25%" class="total text-center">Details</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                 
                                                 <tr>
+                                                    <td>{{ site_description | raw }}</td>
                                                     <td>
-                                                        <span> {{ order.delivery_address['name'] }} </span><br/>
+                                                        <span> <strong>{{ order.delivery_address['name'] }}</strong> </span><br/>
                                                         <span> {{ order.delivery_address['address'] }} </span><br/>
-                                                        <span> Phone: {{ order.delivery_address['phone'] }} </span><br/>     
-                                                        <span> Email: {{ order.delivery_address['email'] }} </span>      
+                                                        <span> Phone: {{ order.delivery_address['phone'] }} </span><br/> 
+                                                        {% if order.delivery_address['email'] %}    
+                                                        <span> Email: {{ order.delivery_address['email'] }} </span> 
+                                                        {% endif %}     
                                                     </td>
-                                                    <td>
-                                                       {{ order.shipping_method.name }}
-                                                    </td>
-                                                    <td>
-                                                        <span> {{ order.delivery_address['name'] }} </span><br/>
-                                                        <span> {{ order.delivery_address['address'] }} </span><br/>
-                                                        <span> Phone: {{ order.delivery_address['phone'] }} </span><br/>      
-                                                        <span> Email: {{ order.delivery_address['email'] }} </span>       
-                                                    </td>
-                                                    <td>
+                                                    
+                                                    <td class="text-center">
+                                                        {{ order.shipping_method.name }} <br>
+
                                                         {{ order.payment_method.name }}
                                 
                                                         <div class="payment-status">
@@ -85,7 +76,7 @@ order_id={{:id}}
                                     <div class="table-responsive">
                                         <table class="table table-2">
                                             <thead>
-                                                <tr><th colspan="5"><h5>Order Details</h5></th></tr>
+                                                <tr><th colspan="6"><h6>Order Details</h6></th></tr>
                                                 <tr>
                                                     <th class="">Sl.</th>
                                                     <th class="remove-porduct">Product</th>

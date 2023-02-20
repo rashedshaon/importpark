@@ -22,14 +22,14 @@ order_id={{:id}}
                                 <tr>
                                     <td class="text-center">
                                         <div class="logo">
-                                            <a href="#" id="imageContainer"><img
+                                            <a href="#" id="imageContainer"><img width="140px"
                                                     src="{{ site_logo }}" alt=""></a>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="text-center">
-                                        <h4>Price Quotation</h4>
+                                        <h4>Deliverable Products</h4>
                                         {{ site_description | raw }}
                                     </td>
                                 </tr>
@@ -76,11 +76,12 @@ order_id={{:id}}
                                     <div class="table-responsive">
                                         <table class="table table-2">
                                             <thead>
-                                                <tr><th colspan="6"><h5>Order Details</h5></th></tr>
+                                                <tr><th colspan="7"><h5>Order Details</h5></th></tr>
                                                 <tr>
                                                     <th class="">Sl.</th>
                                                     <th class="remove-porduct">Photo</th>
                                                     <th class="remove-porduct">Product</th>
+                                                    <th class="remove-porduct">Code</th>
                                                     <th class="product-title">Quantity</th>
                                                     <th class="product-title">Price</th>
                                                     <th class="quantity">Subtotal</th>
@@ -100,6 +101,7 @@ order_id={{:id}}
                                                         <br>Size: {{ item.size }}
                                                         {% endif %}
                                                     </td>
+                                                    <td>{{ item.seller_sku }}</td>
                                                     <td>{{ item.quantity }}</td>
                                                     <td>{{ item.price_label }}/{{ item.unit }}</td>
                                                     <td>{{ item.subtotal_label }}</td>
@@ -108,7 +110,7 @@ order_id={{:id}}
                                 
                                                 {% if order.remarks %}
                                                 <tr>
-                                                    <th colspan="6">
+                                                    <th colspan="7">
                                                         *Notes: {{ order.remarks | raw }}
                                                     </th>
                                                 </tr>
@@ -116,7 +118,7 @@ order_id={{:id}}
                                                 
                                 
                                                 <tr>
-                                                    <th colspan="4"></th>
+                                                    <th colspan="5"></th>
                                                     <th class="product-title" style="width:130px;">
                                                         Subtotal <br>
                                                         Shipping <br>

@@ -52,8 +52,9 @@ is_hidden = 0
                             </div>
                         </div>
                         <div id="customer_details" class="row">
-
+                            {% if user %}
                             {% component 'shopLocations' partial='customer-details' %}
+                            {% endif %}
                             
                         </div>
                         <!-- End Billing Form -->

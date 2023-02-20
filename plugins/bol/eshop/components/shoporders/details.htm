@@ -4,7 +4,7 @@
             <thead>
                 <tr>
                     <th colspan="4"><h4>Order #{{order.order_number}} <span class="badge badge-success" style="background-color: {{order.status.color}}">{{order.status.name}}</span> 
-                        <a href="{{ url('invoice') }}/{{order.id}}" target="_blank" class="badge badge-primary float-right"><i class="fal fa-print"></i></a></h4> 
+                        <a href="{{ url('invoice') }}/{{order.secret_key}}" target="_blank" class="badge badge-primary float-right"><i class="fas fa-print"></i></a></h4> 
                     </th>
                 </tr>
                 <tr>

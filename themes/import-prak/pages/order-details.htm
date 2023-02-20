@@ -12,41 +12,48 @@ redirect='login'
 order_id={{:id}}
 ==
 
-
-<!-- shop body section start -->
-<section class="cart-body mb-90 mt-100 gray-border-top pt-35">
-    <div class="has-breadcrumb-content">
-        <div class="container container-1430">
-            <div class="breadcrumb-content" style="flex-direction: column;">
+<main id="content" role="main" class="cart-page">
+    <!-- breadcrumb -->
+    <div class="bg-gray-13 bg-md-transparent">
+        <div class="container">
+            <!-- breadcrumb -->
+            <div class="my-md-3">
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb p-0 m-0">
-                        <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Orders</li>
+                    <ol class="breadcrumb mb-3 flex-nowrap flex-xl-wrap overflow-auto overflow-xl-visble">
+                        <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1"><a href="{{ url('/') }}">Home</a></li>
+                        <li class="breadcrumb-item flex-shrink-0 flex-xl-shrink-1 active" aria-current="page">Order Details</li>
                     </ol>
                 </nav>
-                <h2 class="cart-title mt-40">Orders Details</h2>
             </div>
+            <!-- End breadcrumb -->
+        </div>
+    </div>
+    <!-- End breadcrumb -->
 
-            <div class="cart-body-content">
-                <div class="row">
+    <div class="container">
+        <div class="my-6">
+            <h1 class="text-center">Order Details</h1>
+        </div>
+        <div class="mb-16 wishlist-table">
+            <div class="row">
 
-                    <div class="col-xl-4">
-                        <div class="cart-widget">
+                <div class="col-xl-4">
+                    <div class="cart-widget">
 
-                            {% partial 'site/profile-side-menu' %}
+                        {% partial 'site/profile-side-menu' %}
+                        
 
+                    </div>
+                </div>
+
+                <div class="col-xl-8">
+                    <div class="product-content">
+                        <div class="table-responsive">
+                            {% component 'shopOrders' partial='details' %}
                         </div>
                     </div>
-
-                    <div class="col-xl-8">
-
-                        {% component 'shopOrders' partial='details' %}
-
-                    </div>
-
                 </div>
             </div>
         </div>
     </div>
-</section>
-<!-- shop body section end -->
+</main>

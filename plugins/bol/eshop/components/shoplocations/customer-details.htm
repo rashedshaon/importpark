@@ -32,7 +32,7 @@
 
             <option value="">Select Regions</option>
             {% for data in regions %}
-            <option value="{{ data.id }}" {{ data.id == user.region_id ? 'selected' : '' }}>{{ data.name }}</option>
+            <option value="{{ data.id }}" {{ data.id == user.region_id ? 'selected' : '' }}>{{ data.name }} - {{ data.name_bn }}</option>
             {% endfor %}
         </select>
     </div>
@@ -50,7 +50,7 @@
             onchange="$.request('onChangeCity', {data: {name: this.value}})">
             <option value="">Select City</option>
             {% for data in cities %}
-            <option value="{{ data.id }}" {{ data.id == user.city_id ? 'selected' : '' }}>{{ data.name }}</option>
+            <option value="{{ data.id }}" {{ data.id == user.city_id ? 'selected' : '' }}>{{ data.name }} - {{ data.name_bn }}</option>
             {% endfor %}
         </select>
     </div>
@@ -67,7 +67,7 @@
         <select class="form-control custom-select" name="delivery_address[area]" id="areas">
             <option value="">Select Area</option>
             {% for data in areas %}
-            <option value="{{ data.id }}" {{ data.id == user.area_id ? 'selected' : '' }}>{{ data.name }}</option>
+            <option value="{{ data.id }}" {{ data.id == user.area_id ? 'selected' : '' }}>{{ data.name }} - {{ data.name_bn }}</option>
             {% endfor %}
         </select>
     </div>

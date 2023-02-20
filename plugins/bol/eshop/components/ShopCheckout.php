@@ -131,9 +131,11 @@ class ShopCheckout extends ComponentBase
         $user = Auth::getUser();  
 
         User::where('id', $user->id)->update([
+            'name' => $data['delivery_address']['name'],
             'region_id' => $data['delivery_address']['region'],
             'city_id' => $data['delivery_address']['city'],
             'area_id' => $data['delivery_address']['area'],
+            'address' => $data['delivery_address']['address'],
         ]);
 
         $data['delivery_address']['region'] = Region::find($data['delivery_address']['region'])->name;
