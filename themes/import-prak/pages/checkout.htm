@@ -138,112 +138,42 @@ is_hidden = 0
                                             </td>
                                         </tr>
 
-                                        {% if not cart.shipping %}
-                                        <tr class="shipping">
-                                            <th>Shipping Method:</th>
-                                            <td>
-                                                <ul>
-                                                    {% for item in shipping_methods %}
-                                                    <li>
-                                                        <input type="radio" name="shipping_method_id" value="{{item.id}}"/>
-                                                        <label>
-                                                            {{item.name}}
                                         
-                                                            {% if item.price %}
-                                                            : <span class="amount">{{ item.price_label }}</span>
-                                                            {% endif %}
-                                                        </label>
-                                                    </li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                        {% endif %}
                                     </tfoot>
                                 </table>
                                 <!-- End Product Content -->
                                 <div class="border-top border-width-3 border-color-1 pt-3 mb-3">
                                     <!-- Basics Accordion -->
                                     <div id="basicsAccordion1">
-                                       
-
+                                        {% if not cart.shipping %}
+                                        Shipping Methods:
+                                        {% for item in shipping_methods %}
                                         <!-- Card -->
-                                        <!-- <div class="border-bottom border-color-1 border-dotted-bottom">
-                                            <div class="p-3" id="basicsHeadingTwo">
+                                        <div class="border-bottom border-color-1 border-dotted-bottom">
+                                            <div class="p-3" id="basicsHeadingShipping{{ item.id }}">
                                                 <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" id="secondStylishRadio1" name="stylishRadio">
-                                                    <label class="custom-control-label form-label collapsed" for="secondStylishRadio1" data-toggle="collapse" data-target="#basicsCollapseTwo" aria-expanded="false" aria-controls="basicsCollapseTwo">
-                                                        Check payments
+                                                    <input id="shippingMethod{{ item.id }}" class="custom-control-input" type="radio" name="shipping_method_id" value="{{ item.id }}"/>
+                                                    <label class="custom-control-label form-label" for="shippingMethod{{ item.id }}" data-toggle="collapse" data-target="#basicsCollapseShipping{{ item.id }}" aria-expanded="false" aria-controls="basicsCollapseShipping{{ item.id }}">
+                                                        {{item.name}}
+                                        
+                                                        {% if item.price %}
+                                                        : <span class="amount">{{ item.price_label }}</span>
+                                                        {% endif %}
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div id="basicsCollapseTwo" class="border-top border-color-1 border-dotted-top bg-dark-lighter collapse" aria-labelledby="basicsHeadingTwo" data-parent="#basicsAccordion1" style="">
+                                            <div id="basicsCollapseShipping{{ item.id }}" class="collapse border-top border-color-1 border-dotted-top bg-dark-lighter" aria-labelledby="basicsHeadingShipping{{ item.id }}" data-parent="#basicsAccordion1">
                                                 <div class="p-4">
-                                                    Please send a check to Store Name, Store Street, Store Town, Store State / County, Store Postcode.
+                                                    {{item.description | raw}}
                                                 </div>
                                             </div>
-                                        </div> -->
+                                        </div>
                                         <!-- End Card -->
+                                        {% endfor %}
+                                        {% endif %}
 
-                                        <!-- Card -->
-                                        <!-- <div class="border-bottom border-color-1 border-dotted-bottom">
-                                            <div class="p-3" id="basicsHeadingThree">
-                                                <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" id="thirdstylishRadio1" name="payment_term">
-                                                    <label class="custom-control-label form-label collapsed" for="thirdstylishRadio1" data-toggle="collapse" data-target="#basicsCollapseThree" aria-expanded="false" aria-controls="basicsCollapseThree">
-                                                        Cash on delivery
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div id="basicsCollapseThree" class="border-top border-color-1 border-dotted-top bg-dark-lighter collapse" aria-labelledby="basicsHeadingThree" data-parent="#basicsAccordion1" style="">
-                                                <div class="p-4">
-                                                    Pay with cash upon delivery.
-                                                </div>
-                                            </div>
-                                        </div> -->
-                                        <!-- End Card -->
-
-                                         <!-- Card -->
-                                         <!-- <div class="border-bottom border-color-1 border-dotted-bottom">
-                                            <div class="p-3" id="basicsHeadingOne">
-                                                <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" id="stylishRadio1" name="payment_term" value="0">
-                                                    <label class="custom-control-label form-label collapsed" for="stylishRadio1" data-toggle="collapse" data-target="#basicsCollapseOnee" aria-expanded="false" aria-controls="basicsCollapseOnee">
-                                                        {{'Direct bank transfer'|_}}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div id="basicsCollapseOnee" class="border-top border-color-1 border-dotted-top bg-dark-lighter collapse" aria-labelledby="basicsHeadingOne" data-parent="#basicsAccordion1" style="">
-                                                <div class="p-4">
-                                                    <div class="font-size-12 mb-2">{{'Please submit the order and send the payable amount to our bank account and update payment information from order list.'|_}}</div>
-                                                    <b>Account Details:</b> <br>
-                                                    A/C Name: AIS BUSINESS CONSULTANT <br>
-                                                    CD:20501020101193206 <br>
-                                                    Islami Bank Bangladesh limited <br>
-                                                    Branch:  Local Office Dhaka. Bangladesh <br>
-                                                </div>
-                                            </div>
-                                        </div> -->
-                                        <!-- End Card -->
-
-                                        <!-- Card -->
-                                        <!-- <div class="border-bottom border-color-1 border-dotted-bottom">
-                                            <div class="p-3" id="basicsHeadingFour">
-                                                <div class="custom-control custom-radio">
-                                                    <input type="radio" class="custom-control-input" id="FourstylishRadio1" name="payment_term" value="1">
-                                                    <label class="custom-control-label form-label" for="FourstylishRadio1" data-toggle="collapse" data-target="#basicsCollapseFour" aria-expanded="false" aria-controls="basicsCollapseFour">
-                                                        {{'Online Payment'|_}}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div id="basicsCollapseFour" class="collapse border-top border-color-1 border-dotted-top bg-dark-lighter" aria-labelledby="basicsHeadingFour" data-parent="#basicsAccordion1">
-                                                <div class="p-4">
-                                                    {{'You can pay online with any of your credit / debit cards or mobile bank accounts.'|_}}
-                                                </div>
-                                            </div>
-                                        </div> -->
-                                        <!-- End Card -->
-
+                                        
+                                        Payment Methods:
                                         {% for item in payment_methods %}
                                         <!-- Card -->
                                         <div class="border-bottom border-color-1 border-dotted-bottom">

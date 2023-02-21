@@ -52,6 +52,7 @@ order_id={{:id}}
                                                     <td>
                                                         <span> <strong>{{ order.delivery_address['name'] }}</strong> </span><br/>
                                                         <span> {{ order.delivery_address['address'] }} </span><br/>
+                                                        <span> {{ order.delivery_address['area'] }}, {{ order.delivery_address['city'] }}, {{ order.delivery_address['region'] }} </span><br/>
                                                         <span> Phone: {{ order.delivery_address['phone'] }} </span><br/> 
                                                         {% if order.delivery_address['email'] %}    
                                                         <span> Email: {{ order.delivery_address['email'] }} </span> 

@@ -111,6 +111,8 @@ class ProductImport extends ImportModel
         
                         $product->save();
     
+                        $product->photos()->delete();
+                        
                         if($data['photos'])
                         {
                             foreach(explode(',', $data['photos']) as $key => $url)
