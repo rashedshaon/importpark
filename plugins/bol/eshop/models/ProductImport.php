@@ -39,6 +39,12 @@ class ProductImport extends ImportModel
                         $product->unit_id           = $this->getUnitId($data['unit']);
                         $product->supplier_id       = $this->getSupplierId($data['supplier_id']);
                         $product->video_url         = $this->filter($data['video_url']);
+                        $product->seller_sku        = $this->filter($data['seller_sku']);
+                        $product->label_code        = $this->filter($data['label_code']);
+                        $product->cost_bdt          = $this->filter($data['cost_bdt']);
+                        $product->shipping_cost     = $this->filter($data['shipping_cost']);
+                        $product->daraz_price       = $this->filter($data['daraz_price']);
+                        $product->daraz_percent     = $this->filter($data['daraz_percent']);
                         $product->page_view         = $this->filter($data['page_view']);
                         $product->view              = $this->filter($data['view']);
                         $product->sizes             = $this->filter($data['sizes']);
@@ -91,6 +97,12 @@ class ProductImport extends ImportModel
                         $product->unit_id           = $this->getUnitId($data['unit']);
                         $product->supplier_id       = $this->getSupplierId($data['supplier_id']);
                         $product->video_url         = $this->filter($data['video_url']);
+                        $product->seller_sku        = $this->filter($data['seller_sku']);
+                        $product->label_code        = $this->filter($data['label_code']);
+                        $product->cost_bdt          = $this->filter($data['cost_bdt']);
+                        $product->shipping_cost     = $this->filter($data['shipping_cost']);
+                        $product->daraz_price       = $this->filter($data['daraz_price']);
+                        $product->daraz_percent     = $this->filter($data['daraz_percent']);
                         $product->page_view         = $this->filter($data['page_view']);
                         $product->view              = $this->filter($data['view']);
                         $product->sizes             = $this->filter($data['sizes']);
