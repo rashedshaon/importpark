@@ -1,0 +1,10 @@
+name: Carts
+form: $/bol/eshop/models/cart/fields.yaml
+modelClass: Bol\Eshop\Models\Cart
+defaultRedirect: bol/eshop/carts
+create:
+    redirect: 'bol/eshop/carts/update/:id'
+    redirectClose: bol/eshop/carts
+update:
+    redirect: bol/eshop/carts
+    redirectClose: bol/eshop/carts
