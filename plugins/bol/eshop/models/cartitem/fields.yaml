@@ -1,12 +1,8 @@
 fields:
-    cart_id:
-        label: 'Cart id'
-        span: auto
-        type: number
     product_id:
         label: 'Product id'
         span: auto
-        type: number
+        type: dropdown
     price:
         label: Price
         span: auto

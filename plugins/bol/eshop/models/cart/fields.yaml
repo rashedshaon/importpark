@@ -15,7 +15,7 @@ fields:
         label: 'Coupon id'
         span: auto
         type: number
-    created_at:
-        label: 'Created at'
-        span: auto
-        type: datepicker
+    cart_items:
+        span: full
+        path: $/bol/eshop/controllers/carts/_cart_items.htm
+        type: partial

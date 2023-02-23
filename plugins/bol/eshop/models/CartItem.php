@@ -25,6 +25,20 @@ class CartItem extends Model
         'product' => ['Bol\Eshop\Models\Product', 'key' => 'id', 'otherKey' => 'product_id'],
     ];
 
+    public function getProductIdOptions()
+    {
+        $options = [
+            null => 'Select Product',
+        ];
+
+        $items = Product::get();
+        $items->each(function ($item) use (&$options) {
+            return $options[$item->id] = $item->title;
+        });
+
+        return $options;
+    }
+
     public function getPriceLabelAttribute()
     {
         if(Settings::get('show_currency'))

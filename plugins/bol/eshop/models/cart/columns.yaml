@@ -2,10 +2,11 @@ columns:
     id:
         label: id
         type: number
-    session_id:
-        label: session_id
-        type: text
+    quotation:
+        label: quotation
+        type: partial
         searchable: true
+        clickable: false
     user_id:
         label: user_id
         type: number
