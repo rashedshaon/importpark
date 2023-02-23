@@ -1,0 +1,22 @@
+columns:
+    id:
+        label: id
+        type: number
+    cart_id:
+        label: cart_id
+        type: number
+    product_id:
+        label: product_id
+        type: number
+    price:
+        label: price
+        type: text
+    color:
+        label: color
+        type: text
+    size:
+        label: size
+        type: text
+    quantity:
+        label: quantity
+        type: number

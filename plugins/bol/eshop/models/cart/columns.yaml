@@ -1,0 +1,25 @@
+columns:
+    id:
+        label: id
+        type: number
+    session_id:
+        label: session_id
+        type: text
+        searchable: true
+    user_id:
+        label: user_id
+        type: number
+        searchable: true
+    shipping_method_id:
+        label: shipping_method_id
+        type: number
+    coupon_id:
+        label: coupon_id
+        type: number
+    created_at:
+        label: created_at
+        type: datetime
+    updated_at:
+        label: updated_at
+        type: datetime
+        sortable: true

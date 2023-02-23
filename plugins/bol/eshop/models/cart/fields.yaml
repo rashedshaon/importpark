@@ -1,0 +1,21 @@
+fields:
+    session_id:
+        label: 'Session id'
+        span: auto
+        type: text
+    user_id:
+        label: 'User id'
+        span: auto
+        type: number
+    shipping_method_id:
+        label: 'Shipping method id'
+        span: auto
+        type: number
+    coupon_id:
+        label: 'Coupon id'
+        span: auto
+        type: number
+    created_at:
+        label: 'Created at'
+        span: auto
+        type: datepicker
