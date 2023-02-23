@@ -65,6 +65,9 @@ permissions:
     bol.eshop.manage_product_items:
         tab: 'bol.eshop::lang.plugin.name'
         label: 'bol.eshop::lang.permission.manage_product_items'
+    bol.eshop.manage_carts:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_carts'
 navigation:
     main-menu-item:
         label: 'bol.eshop::lang.plugin.name'
@@ -79,6 +82,12 @@ navigation:
                 icon: icon-list-alt
                 permissions:
                     - bol.eshop.manage_orders
+            side-menu-item14:
+                label: 'bol.eshop::lang.menu.carts'
+                url: bol/eshop/carts
+                icon: icon-list-alt
+                permissions:
+                    - bol.eshop.manage_carts
             side-menu-item:
                 label: 'bol.eshop::lang.menu.products'
                 url: bol/eshop/products

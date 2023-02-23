@@ -108,6 +108,7 @@
         'manage_product_items' => 'Manage Product Items',
         'manage_purchase_statuses' => 'Manage Purchase Statuses',
         'manage_customers' => 'Manage Customers',
+        'manage_carts' => 'Manage Carts',
     ],
     'brand' => [
         'id' => 'Id',
@@ -234,6 +235,7 @@
         'purchase_statuses' => 'Purchase Statuses',
         'customers' => 'Customers',
         'customer_types' => 'Customer Types',
+        'carts' => 'Carts',
     ],
     'menuitem' => [
         'shop_category' => 'Shop Category',
