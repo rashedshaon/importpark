@@ -182,3 +182,6 @@
 1.0.61:
     - 'Updated table bol_eshop_regions'
     - builder_table_update_bol_eshop_regions.php
+1.0.62:
+    - 'Updated table bol_eshop_cart_items'
+    - builder_table_update_bol_eshop_cart_items_2.php
