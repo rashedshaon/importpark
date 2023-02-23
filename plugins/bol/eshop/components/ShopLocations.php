@@ -66,6 +66,8 @@ class ShopLocations extends ComponentBase
         Auth::login($user, 1);
 
         $this->page['regions'] = Region::get();
+        $this->page['cities'] = City::get();
+        $this->page['areas'] = Area::get();
         $this->page['user'] = $user;
 
         return  [

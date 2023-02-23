@@ -52,6 +52,7 @@ order_id={{:id}}
                                                     <td>
                                                         <span> <strong>{{ order.delivery_address['name'] }}</strong> </span><br/>
                                                         <span> {{ order.delivery_address['address'] }} </span><br/>
+                                                        <span> {{ order.delivery_address['area'] }}, {{ order.delivery_address['city'] }}, {{ order.delivery_address['region'] }} </span><br/>
                                                         <span> Phone: {{ order.delivery_address['phone'] }} </span><br/> 
                                                         {% if order.delivery_address['email'] %}    
                                                         <span> Email: {{ order.delivery_address['email'] }} </span> 
@@ -82,7 +83,7 @@ order_id={{:id}}
                                                     <th class="remove-porduct">Product</th>
                                                     <th class="product-title">Actual Price</th>
                                                     <th class="product-title">Price</th>
-                                                    <th class="product-title">Quantity</th>
+                                                    <th class="text-center" width="2%" class="product-title">Quantity</th>
                                                     <th class="quantity">Subtotal</th>
                                                 </tr>
                                                 {% for item in order.items %}
@@ -99,7 +100,7 @@ order_id={{:id}}
                                                     </td>
                                                     <td>{{ item.actual_price_label }}</td>
                                                     <td>{{ item.price_label }}/{{ item.unit }}</td>
-                                                    <td>{{ item.quantity }}</td>
+                                                    <td class="text-center">{{ item.quantity }}</td>
                                                     <td>{{ item.subtotal_label }}</td>
                                                 </tr>
                                                 {% endfor %}
@@ -111,27 +112,28 @@ order_id={{:id}}
                                                     </th>
                                                 </tr>
                                                 {% endif %}
-                                                
-                                
-                                                <tr>
-                                                    <th colspan="4"></th>
-                                                    <th class="product-title" style="width:130px;">
-                                                        Subtotal <br>
-                                                        Discount <br>
-                                                        Shipping <br>
-                                                        <!-- Tax ({{order.tax_percent}}%) <br> -->
-                                                        Grand Total <br>
-                                                    </th>
-                                                    <th class="quantity">
-                                                        {{ order.subtotal_label }} <br>
-                                                        {{ order.total_discount_label }} <br>
-                                                        {{ order.shipping_method.price_label }} <br>
-                                                        <!-- {{ order.tax_amount_label }} <br> -->
-                                                        {{ order.total_label }} <br>
-                                                    </th>
-                                                </tr>
+                                                                                
 
                                             </tbody>
+                                        </table>
+                                        <table class="table table-2">
+                                            <tr>
+                                                
+                                                <th class="text-right" style="width: 85%;">
+                                                    Subtotal <br>
+                                                    Discount <br>
+                                                    Shipping <br>
+                                                    <!-- Tax ({{order.tax_percent}}%) <br> -->
+                                                    Grand Total <br>
+                                                </th>
+                                                <th class="quantity text-right">
+                                                    {{ order.subtotal_label }} <br>
+                                                    {{ order.total_discount_label }} <br>
+                                                    {{ order.shipping_method.price_label }} <br>
+                                                    <!-- {{ order.tax_amount_label }} <br> -->
+                                                    {{ order.total_label }} <br>
+                                                </th>
+                                            </tr>
                                         </table>
                                     </div>
                                 </div>
