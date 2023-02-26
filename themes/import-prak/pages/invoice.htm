@@ -84,7 +84,7 @@ order_id={{:id}}
                                                     <th class="product-title">Actual Price</th>
                                                     <th class="product-title">Price</th>
                                                     <th class="text-center" width="2%" class="product-title">Quantity</th>
-                                                    <th class="quantity">Subtotal</th>
+                                                    <th class="quantity text-right">Subtotal</th>
                                                 </tr>
                                                 {% for item in order.items %}
                                                 <tr>
@@ -101,7 +101,7 @@ order_id={{:id}}
                                                     <td>{{ item.actual_price_label }}</td>
                                                     <td>{{ item.price_label }}/{{ item.unit }}</td>
                                                     <td class="text-center">{{ item.quantity }}</td>
-                                                    <td>{{ item.subtotal_label }}</td>
+                                                    <td class="text-right">{{ item.subtotal_label }}</td>
                                                 </tr>
                                                 {% endfor %}
                                 
