@@ -83,7 +83,7 @@ public function smartSwitches($target_id, $partial_name)
 
 
 
-    $results = Product::where('is_published', 1)->whereHas('categories', function($q) {
+    $results = Product::where('is_featured', 1)->whereHas('categories', function($q) {
 
         $q->where('slug', 'smart-switch');
 
