@@ -66,6 +66,7 @@ class Product extends Model
         'wish_items'       => ['Bol\Eshop\Models\WishList', 'key' => 'product_id', 'otherKey' => 'id'],
         'stocks'           => ['Bol\Eshop\Models\Stock', 'key' => 'product_id', 'otherKey' => 'id'],
         'stock_deductions' => ['Bol\Eshop\Models\StockDeduction', 'key' => 'product_id', 'otherKey' => 'id'],
+        'items'            => ['Bol\Eshop\Models\ProductItem', 'key' => 'product_id', 'otherKey' => 'id'],
     ];
 
     public $belongsToMany = [
