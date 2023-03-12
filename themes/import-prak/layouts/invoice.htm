@@ -1,54 +1,116 @@
 [shoppingCart]
+
 ==
+
 <?php
+
 use Bol\Eshop\Models\Settings;
 
+
+
 public function onStart()
+
 {
+
     $this['site_logo'] = Settings::siteLogo();
+
     $this['site_description'] = Settings::get('site_description');
+
 }
+
 ==
+
 <!doctype html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="utf-8">
+
     
+
     {% placeholder title %}
+
     
+
     <meta name="title" content="{{ this.page.meta_title }}">
+
     <meta name="description" content="{{ this.page.meta_description }}">
+
     <meta name="author" content="Import Park">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <meta name="generator" content="Import Park">
+
     
+
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
+
+
     <!-- <link rel="manifest" href="site.html"> -->
+
     <link rel="shortcut icon" type="image/x-icon" href="{{ 'assets/images/favicon.ico' | theme }}">
 
+
+
     <!-- CSS here -->
+
     <link rel="stylesheet" href="{{ 'assets/css/bootstrap.min.css' | theme }}">
+
     <link rel="stylesheet" href="{{ 'assets/css/invoice-.css' | theme }}">
 
+
+
     <style>
+
         .table th, .table td {
+
             padding: 0.2rem;
-            font-size: 12px;
+            font-size: 14px;
+
         }
+
+        .table td a{
+            text-decoration: none;
+            color: black;
+        }
+
+        .table td a:hover{
+            cursor: pointer;
+            color: blue;
+        }
+
     </style>
 
+
+
     {% styles %}
+
 </head>
+
 <!-- onload="window.print();" -->
+
 <body>
-    
-    {% page %}
+
     
 
+    {% page %}
+
+    
+
+
+
     {% framework extras %}
+
     {% scripts %}
+
 </body>
+
+
+
 
 
 </html>

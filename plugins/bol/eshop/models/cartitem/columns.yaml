@@ -1,22 +1,21 @@
 columns:
-    id:
-        label: id
-        type: number
-    cart_id:
-        label: cart_id
-        type: number
     product_id:
-        label: product_id
-        type: number
+        label: Product
+        relation: product
+        select: title
+    actual_price:
+        label: Actual Price
+        relation: product
+        select: price
     price:
-        label: price
+        label: Price
         type: text
     color:
-        label: color
+        label: Color
         type: text
     size:
-        label: size
+        label: Size
         type: text
     quantity:
-        label: quantity
+        label: Quantity
         type: number

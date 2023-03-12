@@ -90,7 +90,7 @@ order_id={{:id}}
                                                 <tr>
                                                     <td>{{ loop.index }}</td>
                                                     <td>
-                                                        <a target="_blank" href="{{url('/')}}/product-details/{{ item.product.slug }}">{{ item.title }}</a>
+                                                        <a target="_blank" href="{{url('/')}}/product-details/{{ item.product.slug }}">{{ item.title }} <strong>({{ item.product.id }})</strong></a>
                                                         {% if item.color %}
                                                         <br>Color: {{ item.color }}
                                                         {% endif %}
