@@ -33,7 +33,7 @@ class CartItem extends Model
 
         $items = Product::get();
         $items->each(function ($item) use (&$options) {
-            return $options[$item->id] = $item->title;
+            return $options[$item->id] = $item->title.' ('.$item->id.')';
         });
 
         return $options;
@@ -85,5 +85,17 @@ class CartItem extends Model
     public function getDiscountSubtotalAttribute()
     {
         return ($this->product->price - $this->price) * $this->quantity;
+    }
+
+    public function filterFields($fields, $context = null)
+    {
+        if($context == 'create')
+        {
+            if(!empty($this->product_id))
+            {
+                $price = Product::find($this->product_id)->price;
+                $fields->price->value = round($price);
+            }
+        }
     }
 }

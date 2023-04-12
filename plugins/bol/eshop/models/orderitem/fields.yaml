@@ -13,6 +13,8 @@ fields:
         label: Price
         span: left
         type: number
+        dependsOn:
+            - product_id
     quantity:
         label: Quantity
         span: left

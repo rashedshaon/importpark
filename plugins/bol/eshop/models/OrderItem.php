@@ -102,7 +102,7 @@ class OrderItem extends Model
 
         $items = Product::get();
         $items->each(function ($item) use (&$options) {
-            return $options[$item->id] = $item->title;
+            return $options[$item->id] = $item->title.' ('.$item->id.')';
         });
 
         return $options;
@@ -142,5 +142,17 @@ class OrderItem extends Model
          */
 
         StockDeduction::where('order_id', $this->order_id)->where('product_id', $this->product_id)->delete();
+    }
+
+    public function filterFields($fields, $context = null)
+    {
+        if($context == 'create')
+        {
+            if(!empty($this->product_id))
+            {
+                $price = Product::find($this->product_id)->price;
+                $fields->price->value = round($price);
+            }
+        }
     }
 }
