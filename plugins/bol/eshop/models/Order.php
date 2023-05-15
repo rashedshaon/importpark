@@ -3,6 +3,7 @@
 use Model;
 use Lang;
 use Auth;
+use BackendAuth;
 use Carbon\Carbon;
 use October\Rain\Argon\Argon;
 use RainLab\User\Models\User;
@@ -319,6 +320,15 @@ class Order extends Model
         {
             $this->billing_address = $this->delivery_address;
         }
+
+        $user = BackendAuth::getUser();
+        $this->created_by = $user->id;
+    }
+
+    public function beforeUpdate()
+    {
+        $user = BackendAuth::getUser();
+        $this->updated_by = $user->id;
     }
 
     public function beforeSave()

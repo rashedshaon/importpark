@@ -185,3 +185,12 @@
 1.0.62:
     - 'Updated table bol_eshop_cart_items'
     - builder_table_update_bol_eshop_cart_items_2.php
+1.0.63:
+    - 'Updated table bol_eshop_orders'
+    - builder_table_update_bol_eshop_orders_8.php
+1.0.64:
+    - 'Updated table bol_eshop_order_items'
+    - builder_table_update_bol_eshop_order_items_2.php
+1.0.65:
+    - 'Updated table users'
+    - builder_table_update_users2.php

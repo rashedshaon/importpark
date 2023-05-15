@@ -2,6 +2,7 @@
 
 use Model;
 use Carbon\Carbon;
+use BackendAuth;
 
 /**
  * Model
@@ -39,6 +40,15 @@ class Customer extends Model
     public function beforeCreate()
     {
         $this->password = '87654321';
+
+        $user = BackendAuth::getUser();
+        $this->created_by = $user->id;
+    }
+
+    public function beforeUpdate()
+    {
+        $user = BackendAuth::getUser();
+        $this->updated_by = $user->id;
     }
 
     public function getTypeIdOptions()

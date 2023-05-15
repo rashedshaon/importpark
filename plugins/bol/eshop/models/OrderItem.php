@@ -2,6 +2,7 @@
 
 use Model;
 use Lang;
+use BackendAuth;
 
 /**
  * Model
@@ -114,6 +115,15 @@ class OrderItem extends Model
         $this->title = $product->title;
         $this->actual_price = $product->price;
         $this->unit = $product->unit->name;
+
+        $user = BackendAuth::getUser();
+        $this->created_by = $user->id;
+    }
+
+    public function beforeUpdate()
+    {
+        $user = BackendAuth::getUser();
+        $this->updated_by = $user->id;
     }
 
     public function afterCreate()
