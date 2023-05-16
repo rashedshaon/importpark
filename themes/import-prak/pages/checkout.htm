@@ -211,11 +211,11 @@ is_hidden = 0
                                 
                                 <button type="button" 
                                     class="btn btn-primary-dark btn-block btn-pill font-size-20 mb-3 py-3"
-                                    onclick="this.style.display='none'; this.innerText='Processing…';" 
+                                    onclick="this.disabled=true; this.innerText='Processing…';" 
                                     data-request-form="#form-place-order" 
                                     data-request="onPlaceOrder" 
                                     data-request-success="if(data.status){$('#form-pay-online').submit()}"
-                                    data-request-complete="if(data.statusText == 'Not Acceptable'){this.style.display='block'; this.innerText='{{'Place order'|_}}';}"
+                                    data-request-complete="if(typeof(data.status) == 'undefined'){this.disabled=false; this.innerText='{{'Place order'|_}}';}"
                                     data-request-flash>
                                     {{'Place order'|_}}
                                                         

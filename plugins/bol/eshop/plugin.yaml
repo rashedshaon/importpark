@@ -74,10 +74,10 @@ permissions:
 navigation:
     main-menu-item:
         label: 'bol.eshop::lang.plugin.name'
-        url: bol/eshop/products
+        url: bol/eshop/orders
         icon: icon-home
         permissions:
-            - bol.eshop.manage_products
+            - bol.eshop.manage_orders
         sideMenu:
             side-menu-item4:
                 label: 'bol.eshop::lang.menu.orders'

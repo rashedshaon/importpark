@@ -70,9 +70,9 @@ class ShopCheckout extends ComponentBase
             'delivery_address.name' => 'required',
             'delivery_address.phone' => 'required',
             // 'delivery_address.email' => 'required',
-            'delivery_address.region' => 'required',
-            'delivery_address.city' => 'required',
-            'delivery_address.area' => 'required',
+            // 'delivery_address.region' => 'required',
+            // 'delivery_address.city' => 'required',
+            // 'delivery_address.area' => 'required',
             'delivery_address.address' => 'required',
             'payment_method' => 'required',
             'terms' => 'required',
@@ -85,9 +85,9 @@ class ShopCheckout extends ComponentBase
             $rules['billing_address.name'] = 'required';
             $rules['billing_address.phone'] = 'required';
             // $rules['billing_address.email'] = 'required';
-            $rules['billing_address.region'] = 'required';
-            $rules['billing_address.city'] = 'required';
-            $rules['billing_address.area'] = 'required';
+            // $rules['billing_address.region'] = 'required';
+            // $rules['billing_address.city'] = 'required';
+            // $rules['billing_address.area'] = 'required';
             $rules['billing_address.address'] = 'required';
         }
     
@@ -132,15 +132,15 @@ class ShopCheckout extends ComponentBase
 
         User::where('id', $user->id)->update([
             'name' => $data['delivery_address']['name'],
-            'region_id' => $data['delivery_address']['region'],
-            'city_id' => $data['delivery_address']['city'],
-            'area_id' => $data['delivery_address']['area'],
+            // 'region_id' => $data['delivery_address']['region'],
+            // 'city_id' => $data['delivery_address']['city'],
+            // 'area_id' => $data['delivery_address']['area'],
             'address' => $data['delivery_address']['address'],
         ]);
 
-        $data['delivery_address']['region'] = Region::find($data['delivery_address']['region'])->name;
-        $data['delivery_address']['city'] = City::find($data['delivery_address']['city'])->name;
-        $data['delivery_address']['area'] = Area::find($data['delivery_address']['area'])->name;
+        // $data['delivery_address']['region'] = Region::find($data['delivery_address']['region'])->name;
+        // $data['delivery_address']['city'] = City::find($data['delivery_address']['city'])->name;
+        // $data['delivery_address']['area'] = Area::find($data['delivery_address']['area'])->name;
     
         
     

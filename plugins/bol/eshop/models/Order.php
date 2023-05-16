@@ -344,9 +344,9 @@ class Order extends Model
             'name'    => $customer->name,
             'phone'   => $customer->phone,
             'email'   => $customer->email,
-            'region'  => $customer->region->name,
-            'city'    => $customer->city->name,
-            'area'    => $customer->area->name,
+            // 'region'  => $customer->region->name,
+            // 'city'    => $customer->city->name,
+            // 'area'    => $customer->area->name,
             'address' => $customer->address,
         ];
 
@@ -354,9 +354,9 @@ class Order extends Model
             'name'    => $customer->name,
             'phone'   => $customer->phone,
             'email'   => $customer->email,
-            'region'  => $customer->region->name,
-            'city'    => $customer->city->name,
-            'area'    => $customer->area->name,
+            // 'region'  => $customer->region->name,
+            // 'city'    => $customer->city->name,
+            // 'area'    => $customer->area->name,
             'address' => $customer->address,
         ];
     }
