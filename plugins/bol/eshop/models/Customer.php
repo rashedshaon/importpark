@@ -35,8 +35,8 @@ class Customer extends Model
         'city'   => ['Bol\Eshop\Models\City', 'key' => 'id', 'otherKey' => 'city_id'],
         'area'   => ['Bol\Eshop\Models\Area', 'key' => 'id', 'otherKey' => 'area_id'],
         'type'   => ['Bol\Eshop\Models\CustomerType', 'key' => 'id', 'otherKey' => 'type_id'],
-        'created_by_user'  => ['RainLab\User\Models\User', 'key' => 'id', 'otherKey' => 'created_by'],
-        'updated_by_user'  => ['RainLab\User\Models\User', 'key' => 'id', 'otherKey' => 'updated_by'],
+        'created_by_user'  => ['Backend\Models\User', 'key' => 'id', 'otherKey' => 'created_by'],
+        'updated_by_user'  => ['Backend\Models\User', 'key' => 'id', 'otherKey' => 'updated_by'],
     ];
 
     public function beforeCreate()
