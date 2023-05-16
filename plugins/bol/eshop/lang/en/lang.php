@@ -94,6 +94,7 @@
         'manage_categories' => 'Manage Categories',
         'manage_brands' => 'Manage Brands',
         'manage_orders' => 'Manage Orders',
+        'manage_all_orders' => 'Manage All Orders',
         'manage_order_statuses' => 'Manage Order Statuses',
         'manage_basic_settings' => 'Manage Basic Settings',
         'manage_units' => 'Manage Units',

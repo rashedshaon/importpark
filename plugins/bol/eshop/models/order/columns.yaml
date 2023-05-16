@@ -46,3 +46,17 @@ columns:
         label: bol.eshop::lang.order.updated_at
         type: datetime
         invisible: true
+    created_by:
+        label: 'Created by'
+        relation: created_by_user
+        select: concat(first_name, ' ', last_name)
+        type: text
+        searchable: true
+        invisible: false
+    updated_by:
+        label: 'Updated by'
+        relation: updated_by_user
+        select: concat(first_name, ' ', last_name)
+        type: text
+        searchable: true
+        invisible: true

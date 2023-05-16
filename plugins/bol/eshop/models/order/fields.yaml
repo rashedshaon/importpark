@@ -18,6 +18,7 @@ tabs:
             span: auto
             type: dropdown
             default: 1
+            permission: bol.eshop.manage_order_statuses
             tab: 'bol.eshop::lang.order.tab_info'
         payment_status:
             label: 'Payment status'

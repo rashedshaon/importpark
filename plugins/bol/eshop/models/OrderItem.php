@@ -26,6 +26,8 @@ class OrderItem extends Model
     public $hasOne = [
         'product' => ['Bol\Eshop\Models\Product', 'key' => 'id', 'otherKey' => 'product_id'],
         'order' => ['Bol\Eshop\Models\Order', 'key' => 'id', 'otherKey' => 'order_id'],
+        'created_by_user'  => ['Bol\Eshop\Models\User', 'key' => 'id', 'otherKey' => 'created_by'],
+        'updated_by_user'  => ['Bol\Eshop\Models\User', 'key' => 'id', 'otherKey' => 'updated_by'],
     ];
 
     public function getSubtotalAttribute()
@@ -164,5 +166,11 @@ class OrderItem extends Model
                 $fields->price->value = round($price);
             }
         }
+    }
+
+    public function scopeOwnList($query)
+    {
+        $user = BackendAuth::getUser();
+        return $query->where('created_by', $user->id);
     }
 }

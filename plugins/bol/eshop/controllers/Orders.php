@@ -34,6 +34,13 @@ class Orders extends Controller
         parent::preview($id);
     }
 
+    public function listExtendQuery($query, $definition)
+    {
+        if (!$this->user->hasAccess('bol.eshop.manage_all_orders')) {
+            $query->ownList();
+        }
+    }
+
     public function listInjectRowClass($record, $value)
     {
         $start_of_day = Carbon::today()->startOfDay();

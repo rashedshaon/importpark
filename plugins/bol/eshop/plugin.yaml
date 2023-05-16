@@ -23,6 +23,9 @@ permissions:
     bol.eshop.manage_orders:
         tab: 'bol.eshop::lang.plugin.name'
         label: 'bol.eshop::lang.permission.manage_orders'
+    bol.eshop.manage_all_orders:
+        tab: 'bol.eshop::lang.plugin.name'
+        label: 'bol.eshop::lang.permission.manage_all_orders'
     bol.eshop.manage_order_statuses:
         tab: 'bol.eshop::lang.plugin.name'
         label: 'bol.eshop::lang.permission.manage_order_statuses'
