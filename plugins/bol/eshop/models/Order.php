@@ -35,8 +35,8 @@ class Order extends Model
         'status'          => ['Bol\Eshop\Models\OrderStatus', 'key' => 'id', 'otherKey' => 'status_id'],
         'shipping_method' => ['Bol\Eshop\Models\ShippingMethod', 'key' => 'id', 'otherKey' => 'shipping_method_id'],
         'payment_method'  => ['Bol\Eshop\Models\PaymentMethod', 'key' => 'id', 'otherKey' => 'payment_method_id'],
-        'created_by_user'  => ['Bol\Eshop\Models\User', 'key' => 'id', 'otherKey' => 'created_by'],
-        'updated_by_user'  => ['Bol\Eshop\Models\User', 'key' => 'id', 'otherKey' => 'updated_by'],
+        'created_by_user'  => ['RainLab\User\Models\User', 'key' => 'id', 'otherKey' => 'created_by'],
+        'updated_by_user'  => ['RainLab\User\Models\User', 'key' => 'id', 'otherKey' => 'updated_by'],
     ];
 
     public $hasMany = [
